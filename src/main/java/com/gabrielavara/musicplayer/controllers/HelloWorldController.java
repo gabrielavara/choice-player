@@ -1,7 +1,6 @@
 package com.gabrielavara.musicplayer.controllers;
 
 import de.felixroske.jfxsupport.FXMLController;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -18,8 +17,8 @@ public class HelloWorldController {
     // @Autowired
     // private AwesomeActionService actionService;
 
-    @FXML
-    private void setHelloText(final Event event) {
-        helloLabel.setText(nameField.getText());
-    }
+    // @FXML
+    // private void setHelloText(final Event event) {
+    // helloLabel.setText(nameField.getText());
+    // }
 }
