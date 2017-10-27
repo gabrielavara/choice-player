@@ -20,10 +20,10 @@ import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
-class PlaylistLoader {
+public class PlaylistLoader {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.model.PlaylistLoader");
 
-    List<Mp3File> load(Path folder) {
+    public List<Mp3File> load(Path folder) {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
             Stream<Path> paths = StreamSupport.stream(directoryStream.spliterator(), false);
             return paths.filter(isMp3()).map(PlaylistLoader::createMp3File).filter(Objects::nonNull)
