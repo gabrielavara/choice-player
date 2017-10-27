@@ -32,6 +32,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile group: 'com.mpatric', name: 'mp3agic', version: '0.9.1'
     compile group: 'de.roskenet', name: 'springboot-javafx-support', version: '2.1.2'
+    compile group: 'com.jfoenix', name: 'jfoenix', version: '1.9.1'
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
