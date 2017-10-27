@@ -19,8 +19,8 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.gabrielavara'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.9
-targetCompatibility = 1.9
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -28,9 +28,10 @@ repositories {
     maven { url "https://repo.spring.io/milestone" }
 }
 
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
+    compile group: 'com.mpatric', name: 'mp3agic', version: '0.9.1'
     compile group: 'de.roskenet', name: 'springboot-javafx-support', version: '2.1.2'
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
