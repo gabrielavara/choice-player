@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 @FXMLController
-public class HelloWorldController {
+public class PlayerController {
     @FXML
     private Label helloLabel;
 

@@ -21,7 +21,7 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
 class PlaylistLoader {
-    private static Logger log = LoggerFactory.getLogger("chapters.introduction.HelloWorld1");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.model.PlaylistLoader");
 
     List<Mp3File> load(Path folder) {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
