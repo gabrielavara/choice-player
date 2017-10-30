@@ -18,12 +18,12 @@ import org.junit.Test;
 
 public class PlaylistLoaderTest {
     private final Path path = Paths.get("src/test/resources/mp3folder");
-    private final Path newerPath = Paths.get("src/test/resources/mp3folder/testNewer.mp3");
+    private final Path newerFilePath = Paths.get("src/test/resources/mp3folder/testNewer.mp3");
 
     @Before
     public void setup() throws IOException {
         Date now = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-        setFileCreationDate(newerPath, now);
+        setFileCreationDate(newerFilePath, now);
     }
 
     private void setFileCreationDate(Path filePath, Date creationDate) throws IOException{

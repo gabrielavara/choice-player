@@ -5,20 +5,20 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0"
-      xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielavara.musicplayer.controllers.PlayerController">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+      prefWidth="1000.0"
+      xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gabrielavara.musicplayer.controllers.PlayerController">
     <VBox>
         <StackPane>
             <VBox.margin>
                 <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>
             </VBox.margin>
-            <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true"/>
+            <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" fx:id="albumArt"/>
         </StackPane>
-        <Label text="Artist">
+        <Label text="Artist" fx:id="artist">
             <VBox.margin>
                 <Insets bottom="6.0" left="24.0" right="24.0" top="6.0"/>
             </VBox.margin>
@@ -26,7 +26,7 @@
                 <Font size="20.0"/>
             </font>
         </Label>
-        <Label text="Track">
+        <Label text="Title" fx:id="title">
             <VBox.margin>
                 <Insets bottom="6.0" left="24.0" right="24.0" top="6.0"/>
             </VBox.margin>
