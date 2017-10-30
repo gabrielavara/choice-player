@@ -5,8 +5,11 @@ import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class Mp3 {
     private static final String EMPTY = "";
     private final String artist;
@@ -15,6 +18,8 @@ public class Mp3 {
     private final String album;
     private final long length;
     private final String filename;
+    @Setter
+    private boolean currentlyPlaying;
 
     Mp3(Mp3File mp3) {
         artist = getArtist(mp3);

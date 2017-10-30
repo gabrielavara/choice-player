@@ -1,6 +1,7 @@
 package com.gabrielavara.musicplayer.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,5 +18,10 @@ public class MusicController {
     @GetMapping("/api/playlist")
     public List<Mp3> getPlaylist() {
         return musicService.getPlayList();
+    }
+
+    @GetMapping("/api/currentlyPlaying")
+    public Optional<Mp3> getCurrentlyPlaying() {
+        return musicService.getCurrentlyPlaying();
     }
 }
