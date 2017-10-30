@@ -22,15 +22,15 @@ public class Mp3 {
     private boolean currentlyPlaying;
 
     Mp3(Mp3File mp3) {
-        artist = getArtist(mp3);
-        title = getTitle(mp3);
-        year = getYear(mp3);
-        album = getAlbum(mp3);
+        artist = extractArtist(mp3);
+        title = extractTitle(mp3);
+        year = extractYear(mp3);
+        album = extractAlbum(mp3);
         length = mp3.getLengthInMilliseconds();
         filename = mp3.getFilename();
     }
 
-    private String getArtist(Mp3File mp3) {
+    private String extractArtist(Mp3File mp3) {
         if (mp3.hasId3v2Tag()) {
             ID3v2 id3v2Tag = mp3.getId3v2Tag();
             return id3v2Tag.getArtist();
@@ -42,7 +42,7 @@ public class Mp3 {
         return EMPTY;
     }
 
-    private String getTitle(Mp3File mp3) {
+    private String extractTitle(Mp3File mp3) {
         if (mp3.hasId3v2Tag()) {
             ID3v2 id3v2Tag = mp3.getId3v2Tag();
             return id3v2Tag.getTitle();
@@ -54,7 +54,7 @@ public class Mp3 {
         return EMPTY;
     }
 
-    private String getYear(Mp3File mp3) {
+    private String extractYear(Mp3File mp3) {
         if (mp3.hasId3v2Tag()) {
             ID3v2 id3v2Tag = mp3.getId3v2Tag();
             return id3v2Tag.getYear();
@@ -66,7 +66,7 @@ public class Mp3 {
         return EMPTY;
     }
 
-    private String getAlbum(Mp3File mp3) {
+    private String extractAlbum(Mp3File mp3) {
         if (mp3.hasId3v2Tag()) {
             ID3v2 id3v2Tag = mp3.getId3v2Tag();
             return id3v2Tag.getAlbum();
