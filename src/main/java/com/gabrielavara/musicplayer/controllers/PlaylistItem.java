@@ -26,11 +26,11 @@ public class PlaylistItem extends ListCell<Mp3File> {
     private String getItemText(Mp3File mp3) {
         if (mp3.hasId3v2Tag()) {
             ID3v2 id3v2Tag = mp3.getId3v2Tag();
-            return id3v2Tag.getArtist() + " - " + id3v2Tag.getTrack();
+            return id3v2Tag.getArtist() + " - " + id3v2Tag.getTitle();
         }
         if (mp3.hasId3v1Tag()) {
             ID3v1 id3v1Tag = mp3.getId3v1Tag();
-            return id3v1Tag.getArtist() + " - " + id3v1Tag.getTrack();
+            return id3v1Tag.getArtist() + " - " + id3v1Tag.getTitle();
         }
         return mp3.getFilename();
     }

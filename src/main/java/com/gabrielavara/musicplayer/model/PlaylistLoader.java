@@ -26,8 +26,8 @@ public class PlaylistLoader {
     public List<Mp3File> load(Path folder) {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
             Stream<Path> paths = StreamSupport.stream(directoryStream.spliterator(), false);
-            return paths.filter(isMp3()).map(PlaylistLoader::createMp3File).filter(Objects::nonNull)
-                            .collect(Collectors.toList());
+            return paths.filter(isMp3()).sorted(new CreationTimeComparator()).map(PlaylistLoader::createMp3File)
+                            .filter(Objects::nonNull).collect(Collectors.toList());
         } catch (IOException | DirectoryIteratorException e) {
             log.error("Could not find folder: {0}. Message: {1}", folder, e.getMessage());
         }

@@ -23,8 +23,10 @@ public class PlaylistLoaderTest {
         List<Mp3File> mp3Files = playlistLoader.load(path);
 
         // then
-        assertEquals(mp3Files.size(), 1);
+        assertEquals(mp3Files.size(), 2);
         assertEquals(mp3Files.get(0).getId3v1Tag().getArtist(), "Me");
-        assertEquals(mp3Files.get(0).getId3v1Tag().getTrack(), "1");
+        assertEquals(mp3Files.get(0).getId3v1Tag().getTitle(), "Test Older");
+        assertEquals(mp3Files.get(1).getId3v1Tag().getArtist(), "Me");
+        assertEquals(mp3Files.get(1).getId3v1Tag().getTitle(), "Test Newer");
     }
 }
