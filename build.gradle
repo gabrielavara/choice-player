@@ -29,6 +29,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.16.18'
     compile('org.springframework.boot:spring-boot-starter-web')
     compile group: 'com.mpatric', name: 'mp3agic', version: '0.9.1'
     compile group: 'de.roskenet', name: 'springboot-javafx-support', version: '2.1.2'

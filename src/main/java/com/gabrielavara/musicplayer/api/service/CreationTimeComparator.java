@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.model;
+package com.gabrielavara.musicplayer.api.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CreationTimeComparator implements Comparator<Path> {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.model.CreationTimeComparator");
+    private static Logger log = LoggerFactory.getLogger("CreationTimeComparator");
 
     @Override
     public int compare(Path path1, Path path2) {

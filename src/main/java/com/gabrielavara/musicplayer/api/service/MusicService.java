@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.gabrielavara.musicplayer.model.PlaylistLoader;
 import com.mpatric.mp3agic.Mp3File;
 
 @Service

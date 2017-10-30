@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.model;
+package com.gabrielavara.musicplayer.api.service;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.model;
+package com.gabrielavara.musicplayer.api.service;
 
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
@@ -21,7 +21,7 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
 public class PlaylistLoader {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.model.PlaylistLoader");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.api.service.PlaylistLoader");
 
     public List<Mp3File> load(Path folder) {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
