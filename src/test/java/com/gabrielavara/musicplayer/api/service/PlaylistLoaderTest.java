@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.mpatric.mp3agic.Mp3File;
-
 public class PlaylistLoaderTest {
     private final Path path = Paths.get("src/test/resources/mp3folder");
 
@@ -20,13 +18,13 @@ public class PlaylistLoaderTest {
         PlaylistLoader playlistLoader = new PlaylistLoader();
 
         // when
-        List<Mp3File> mp3Files = playlistLoader.load(path);
+        List<Mp3> mp3Files = playlistLoader.load(path);
 
         // then
         assertEquals(mp3Files.size(), 2);
-        assertEquals(mp3Files.get(0).getId3v1Tag().getArtist(), "Me");
-        assertEquals(mp3Files.get(0).getId3v1Tag().getTitle(), "Test Older");
-        assertEquals(mp3Files.get(1).getId3v1Tag().getArtist(), "Me");
-        assertEquals(mp3Files.get(1).getId3v1Tag().getTitle(), "Test Newer");
+        assertEquals(mp3Files.get(0).getArtist(), "Me");
+        assertEquals(mp3Files.get(0).getTitle(), "Test Older");
+        assertEquals(mp3Files.get(1).getArtist(), "Me");
+        assertEquals(mp3Files.get(1).getTitle(), "Test Newer");
     }
 }

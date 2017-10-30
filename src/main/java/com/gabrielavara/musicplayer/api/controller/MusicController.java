@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gabrielavara.musicplayer.api.service.Mp3;
 import com.gabrielavara.musicplayer.api.service.MusicService;
-import com.mpatric.mp3agic.Mp3File;
 
 @RestController
 public class MusicController {
@@ -15,7 +15,7 @@ public class MusicController {
     private MusicService musicService;
 
     @GetMapping("/api/playlist")
-    public List<Mp3File> getPlaylist() {
+    public List<Mp3> getPlaylist() {
         return musicService.getPlayList();
     }
 }

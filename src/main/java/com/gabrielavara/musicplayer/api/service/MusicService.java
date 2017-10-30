@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.mpatric.mp3agic.Mp3File;
-
 @Service
 public class MusicService {
-    public List<Mp3File> getPlayList() {
+    public List<Mp3> getPlayList() {
         return new PlaylistLoader().load(Paths.get("src/test/resources/mp3folder"));
     }
 }
