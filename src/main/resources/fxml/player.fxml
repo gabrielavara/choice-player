@@ -14,11 +14,10 @@
       xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.musicplayer.controllers.PlayerController">
     <VBox>
-        <StackPane>
+        <StackPane fx:id="albumArtStackPane">
             <VBox.margin>
                 <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>
             </VBox.margin>
-            <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" fx:id="albumArt"/>
         </StackPane>
         <Label text="Artist" fx:id="artist">
             <VBox.margin>
