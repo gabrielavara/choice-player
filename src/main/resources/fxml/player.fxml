@@ -3,38 +3,17 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.*?>
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
       prefWidth="1000.0"
       xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.musicplayer.controllers.PlayerController">
-    <VBox>
+    <VBox fx:id="currentlyPlayingBox">
         <StackPane fx:id="albumArtStackPane">
             <VBox.margin>
                 <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>
             </VBox.margin>
         </StackPane>
-        <Label text="Artist" fx:id="artist">
-            <VBox.margin>
-                <Insets bottom="6.0" left="24.0" right="24.0" top="6.0"/>
-            </VBox.margin>
-            <font>
-                <Font size="20.0"/>
-            </font>
-        </Label>
-        <Label text="Title" fx:id="title">
-            <VBox.margin>
-                <Insets bottom="6.0" left="24.0" right="24.0" top="6.0"/>
-            </VBox.margin>
-            <font>
-                <Font size="16.0"/>
-            </font>
-        </Label>
         <JFXSlider>
             <VBox.margin>
                 <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>

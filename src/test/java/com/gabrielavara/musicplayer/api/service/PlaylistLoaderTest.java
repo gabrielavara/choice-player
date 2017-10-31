@@ -1,6 +1,7 @@
 package com.gabrielavara.musicplayer.api.service;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,8 +14,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class PlaylistLoaderTest {
     private final Path path = Paths.get("src/test/resources/mp3folder");
@@ -26,7 +26,7 @@ public class PlaylistLoaderTest {
         setFileCreationDate(newerFilePath, now);
     }
 
-    private void setFileCreationDate(Path filePath, Date creationDate) throws IOException{
+    private void setFileCreationDate(Path filePath, Date creationDate) throws IOException {
         BasicFileAttributeView attributes = Files.getFileAttributeView(filePath, BasicFileAttributeView.class);
         FileTime time = FileTime.fromMillis(creationDate.getTime());
         attributes.setTimes(time, time, time);
@@ -42,9 +42,9 @@ public class PlaylistLoaderTest {
 
         // then
         assertEquals(mp3Files.size(), 2);
-        assertEquals(mp3Files.get(0).getArtist(), "Me");
-        assertEquals(mp3Files.get(0).getTitle(), "Test Older");
-        assertEquals(mp3Files.get(1).getArtist(), "Me");
-        assertEquals(mp3Files.get(1).getTitle(), "Test Newer");
+        assertEquals(mp3Files.get(0).getArtist(), "Test Artist");
+        assertEquals(mp3Files.get(0).getTitle(), "Test Older Title");
+        assertEquals(mp3Files.get(1).getArtist(), "The Super Artist Test");
+        assertEquals(mp3Files.get(1).getTitle(), "Test Newer Title");
     }
 }
