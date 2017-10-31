@@ -1,6 +1,8 @@
 package com.gabrielavara.musicplayer.controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +53,17 @@ public class PlayerController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         playlist.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener(this));
         loadPlaylist();
+        loadDefaultAlbumArt();
+    }
+
+    private void loadDefaultAlbumArt() {
+        try {
+            FileInputStream inputStream = new FileInputStream("src/main/resources/images/defaultAlbumArt.png");
+            albumArt.setImage(new Image(inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            log.warn("Could not load default album art");
+        }
     }
 
     private void loadPlaylist() {
