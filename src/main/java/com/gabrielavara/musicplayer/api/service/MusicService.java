@@ -1,23 +1,21 @@
 package com.gabrielavara.musicplayer.api.service;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.gabrielavara.musicplayer.controllers.PlayerController;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
-
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MusicService {
@@ -29,7 +27,7 @@ public class MusicService {
 
     public List<Mp3> getPlayList() {
         log.info("getPlaylist called");
-        return new PlaylistLoader().load(Paths.get("src/test/resources/mp3folder"));
+        return playerController.getMp3Files();
     }
 
     public Optional<Mp3> getCurrentlyPlaying() {

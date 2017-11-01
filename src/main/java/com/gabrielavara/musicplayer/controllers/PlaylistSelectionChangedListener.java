@@ -1,18 +1,16 @@
 package com.gabrielavara.musicplayer.controllers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.file.Paths;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.gabrielavara.musicplayer.api.service.Mp3;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.file.Paths;
 
 public class PlaylistSelectionChangedListener implements ChangeListener<Mp3> {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.controllers.PlaylistSelectionChangedListener");
@@ -45,7 +43,6 @@ public class PlaylistSelectionChangedListener implements ChangeListener<Mp3> {
             playerController.setMediaPlayer(new MediaPlayer(media));
             mediaPlayer = playerController.getMediaPlayer();
             mediaPlayer.play();
-
             playerController.setAlbumArt();
         }
     }

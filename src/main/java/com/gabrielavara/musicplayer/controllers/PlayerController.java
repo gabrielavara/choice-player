@@ -2,8 +2,10 @@ package com.gabrielavara.musicplayer.controllers;
 
 import com.gabrielavara.musicplayer.api.service.Mp3;
 import com.gabrielavara.musicplayer.api.service.MusicService;
+import com.gabrielavara.musicplayer.api.service.PlaylistLoader;
 import com.gabrielavara.musicplayer.views.AnimatingLabel;
 import com.gabrielavara.musicplayer.views.FlippableImage;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.collections.FXCollections;
@@ -23,10 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Getter
 @FXMLController
@@ -36,46 +41,117 @@ public class PlayerController implements Initializable {
     @FXML
     private StackPane albumArtStackPane;
     @FXML
+    @Setter
     private JFXListView<Mp3> playlist;
     @FXML
     private VBox currentlyPlayingBox;
+    @FXML
+    private JFXButton previousTrackButton;
+    @FXML
+    private JFXButton nextTrackButton;
+    @FXML
+    private JFXButton playPauseButton;
 
     @Autowired
     private MusicService musicService;
 
     @Setter
     private MediaPlayer mediaPlayer;
+    private boolean atEndOfMedia;
 
     private FlippableImage flippableAlbumArt = new FlippableImage();
     private AnimatingLabel artist;
     private AnimatingLabel title;
+    private ObservableList<Mp3> mp3Files;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         flippableAlbumArt = new FlippableImage();
-        artist = new AnimatingLabel("Artist", 20);
-        title = new AnimatingLabel("Title", 16);
+        artist = new AnimatingLabel("", 20);
+        title = new AnimatingLabel("", 16);
 
-        playlist.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener(this));
+        PlaylistSelectionChangedListener playlistSelectionChangedListener = new PlaylistSelectionChangedListener(this);
+        playlist.getSelectionModel().selectedItemProperty().addListener(playlistSelectionChangedListener);
         loadPlaylist();
+
         albumArtStackPane.getChildren().add(flippableAlbumArt);
         VBox.setMargin(artist, new Insets(6, 24, 6, 24));
         VBox.setMargin(title, new Insets(6, 24, 6, 24));
 
         currentlyPlayingBox.getChildren().add(1, artist);
         currentlyPlayingBox.getChildren().add(2, title);
+
+        previousTrackButton.setOnMouseClicked(event -> {
+                    getPreviousTrack().ifPresent(nextTrack -> {
+                        playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), nextTrack);
+                    });
+                }
+        );
+        nextTrackButton.setOnMouseClicked(event -> {
+                    getNextTrack().ifPresent(previousTrack -> {
+                        playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), previousTrack);
+                    });
+                }
+        );
+        playPauseButton.setOnMouseClicked(event -> {
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+            if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
+                return;
+            }
+            if (status == MediaPlayer.Status.PAUSED
+                    || status == MediaPlayer.Status.READY
+                    || status == MediaPlayer.Status.STOPPED) {
+                if (atEndOfMedia) {
+                    mediaPlayer.seek(mediaPlayer.getStartTime());
+                    atEndOfMedia = false;
+                }
+                mediaPlayer.play();
+            } else {
+                mediaPlayer.pause();
+            }
+        });
     }
 
     private void loadPlaylist() {
-        List<Mp3> files = musicService.getPlayList();
-        ObservableList<Mp3> mp3Files = FXCollections.observableArrayList(files);
+        loadMp3Files();
         playlist.setItems(mp3Files);
         playlist.setCellFactory(listView -> new PlaylistItem());
+    }
+
+    void loadMp3Files() {
+        List<Mp3> files = new PlaylistLoader().load(Paths.get("src/test/resources/mp3folder"));
+        mp3Files = FXCollections.observableArrayList(files);
     }
 
     public Optional<Mp3> getCurrentlyPlaying() {
         List<Mp3> playing = playlist.getItems().stream().filter(Mp3::isCurrentlyPlaying).collect(Collectors.toList());
         return playing.size() == 1 ? Optional.of(playing.get(0)) : Optional.empty();
+    }
+
+    public Optional<Mp3> getNextTrack() {
+        OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).isCurrentlyPlaying()).findFirst();
+        if (first.isPresent()) {
+            int index = first.getAsInt();
+            if (mp3Files.size() > index + 1) {
+                return Optional.of(mp3Files.get(index + 1));
+            } else {
+                return Optional.empty();
+            }
+        }
+        return Optional.of(mp3Files.get(0));
+    }
+
+    public Optional<Mp3> getPreviousTrack() {
+        OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).isCurrentlyPlaying()).findFirst();
+        if (first.isPresent()) {
+            int index = first.getAsInt();
+            if (0 <= index - 1) {
+                return Optional.of(mp3Files.get(index - 1));
+            } else {
+                return Optional.empty();
+            }
+        }
+        return Optional.of(mp3Files.get(0));
     }
 
     void setAlbumArt() {

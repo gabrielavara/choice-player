@@ -1,5 +1,11 @@
 package com.gabrielavara.musicplayer.api.service;
 
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -13,21 +19,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
-
-class PlaylistLoader {
+public class PlaylistLoader {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.api.service.PlaylistLoader");
 
-    List<Mp3> load(Path folder) {
+    public List<Mp3> load(Path folder) {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
             Stream<Path> paths = StreamSupport.stream(directoryStream.spliterator(), false);
             return paths.filter(isMp3()).sorted(new CreationTimeComparator()).map(PlaylistLoader::createMp3File)
-                            .filter(Objects::nonNull).collect(Collectors.toList());
+                    .filter(Objects::nonNull).collect(Collectors.toList());
         } catch (IOException | DirectoryIteratorException e) {
             log.error("Could not find folder: {0}. Message: {1}", folder, e.getMessage());
         }
