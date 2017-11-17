@@ -1,28 +1,5 @@
 package com.gabrielavara.musicplayer.controllers;
 
-import com.gabrielavara.musicplayer.api.service.Mp3;
-import com.gabrielavara.musicplayer.api.service.MusicService;
-import com.gabrielavara.musicplayer.api.service.PlaylistLoader;
-import com.gabrielavara.musicplayer.views.AnimatingLabel;
-import com.gabrielavara.musicplayer.views.FlippableImage;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import de.felixroske.jfxsupport.FXMLController;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaPlayer;
-import lombok.Getter;
-import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -32,6 +9,34 @@ import java.util.OptionalInt;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gabrielavara.musicplayer.api.service.Mp3;
+import com.gabrielavara.musicplayer.api.service.MusicService;
+import com.gabrielavara.musicplayer.api.service.PlaylistLoader;
+import com.gabrielavara.musicplayer.views.AnimatingLabel;
+import com.gabrielavara.musicplayer.views.FlippableImage;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXSlider;
+
+import de.felixroske.jfxsupport.FXMLController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @FXMLController
@@ -51,18 +56,27 @@ public class PlayerController implements Initializable {
     private JFXButton nextTrackButton;
     @FXML
     private JFXButton playPauseButton;
+    @FXML
+    private JFXSlider timeSlider;
+    @FXML
+    private Label elapsedLabel;
+    @FXML
+    private Label remainingLabel;
 
     @Autowired
     private MusicService musicService;
 
     @Setter
     private MediaPlayer mediaPlayer;
-    private boolean atEndOfMedia;
+    @Setter
+    private boolean stopRequested;
 
     private FlippableImage flippableAlbumArt = new FlippableImage();
     private AnimatingLabel artist;
     private AnimatingLabel title;
     private ObservableList<Mp3> mp3Files;
+    @Setter
+    private Duration duration;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -81,18 +95,20 @@ public class PlayerController implements Initializable {
         currentlyPlayingBox.getChildren().add(1, artist);
         currentlyPlayingBox.getChildren().add(2, title);
 
+        setButtonListeners(playlistSelectionChangedListener);
+    }
+
+    private void setButtonListeners(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
         previousTrackButton.setOnMouseClicked(event -> {
                     getPreviousTrack().ifPresent(nextTrack -> {
                         playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), nextTrack);
                     });
-                }
-        );
+        });
+
         nextTrackButton.setOnMouseClicked(event -> {
-                    getNextTrack().ifPresent(previousTrack -> {
-                        playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), previousTrack);
-                    });
-                }
-        );
+            goToNextTrack(playlistSelectionChangedListener);
+        });
+
         playPauseButton.setOnMouseClicked(event -> {
             MediaPlayer.Status status = mediaPlayer.getStatus();
             if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
@@ -101,14 +117,22 @@ public class PlayerController implements Initializable {
             if (status == MediaPlayer.Status.PAUSED
                     || status == MediaPlayer.Status.READY
                     || status == MediaPlayer.Status.STOPPED) {
-                if (atEndOfMedia) {
-                    mediaPlayer.seek(mediaPlayer.getStartTime());
-                    atEndOfMedia = false;
-                }
                 mediaPlayer.play();
             } else {
                 mediaPlayer.pause();
             }
+        });
+
+        timeSlider.valueProperty().addListener(ov -> {
+            if (timeSlider.isValueChanging()) {
+                mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
+            }
+        });
+    }
+
+    void goToNextTrack(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
+        getNextTrack().ifPresent(previousTrack -> {
+            playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), previousTrack);
         });
     }
 
