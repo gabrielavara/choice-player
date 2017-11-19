@@ -1,16 +1,8 @@
-package com.gabrielavara.musicplayer.controllers;
+package com.gabrielavara.choiceplayer.controllers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.file.Paths;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.musicplayer.api.service.Mp3;
-import com.gabrielavara.musicplayer.util.TimeFormatter;
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.jfoenix.controls.JFXSlider;
-
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,9 +10,15 @@ import javafx.scene.control.Label;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.file.Paths;
 
 public class PlaylistSelectionChangedListener implements ChangeListener<Mp3> {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.controllers.PlaylistSelectionChangedListener");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlaylistSelectionChangedListener");
     private PlayerController playerController;
 
     PlaylistSelectionChangedListener(PlayerController playerController) {
@@ -111,7 +109,7 @@ public class PlaylistSelectionChangedListener implements ChangeListener<Mp3> {
     private void updateTimeSlider(JFXSlider timeSlider, Duration duration, Duration currentTime) {
         playerController.getTimeSlider().setDisable(duration.isUnknown());
         if (!timeSlider.isDisabled() && duration.greaterThan(Duration.ZERO) && !timeSlider.isValueChanging()) {
-            timeSlider.setValue(currentTime.divide(duration).toMillis() * 100.0);
+            timeSlider.setValue(currentTime.divide(duration.toMillis()).toMillis() * 100.0);
         }
     }
 

@@ -1,8 +1,7 @@
-package com.gabrielavara.musicplayer.controllers;
+package com.gabrielavara.choiceplayer.controllers;
 
-import com.gabrielavara.musicplayer.api.service.Mp3;
-import com.gabrielavara.musicplayer.views.PlaylistItemController;
-
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.views.PlaylistItemController;
 import javafx.scene.control.ListCell;
 
 public class PlaylistItem extends ListCell<Mp3> {

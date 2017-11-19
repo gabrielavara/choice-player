@@ -1,21 +1,19 @@
-package com.gabrielavara.musicplayer.views;
+package com.gabrielavara.choiceplayer.views;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.musicplayer.api.service.Mp3;
-import com.gabrielavara.musicplayer.util.TimeFormatter;
-
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class PlaylistItemController {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.views.PlaylistItemController");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.views.PlaylistItemController");
     @Getter
     @FXML
     private HBox rootNode;

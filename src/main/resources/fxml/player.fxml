@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXListView?>
-<?import com.jfoenix.controls.JFXSlider?>
-<?import javafx.geometry.Insets?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0"
-      xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielavara.musicplayer.controllers.PlayerController">
+<?import javafx.scene.layout.*?>
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
+      prefWidth="1200.0"
+      xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController">
     <VBox fx:id="currentlyPlayingBox">
         <StackPane fx:id="albumArtStackPane">
             <VBox.margin>
@@ -36,12 +33,14 @@
                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                 </HBox.margin>
             </JFXButton>
-            <JFXButton fx:id="playPauseButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="roundButton" text="&gt;">
+            <JFXButton fx:id="playPauseButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
+                       styleClass="roundButton" text="&gt;">
                 <HBox.margin>
                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                 </HBox.margin>
             </JFXButton>
-            <JFXButton fx:id="nextTrackButton" layoutX="35.0" layoutY="10.0" mnemonicParsing="false" styleClass="roundButton" text="&gt;&gt;">
+            <JFXButton fx:id="nextTrackButton" layoutX="35.0" layoutY="10.0" mnemonicParsing="false"
+                       styleClass="roundButton" text="&gt;&gt;">
                 <HBox.margin>
                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                 </HBox.margin>

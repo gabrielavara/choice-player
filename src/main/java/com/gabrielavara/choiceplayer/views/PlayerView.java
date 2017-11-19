@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.views;
+package com.gabrielavara.choiceplayer.views;
 
 import de.felixroske.jfxsupport.AbstractFxmlView;
 import de.felixroske.jfxsupport.FXMLView;

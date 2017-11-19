@@ -1,4 +1,7 @@
-package com.gabrielavara.musicplayer.api.service;
+package com.gabrielavara.choiceplayer.api.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,9 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.FileTime;
 import java.util.Comparator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CreationTimeComparator implements Comparator<Path> {
     private static Logger log = LoggerFactory.getLogger("CreationTimeComparator");

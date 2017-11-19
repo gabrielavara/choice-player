@@ -1,6 +1,6 @@
-package com.gabrielavara.musicplayer.api.service;
+package com.gabrielavara.choiceplayer.api.service;
 
-import com.gabrielavara.musicplayer.controllers.PlayerController;
+import com.gabrielavara.choiceplayer.controllers.PlayerController;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service
 public class MusicService {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.api.service.MusicService");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.service.MusicService");
 
     @Autowired
     @Setter

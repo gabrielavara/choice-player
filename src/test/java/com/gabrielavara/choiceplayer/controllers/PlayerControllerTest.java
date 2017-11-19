@@ -1,6 +1,6 @@
-package com.gabrielavara.musicplayer.controllers;
+package com.gabrielavara.choiceplayer.controllers;
 
-import com.gabrielavara.musicplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.api.service.Mp3;
 import javafx.collections.ObservableList;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,28 +1,13 @@
-package com.gabrielavara.musicplayer.controllers;
+package com.gabrielavara.choiceplayer.controllers;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.gabrielavara.musicplayer.api.service.Mp3;
-import com.gabrielavara.musicplayer.api.service.MusicService;
-import com.gabrielavara.musicplayer.api.service.PlaylistLoader;
-import com.gabrielavara.musicplayer.views.AnimatingLabel;
-import com.gabrielavara.musicplayer.views.FlippableImage;
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.api.service.MusicService;
+import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
+import com.gabrielavara.choiceplayer.views.AnimatingLabel;
+import com.gabrielavara.choiceplayer.views.FlippableImage;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
-
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,11 +22,24 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Getter
 @FXMLController
 public class PlayerController implements Initializable {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.musicplayer.controllers.PlayerController");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlayerController");
 
     @FXML
     private StackPane albumArtStackPane;
@@ -100,9 +98,9 @@ public class PlayerController implements Initializable {
 
     private void setButtonListeners(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
         previousTrackButton.setOnMouseClicked(event -> {
-                    getPreviousTrack().ifPresent(nextTrack -> {
-                        playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), nextTrack);
-                    });
+            getPreviousTrack().ifPresent(nextTrack -> {
+                playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), nextTrack);
+            });
         });
 
         nextTrackButton.setOnMouseClicked(event -> {
@@ -152,28 +150,20 @@ public class PlayerController implements Initializable {
         return playing.size() == 1 ? Optional.of(playing.get(0)) : Optional.empty();
     }
 
-    public Optional<Mp3> getNextTrack() {
+    Optional<Mp3> getNextTrack() {
         OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            if (mp3Files.size() > index + 1) {
-                return Optional.of(mp3Files.get(index + 1));
-            } else {
-                return Optional.empty();
-            }
+            return mp3Files.size() > index + 1 ? Optional.of(mp3Files.get(index + 1)) : Optional.empty();
         }
         return Optional.of(mp3Files.get(0));
     }
 
-    public Optional<Mp3> getPreviousTrack() {
+    Optional<Mp3> getPreviousTrack() {
         OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            if (0 <= index - 1) {
-                return Optional.of(mp3Files.get(index - 1));
-            } else {
-                return Optional.empty();
-            }
+            return 0 <= index - 1 ? Optional.of(mp3Files.get(index - 1)) : Optional.empty();
         }
         return Optional.of(mp3Files.get(0));
     }

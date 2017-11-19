@@ -1,16 +1,15 @@
-package com.gabrielavara.musicplayer.api.controller;
+package com.gabrielavara.choiceplayer.api.controller;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.api.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabrielavara.musicplayer.api.service.Mp3;
-import com.gabrielavara.musicplayer.api.service.MusicService;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class MusicController {

@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.util;
+package com.gabrielavara.choiceplayer.util;
 
 import javafx.util.Duration;
 import lombok.AllArgsConstructor;

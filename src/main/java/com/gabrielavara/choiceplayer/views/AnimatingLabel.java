@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.views;
+package com.gabrielavara.choiceplayer.views;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;

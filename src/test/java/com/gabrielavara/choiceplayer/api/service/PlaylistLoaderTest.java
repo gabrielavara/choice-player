@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.api.service;
+package com.gabrielavara.choiceplayer.api.service;
 
 import org.junit.Before;
 import org.junit.Test;

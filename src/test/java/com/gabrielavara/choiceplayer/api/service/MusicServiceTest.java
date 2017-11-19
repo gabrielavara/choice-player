@@ -1,21 +1,20 @@
-package com.gabrielavara.musicplayer.api.service;
+package com.gabrielavara.choiceplayer.api.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Optional;
-
+import com.gabrielavara.choiceplayer.controllers.PlayerController;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.gabrielavara.musicplayer.controllers.PlayerController;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class MusicServiceTest {
     @Mock
@@ -55,7 +54,7 @@ public class MusicServiceTest {
     }
 
     private void mockCurrentlyPlaying(final String mp3FileName)
-                    throws IOException, UnsupportedTagException, InvalidDataException {
+            throws IOException, UnsupportedTagException, InvalidDataException {
         Mp3File mp3File = new Mp3File(Paths.get("src/test/resources/mp3folder/" + mp3FileName));
         Mp3 mp3 = new Mp3(mp3File);
         when(playerController.getCurrentlyPlaying()).thenReturn(Optional.of(mp3));

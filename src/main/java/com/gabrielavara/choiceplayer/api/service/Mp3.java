@@ -1,4 +1,4 @@
-package com.gabrielavara.musicplayer.api.service;
+package com.gabrielavara.choiceplayer.api.service;
 
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;

@@ -1,10 +1,9 @@
-package com.gabrielavara.musicplayer.util;
-
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+package com.gabrielavara.choiceplayer.util;
 
 import javafx.util.Duration;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class TimeFormatterTest {
     @Test
