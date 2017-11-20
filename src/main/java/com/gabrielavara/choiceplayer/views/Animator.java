@@ -7,13 +7,13 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 
 public class Animator {
-    private static final int DURATION = 400;
-    private static final int DELAY = 80;
-    private static final int TRANSLATE_Y = 30;
+    private static final int DURATION = 700;
+    private static final int DELAY = 100;
+    private static final int TRANSLATE_Y = 50;
 
     private Direction direction;
     private ParallelTransition parallelTransition = new ParallelTransition();
-    private int step = 3;
+    private int step = 6;
 
     public enum Direction {
         IN, OUT
