@@ -1,14 +1,31 @@
 package com.gabrielavara.choiceplayer.controllers;
 
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.MusicService;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.views.AnimatingLabel;
+import com.gabrielavara.choiceplayer.views.Animator;
 import com.gabrielavara.choiceplayer.views.FlippableImage;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
+
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.animation.ParallelTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,19 +39,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Getter
 @FXMLController
@@ -94,6 +98,18 @@ public class PlayerController implements Initializable {
         currentlyPlayingBox.getChildren().add(2, title);
 
         setButtonListeners(playlistSelectionChangedListener);
+
+        animateItems();
+    }
+
+    private void animateItems() {
+        Animator animator = new Animator(Animator.Direction.IN);
+        animator.setup(albumArtStackPane, artist, title, timeSlider, elapsedLabel, remainingLabel, previousTrackButton,
+                        playPauseButton, nextTrackButton);
+        animator.add(albumArtStackPane).add(artist).add(title).add(timeSlider).add(elapsedLabel, remainingLabel)
+                        .add(previousTrackButton, playPauseButton, nextTrackButton);
+        ParallelTransition transition = animator.build();
+        transition.play();
     }
 
     private void setButtonListeners(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
