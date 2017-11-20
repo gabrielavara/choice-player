@@ -20,9 +20,15 @@ import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
 import com.gabrielavara.choiceplayer.views.FlippableImage;
+import com.gabrielavara.choiceplayer.views.TableItem;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
+import com.jfoenix.controls.JFXTreeTableColumn;
+import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
+import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.ParallelTransition;
@@ -32,6 +38,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -49,7 +57,7 @@ public class PlayerController implements Initializable {
     private StackPane albumArtStackPane;
     @FXML
     @Setter
-    private JFXListView<Mp3> playlist;
+    private JFXTreeTableView<TableItem> playlist;
     @FXML
     private VBox currentlyPlayingBox;
     @FXML
@@ -76,7 +84,7 @@ public class PlayerController implements Initializable {
     private FlippableImage flippableAlbumArt = new FlippableImage();
     private AnimatingLabel artist;
     private AnimatingLabel title;
-    private ObservableList<Mp3> mp3Files;
+    private ObservableList<TableItem> mp3Files;
     @Setter
     private Duration duration;
 
@@ -115,7 +123,7 @@ public class PlayerController implements Initializable {
     private void setButtonListeners(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
         previousTrackButton.setOnMouseClicked(event -> {
             getPreviousTrack().ifPresent(nextTrack -> {
-                playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), nextTrack);
+                playlistSelectionChangedListener.changed(getCurrentlyPlaying().orElse(null), nextTrack);
             });
         });
 
@@ -146,42 +154,114 @@ public class PlayerController implements Initializable {
 
     void goToNextTrack(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
         getNextTrack().ifPresent(previousTrack -> {
-            playlistSelectionChangedListener.changed(null, getCurrentlyPlaying().orElse(null), previousTrack);
+            playlistSelectionChangedListener.changed(getCurrentlyPlaying().orElse(null), previousTrack);
         });
     }
 
     private void loadPlaylist() {
         loadMp3Files();
-        playlist.setItems(mp3Files);
-        playlist.setCellFactory(listView -> new PlaylistItem());
+        TreeItem<TableItem> root = new RecursiveTreeItem<>(mp3Files, RecursiveTreeObject::getChildren);
+        playlist.setRoot(root);
+        playlist.setShowRoot(false);
+        playlist.setEditable(false);
+        addColumns();
+    }
+
+    private void addColumns() {
+        JFXTreeTableColumn<TableItem, String> indexColumn = new JFXTreeTableColumn<>("#");
+        indexColumn.setPrefWidth(150);
+        indexColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
+            if (indexColumn.validateValue(param)) {
+                return param.getValue().getValue().getIndex();
+            } else {
+                return indexColumn.getComputedValue(param);
+            }
+        });
+
+        JFXTreeTableColumn<TableItem, String> artistColumn = new JFXTreeTableColumn<>("Artist");
+        artistColumn.setPrefWidth(150);
+        artistColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
+            if (artistColumn.validateValue(param)) {
+                return param.getValue().getValue().getArtist();
+            } else {
+                return artistColumn.getComputedValue(param);
+            }
+        });
+
+        JFXTreeTableColumn<TableItem, String> titleColumn = new JFXTreeTableColumn<>("Title");
+        titleColumn.setPrefWidth(150);
+        titleColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
+            if (titleColumn.validateValue(param)) {
+                return param.getValue().getValue().getTrack();
+            } else {
+                return titleColumn.getComputedValue(param);
+            }
+        });
+
+        JFXTreeTableColumn<TableItem, String> lengthColumn = new JFXTreeTableColumn<>("Length");
+        lengthColumn.setPrefWidth(150);
+        lengthColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
+            if (lengthColumn.validateValue(param)) {
+                return param.getValue().getValue().getLength();
+            } else {
+                return lengthColumn.getComputedValue(param);
+            }
+        });
+
+        indexColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(
+                        new TextFieldEditorBuilder()));
+        indexColumn.setOnEditCommit((TreeTableColumn.CellEditEvent<TableItem, String> t) -> t.getTreeTableView()
+                        .getTreeItem(t.getTreeTablePosition().getRow()).getValue().getIndex().set(t.getNewValue()));
+
+        artistColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(
+                        new TextFieldEditorBuilder()));
+        artistColumn.setOnEditCommit((TreeTableColumn.CellEditEvent<TableItem, String> t) -> t.getTreeTableView()
+                        .getTreeItem(t.getTreeTablePosition().getRow()).getValue().getArtist().set(t.getNewValue()));
+
+        titleColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(
+                        new TextFieldEditorBuilder()));
+        titleColumn.setOnEditCommit((TreeTableColumn.CellEditEvent<TableItem, String> t) -> t.getTreeTableView()
+                        .getTreeItem(t.getTreeTablePosition().getRow()).getValue().getTrack().set(t.getNewValue()));
+
+        lengthColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(
+                        new TextFieldEditorBuilder()));
+        lengthColumn.setOnEditCommit((TreeTableColumn.CellEditEvent<TableItem, String> t) -> t.getTreeTableView()
+                        .getTreeItem(t.getTreeTablePosition().getRow()).getValue().getLength().set(t.getNewValue()));
+
+        playlist.getColumns().setAll(indexColumn, artistColumn, titleColumn, lengthColumn);
     }
 
     void loadMp3Files() {
         List<Mp3> files = new PlaylistLoader().load(Paths.get("src/test/resources/mp3folder"));
-        mp3Files = FXCollections.observableArrayList(files);
+        List<TableItem> tableItems = IntStream.range(0, files.size())
+                        .mapToObj(index -> new TableItem(index + 1, files.get(index))).collect(Collectors.toList());
+        mp3Files = FXCollections.observableArrayList(tableItems);
     }
 
     public Optional<Mp3> getCurrentlyPlaying() {
-        List<Mp3> playing = playlist.getItems().stream().filter(Mp3::isCurrentlyPlaying).collect(Collectors.toList());
+        List<Mp3> playing = mp3Files.stream().filter(s -> s.getMp3().isCurrentlyPlaying()).map(TableItem::getMp3)
+                        .collect(Collectors.toList());
         return playing.size() == 1 ? Optional.of(playing.get(0)) : Optional.empty();
     }
 
     Optional<Mp3> getNextTrack() {
-        OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).isCurrentlyPlaying()).findFirst();
+        OptionalInt first = IntStream.range(0, mp3Files.size())
+                        .filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            return mp3Files.size() > index + 1 ? Optional.of(mp3Files.get(index + 1)) : Optional.empty();
+            return mp3Files.size() > index + 1 ? Optional.of(mp3Files.get(index + 1).getMp3()) : Optional.empty();
         }
-        return Optional.of(mp3Files.get(0));
+        return Optional.of(mp3Files.get(0).getMp3());
     }
 
     Optional<Mp3> getPreviousTrack() {
-        OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).isCurrentlyPlaying()).findFirst();
+        OptionalInt first = IntStream.range(0, mp3Files.size())
+                        .filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            return 0 <= index - 1 ? Optional.of(mp3Files.get(index - 1)) : Optional.empty();
+            return 0 <= index - 1 ? Optional.of(mp3Files.get(index - 1).getMp3()) : Optional.empty();
         }
-        return Optional.of(mp3Files.get(0));
+        return Optional.of(mp3Files.get(0).getMp3());
     }
 
     void setAlbumArt() {

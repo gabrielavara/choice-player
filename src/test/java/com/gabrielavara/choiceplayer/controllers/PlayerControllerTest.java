@@ -1,13 +1,19 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import javafx.collections.ObservableList;
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Optional;
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.views.TableItem;
 
-import static org.junit.Assert.assertEquals;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class PlayerControllerTest {
     private PlayerController playerController = new PlayerController();
@@ -16,7 +22,8 @@ public class PlayerControllerTest {
     @Before
     public void setUp() throws Exception {
         playerController.loadMp3Files();
-        mp3Files = playerController.getMp3Files();
+        List<Mp3> mp3s = playerController.getMp3Files().stream().map(TableItem::getMp3).collect(Collectors.toList());
+        mp3Files = FXCollections.observableList(mp3s);
     }
 
     @Test
@@ -32,7 +39,7 @@ public class PlayerControllerTest {
     @Test
     public void getNextTrack() throws Exception {
         //given
-        playerController.getMp3Files().get(0).setCurrentlyPlaying(true);
+        playerController.getMp3Files().get(0).getMp3().setCurrentlyPlaying(true);
 
         //when
         Optional<Mp3> nextTrack = playerController.getNextTrack();
@@ -45,7 +52,7 @@ public class PlayerControllerTest {
     @Test
     public void getNextTrackOnEndOfPlaylist() throws Exception {
         //given
-        playerController.getMp3Files().get(1).setCurrentlyPlaying(true);
+        playerController.getMp3Files().get(1).getMp3().setCurrentlyPlaying(true);
 
         //when
         Optional<Mp3> nextTrack = playerController.getNextTrack();
@@ -67,7 +74,7 @@ public class PlayerControllerTest {
     @Test
     public void getPreviousTrack() throws Exception {
         //given
-        playerController.getMp3Files().get(1).setCurrentlyPlaying(true);
+        playerController.getMp3Files().get(1).getMp3().setCurrentlyPlaying(true);
 
         //when
         Optional<Mp3> previousTrack = playerController.getPreviousTrack();
@@ -80,7 +87,7 @@ public class PlayerControllerTest {
     @Test
     public void getPreviousTrackOnStartOfPlaylist() throws Exception {
         //given
-        playerController.getMp3Files().get(0).setCurrentlyPlaying(true);
+        playerController.getMp3Files().get(0).getMp3().setCurrentlyPlaying(true);
 
         //when
         Optional<Mp3> previousTrack = playerController.getPreviousTrack();
