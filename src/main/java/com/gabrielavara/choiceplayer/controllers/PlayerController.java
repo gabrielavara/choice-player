@@ -1,21 +1,5 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.MusicService;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
@@ -24,15 +8,10 @@ import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
 import com.gabrielavara.choiceplayer.views.FlippableImage;
 import com.gabrielavara.choiceplayer.views.TableItem;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.*;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.ParallelTransition;
 import javafx.collections.FXCollections;
@@ -50,6 +29,21 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Getter
 @FXMLController
@@ -96,9 +90,12 @@ public class PlayerController implements Initializable {
     private Duration duration;
 
     private PlaylistSelectionChangedListener playlistSelectionChangedListener;
+    private ResourceBundle resourceBundle;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        resourceBundle = ResourceBundle.getBundle("language.player");
+
         flippableAlbumArt = new FlippableImage();
         artist = new AnimatingLabel("", 20);
         title = new AnimatingLabel("", 16);
@@ -149,18 +146,29 @@ public class PlayerController implements Initializable {
                 return;
             }
             if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY
-                            || status == MediaPlayer.Status.STOPPED) {
+                    || status == MediaPlayer.Status.STOPPED) {
                 mediaPlayer.play();
             } else {
                 mediaPlayer.pause();
             }
         });
 
-        timeSlider.valueProperty().addListener(ov -> {
-            if (timeSlider.isValueChanging()) {
-                mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
-            }
+        timeSlider.setOnMouseClicked(event -> {
+            seek(false);
         });
+
+        timeSlider.valueProperty().addListener(ov -> {
+            seek(true);
+        });
+    }
+
+    private void seek(boolean shouldConsiderValueChanging) {
+        if (mediaPlayer == null) {
+            return;
+        }
+        if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
+            mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
+        }
     }
 
     public void goToPreviousTrack() {
@@ -195,7 +203,7 @@ public class PlayerController implements Initializable {
             }
         });
 
-        JFXTreeTableColumn<TableItem, String> artistColumn = new JFXTreeTableColumn<>("Artist");
+        JFXTreeTableColumn<TableItem, String> artistColumn = new JFXTreeTableColumn<>(resourceBundle.getString("artist").toUpperCase());
         artistColumn.setPrefWidth(150);
         artistColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
             if (artistColumn.validateValue(param)) {
@@ -205,7 +213,7 @@ public class PlayerController implements Initializable {
             }
         });
 
-        JFXTreeTableColumn<TableItem, String> titleColumn = new JFXTreeTableColumn<>("Title");
+        JFXTreeTableColumn<TableItem, String> titleColumn = new JFXTreeTableColumn<>(resourceBundle.getString("title").toUpperCase());
         titleColumn.setPrefWidth(150);
         titleColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
             if (titleColumn.validateValue(param)) {
@@ -215,7 +223,7 @@ public class PlayerController implements Initializable {
             }
         });
 
-        JFXTreeTableColumn<TableItem, String> lengthColumn = new JFXTreeTableColumn<>("Length");
+        JFXTreeTableColumn<TableItem, String> lengthColumn = new JFXTreeTableColumn<>(resourceBundle.getString("length").toUpperCase());
         lengthColumn.setPrefWidth(150);
         lengthColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
             if (lengthColumn.validateValue(param)) {
@@ -311,5 +319,21 @@ public class PlayerController implements Initializable {
 
     public void moveFileToRecycleBin() {
         log.info("Move file to recycle bin");
+    }
+
+    public void rewind() {
+        log.info("Rewind");
+        if (mediaPlayer == null) {
+            return;
+        }
+        mediaPlayer.seek(Duration.seconds(-5));
+    }
+
+    public void fastForward() {
+        log.info("Fast forward");
+        if (mediaPlayer == null) {
+            return;
+        }
+        mediaPlayer.seek(Duration.seconds(5));
     }
 }

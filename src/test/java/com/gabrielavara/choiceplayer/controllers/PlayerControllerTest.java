@@ -1,19 +1,17 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import static org.junit.Assert.assertEquals;
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.views.TableItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.views.TableItem;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import static org.junit.Assert.assertEquals;
 
 public class PlayerControllerTest {
     private PlayerController playerController = new PlayerController();
@@ -52,7 +50,7 @@ public class PlayerControllerTest {
     @Test
     public void getNextTrackOnEndOfPlaylist() throws Exception {
         //given
-        playerController.getMp3Files().get(1).getMp3().setCurrentlyPlaying(true);
+        playerController.getMp3Files().get(3).getMp3().setCurrentlyPlaying(true);
 
         //when
         Optional<Mp3> nextTrack = playerController.getNextTrack();
