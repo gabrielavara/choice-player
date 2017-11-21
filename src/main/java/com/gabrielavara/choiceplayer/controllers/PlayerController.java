@@ -90,7 +90,7 @@ public class PlayerController implements Initializable {
     private ObservableList<TableItem> mp3Files;
 
     @Getter
-    private TimeSliderConverter timeSliderConverter;
+    private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
 
     @Setter
     private Duration duration;

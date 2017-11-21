@@ -9,7 +9,7 @@ public class TimeSliderConverter extends StringConverter<Double> {
 
     @Override
     public String toString(Double value) {
-        int seconds = (int) (length * value / 1000);
+        int seconds = (int) (length * value / 100000);
         return TimeFormatter.getFormattedLength(seconds);
     }
 
@@ -29,7 +29,7 @@ public class TimeSliderConverter extends StringConverter<Double> {
             seconds = Integer.valueOf(parts[1]);
         }
         int sumSeconds = hours * 60 * 60 + minutes * 60 + seconds;
-        return (double) sumSeconds * 1000 / length;
+        return (double) sumSeconds * 100000 / length;
     }
 
     void setLength(long length) {

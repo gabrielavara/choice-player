@@ -29,7 +29,7 @@ public class TimeSliderConverterTest {
         Double value = converter.fromString("0:30");
 
         // test
-        assertEquals(0.5, value, EPSILON);
+        assertEquals(50, value, EPSILON);
     }
 
 }
