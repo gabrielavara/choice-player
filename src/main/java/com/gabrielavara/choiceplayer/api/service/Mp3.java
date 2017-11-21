@@ -3,6 +3,7 @@ package com.gabrielavara.choiceplayer.api.service;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class Mp3 {
     private final String title;
     private final String year;
     private final String album;
+    private final String track;
     private final long length;
     private final String filename;
     @Setter
@@ -27,6 +29,7 @@ public class Mp3 {
         title = extractTitle(mp3);
         year = extractYear(mp3);
         album = extractAlbum(mp3);
+        track = extractTrack(mp3);
         length = mp3.getLengthInMilliseconds();
         filename = mp3.getFilename();
     }
@@ -77,5 +80,17 @@ public class Mp3 {
             return id3v1Tag.getAlbum();
         }
         return EMPTY;
+    }
+
+    private String extractTrack(Mp3File mp3) {
+        if (mp3.hasId3v2Tag()) {
+            ID3v2 id3v2Tag = mp3.getId3v2Tag();
+            return id3v2Tag.getTrack();
+        }
+        if (mp3.hasId3v1Tag()) {
+            ID3v1 id3v1Tag = mp3.getId3v1Tag();
+            return id3v1Tag.getTrack();
+        }
+        return "1";
     }
 }

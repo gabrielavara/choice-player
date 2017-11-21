@@ -1,36 +1,67 @@
 package com.gabrielavara.choiceplayer.api.service;
 
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 
 public class PlaylistLoader {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.service.PlaylistLoader");
 
     public List<Mp3> load(Path folder) {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
-            Stream<Path> paths = StreamSupport.stream(directoryStream.spliterator(), false);
-            return paths.filter(isMp3()).sorted(new CreationTimeComparator()).map(PlaylistLoader::createMp3File)
-                    .filter(Objects::nonNull).collect(Collectors.toList());
+            Map<String, List<Mp3>> albums = getAlbums(directoryStream);
+            TreeMap<Double, List<Mp3>> sortedAlbums = getSortedAlbums(albums);
+            return getSortedPlaylist(sortedAlbums);
         } catch (IOException | DirectoryIteratorException e) {
             log.error("Could not find folder: {0}. Message: {1}", folder, e.getMessage());
         }
         return Collections.emptyList();
+    }
+
+    private Map<String, List<Mp3>> getAlbums(DirectoryStream<Path> directoryStream) {
+        Stream<Path> paths = StreamSupport.stream(directoryStream.spliterator(), false);
+        return paths.filter(isMp3()).map(PlaylistLoader::createMp3File).collect(Collectors.groupingBy(Mp3::getAlbum));
+    }
+
+    private TreeMap<Double, List<Mp3>> getSortedAlbums(Map<String, List<Mp3>> albums) {
+        TreeMap<Double, List<Mp3>> sortedAlbums = new TreeMap<>();
+        for (List<Mp3> tracks : albums.values()) {
+            Double averageTime = tracks.stream().map(PlaylistLoader::getCreationTime)
+                            .collect(Collectors.averagingLong(FileTime::toMillis));
+            sortedAlbums.put(averageTime, tracks);
+        }
+        return sortedAlbums;
+    }
+
+    private List<Mp3> getSortedPlaylist(TreeMap<Double, List<Mp3>> sortedAlbums) {
+        List<Mp3> sortedPlayList = new ArrayList<>();
+        sortedAlbums.forEach((averageTime, tracks) -> {
+            tracks.sort(Comparator.comparing(Mp3::getTrack));
+            sortedPlayList.addAll(tracks);
+        });
+        return sortedPlayList;
     }
 
     private Predicate<Path> isMp3() {
@@ -49,5 +80,15 @@ public class PlaylistLoader {
             log.error("Invalid data for file: {0}. Message: {1}", path, e.getMessage());
         }
         return null;
+    }
+
+    private static FileTime getCreationTime(Mp3 mp3) {
+        try {
+            Path path = Paths.get(mp3.getFilename());
+            return Files.getFileAttributeView(path, BasicFileAttributeView.class).readAttributes().creationTime();
+        } catch (IOException e) {
+            log.error("Could not get creation time: {0}", e.getMessage());
+            return FileTime.fromMillis(System.currentTimeMillis());
+        }
     }
 }
