@@ -89,6 +89,9 @@ public class PlayerController implements Initializable {
     private AnimatingLabel title;
     private ObservableList<TableItem> mp3Files;
 
+    @Getter
+    private TimeSliderConverter timeSliderConverter;
+
     @Setter
     private Duration duration;
 
@@ -110,6 +113,8 @@ public class PlayerController implements Initializable {
 
         currentlyPlayingBox.getChildren().add(1, artist);
         currentlyPlayingBox.getChildren().add(2, title);
+
+        timeSlider.setLabelFormatter(timeSliderConverter);
 
         setButtonListeners();
         animateItems();
@@ -143,9 +148,8 @@ public class PlayerController implements Initializable {
             if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
                 return;
             }
-            if (status == MediaPlayer.Status.PAUSED
-                    || status == MediaPlayer.Status.READY
-                    || status == MediaPlayer.Status.STOPPED) {
+            if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY
+                            || status == MediaPlayer.Status.STOPPED) {
                 mediaPlayer.play();
             } else {
                 mediaPlayer.pause();

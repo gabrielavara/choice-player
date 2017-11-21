@@ -44,6 +44,8 @@ public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem
         newValue.setCurrentlyPlaying(true);
         playerController.getArtist().setText(newValue.getArtist());
         playerController.getTitle().setText(newValue.getTitle());
+        playerController.getTimeSliderConverter().setLength(newValue.getLength());
+
         if (oldValue != null) {
             oldValue.setCurrentlyPlaying(false);
         }
