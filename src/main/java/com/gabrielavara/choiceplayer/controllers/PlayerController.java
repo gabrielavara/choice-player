@@ -1,16 +1,38 @@
 package com.gabrielavara.choiceplayer.controllers;
 
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.MusicService;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
+import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
 import com.gabrielavara.choiceplayer.views.FlippableImage;
 import com.gabrielavara.choiceplayer.views.TableItem;
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXSlider;
+import com.jfoenix.controls.JFXTreeTableColumn;
+import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.ParallelTransition;
 import javafx.collections.FXCollections;
@@ -28,19 +50,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Getter
 @FXMLController
@@ -79,6 +88,7 @@ public class PlayerController implements Initializable {
     private AnimatingLabel artist;
     private AnimatingLabel title;
     private ObservableList<TableItem> mp3Files;
+
     @Setter
     private Duration duration;
 
@@ -100,8 +110,8 @@ public class PlayerController implements Initializable {
         currentlyPlayingBox.getChildren().add(2, title);
 
         setButtonListeners(playlistSelectionChangedListener);
-
         animateItems();
+        registerGlobalKeyListener();
     }
 
     private void animateItems() {
@@ -274,5 +284,22 @@ public class PlayerController implements Initializable {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(albumArtData);
         Image image = new Image(inputStream);
         flippableAlbumArt.setImage(image);
+    }
+
+    private void registerGlobalKeyListener() {
+        try {
+            GlobalScreen.registerNativeHook();
+        } catch (NativeHookException ex) {
+            log.error("There was a problem registering the native hook.", ex);
+        }
+        GlobalScreen.addNativeKeyListener(new GlobalKeyListener(this));
+    }
+
+    public void moveFileToGoodFolder() {
+        log.info("Move file to good folder");
+    }
+
+    public void moveFileToRecycleBin() {
+        log.info("Move file to recycle bin");
     }
 }
