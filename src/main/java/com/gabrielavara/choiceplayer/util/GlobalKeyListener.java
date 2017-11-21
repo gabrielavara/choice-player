@@ -26,11 +26,16 @@ public class GlobalKeyListener implements NativeKeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         boolean isAltPressed = (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0;
+        boolean isCtrlPressed = (e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0;
+
         if (e.getKeyCode() == NativeKeyEvent.VC_M && isAltPressed) {
             playerController.moveFileToGoodFolder();
-        }
-        if (e.getKeyCode() == NativeKeyEvent.VC_D && isAltPressed) {
+        } else if (e.getKeyCode() == NativeKeyEvent.VC_D && isAltPressed) {
             playerController.moveFileToRecycleBin();
+        } else if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_UP && isAltPressed && isCtrlPressed) {
+            playerController.goToPreviousTrack();
+        } else if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_DOWN && isAltPressed && isCtrlPressed) {
+            playerController.goToNextTrack();
         }
     }
 

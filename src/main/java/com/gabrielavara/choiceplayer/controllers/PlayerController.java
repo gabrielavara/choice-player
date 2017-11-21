@@ -92,13 +92,15 @@ public class PlayerController implements Initializable {
     @Setter
     private Duration duration;
 
+    private PlaylistSelectionChangedListener playlistSelectionChangedListener;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         flippableAlbumArt = new FlippableImage();
         artist = new AnimatingLabel("", 20);
         title = new AnimatingLabel("", 16);
 
-        PlaylistSelectionChangedListener playlistSelectionChangedListener = new PlaylistSelectionChangedListener(this);
+        playlistSelectionChangedListener = new PlaylistSelectionChangedListener(this);
         playlist.getSelectionModel().selectedItemProperty().addListener(playlistSelectionChangedListener);
         loadPlaylist();
 
@@ -109,7 +111,7 @@ public class PlayerController implements Initializable {
         currentlyPlayingBox.getChildren().add(1, artist);
         currentlyPlayingBox.getChildren().add(2, title);
 
-        setButtonListeners(playlistSelectionChangedListener);
+        setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
     }
@@ -124,15 +126,13 @@ public class PlayerController implements Initializable {
         transition.play();
     }
 
-    private void setButtonListeners(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
+    private void setButtonListeners() {
         previousTrackButton.setOnMouseClicked(event -> {
-            getPreviousTrack().ifPresent(nextTrack -> {
-                playlistSelectionChangedListener.changed(getCurrentlyPlaying().orElse(null), nextTrack);
-            });
+            goToPreviousTrack();
         });
 
         nextTrackButton.setOnMouseClicked(event -> {
-            goToNextTrack(playlistSelectionChangedListener);
+            goToNextTrack();
         });
 
         playPauseButton.setOnMouseClicked(event -> {
@@ -159,7 +159,13 @@ public class PlayerController implements Initializable {
         });
     }
 
-    void goToNextTrack(PlaylistSelectionChangedListener playlistSelectionChangedListener) {
+    public void goToPreviousTrack() {
+        getPreviousTrack().ifPresent(nextTrack -> {
+            playlistSelectionChangedListener.changed(getCurrentlyPlaying().orElse(null), nextTrack);
+        });
+    }
+
+    public void goToNextTrack() {
         getNextTrack().ifPresent(previousTrack -> {
             playlistSelectionChangedListener.changed(getCurrentlyPlaying().orElse(null), previousTrack);
         });
