@@ -1,33 +1,8 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import static java.text.MessageFormat.format;
-
-import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.MusicService;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
-import com.gabrielavara.choiceplayer.settings.Settings;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
@@ -41,7 +16,6 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.ParallelTransition;
 import javafx.collections.FXCollections;
@@ -59,6 +33,21 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Getter
 @FXMLController
@@ -107,16 +96,8 @@ public class PlayerController implements Initializable {
     private PlaylistSelectionChangedListener playlistSelectionChangedListener;
     private ResourceBundle resourceBundle;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Settings settings = loadSettings();
-        Color accentColor = settings.getTheme().getAccentColor();
-        modifyCss(accentColor);
-        // Scene scene = ChoicePlayerApplication.getScene();
-        // scene.getStylesheets().clear();
-        // scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-
         resourceBundle = ResourceBundle.getBundle("language.player");
 
         flippableAlbumArt = new FlippableImage();
@@ -139,28 +120,6 @@ public class PlayerController implements Initializable {
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
-    }
-
-    private static Settings loadSettings() {
-        try {
-            return new ObjectMapper().readValue(new File("settings.json"), Settings.class);
-        } catch (IOException e) {
-            log.info("Could not load settings.json file");
-            return new Settings();
-        }
-    }
-
-    private static void modifyCss(Color accentColor) {
-        try {
-            Path path = Paths.get("src/main/resources/css/style.css");
-            String content = new String(Files.readAllBytes(path));
-            String accentColorReplacement = format("accent-color: rgba({0}, {1}, {2}, {3})", accentColor.getRed(),
-                            accentColor.getGreen(), accentColor.getBlue(), accentColor.getAlpha());
-            content = content.replaceAll("accent-color: rgb(29, 185, 84);", accentColorReplacement);
-            Files.write(path, content.getBytes());
-        } catch (IOException e) {
-            log.error("Could not modify style.css");
-        }
     }
 
     private void animateItems() {

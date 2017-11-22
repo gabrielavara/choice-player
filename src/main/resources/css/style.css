@@ -18,6 +18,7 @@
 }
 
 .slider .track {
+    -fx-background-color: background-color;
     -fx-control-inner-background: accent-color;
 }
 
