@@ -30,13 +30,16 @@ public class PlaylistLoader {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.service.PlaylistLoader");
 
     public List<Mp3> load(Path folder) {
+        log.info("Start loading playlist");
         if (!Files.exists(folder)) {
             folder = Paths.get("src/test/resources/mp3folder");
         }
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
             Map<String, List<Mp3>> albums = getAlbums(directoryStream);
             TreeMap<Double, List<Mp3>> sortedAlbums = getSortedAlbums(albums);
-            return getSortedPlaylist(sortedAlbums);
+            List<Mp3> sortedPlaylist = getSortedPlaylist(sortedAlbums);
+            log.info("Playlist loaded");
+            return sortedPlaylist;
         } catch (IOException | DirectoryIteratorException e) {
             log.error("Could not find folder: {}. Message: {}", folder, e.getMessage());
         }
