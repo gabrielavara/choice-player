@@ -17,6 +17,10 @@
     -fx-text-fill: foreground-bright-color;
 }
 
+.button .icon {
+    -fx-fill: foreground-bright-color;
+}
+
 .slider .track {
     -fx-background-color: background-color;
     -fx-control-inner-background: accent-color;

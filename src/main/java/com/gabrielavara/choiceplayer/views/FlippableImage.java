@@ -16,12 +16,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FlippableImage extends StackPane {
+    private static final int SIZE = 350;
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.views.FlippableImage");
 
     private Timeline flipForward;
     private Timeline flipBackward;
     private boolean isFlipped = false;
-    private static final double FLIP_SECS = 0.3;
+    private static final double FLIP_SECS = 0.6;
     private ImageView back;
     private ImageView front;
 
@@ -29,12 +30,12 @@ public class FlippableImage extends StackPane {
         setRotationAxis(Rotate.Y_AXIS);
         back = new ImageView();
         back.setEffect(new DropShadow());
-        back.setFitHeight(250);
-        back.setFitWidth(250);
+        back.setFitHeight(SIZE);
+        back.setFitWidth(SIZE);
         front = new ImageView();
         front.setEffect(new DropShadow());
-        front.setFitHeight(250);
-        front.setFitWidth(250);
+        front.setFitHeight(SIZE);
+        front.setFitWidth(SIZE);
 
         loadDefaultAlbumArt();
 
@@ -43,15 +44,19 @@ public class FlippableImage extends StackPane {
         back.getTransforms().add(backRot);
         getChildren().addAll(back, front);
 
-        flipForward = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(rotateProperty(), 0d)),
-                new KeyFrame(Duration.seconds(FLIP_SECS / 2), t -> back.toFront(),
-                        new KeyValue(rotateProperty(), 90d)),
-                new KeyFrame(Duration.seconds(FLIP_SECS), new KeyValue(rotateProperty(), 180d)));
+        flipForward = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(scaleXProperty(), 1d), new KeyValue(scaleYProperty(), 1d), new KeyValue(rotateProperty(), 0d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS / 4 * 1), new KeyValue(scaleXProperty(), 0.8d), new KeyValue(scaleYProperty(), 0.8d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS / 4 * 2), t -> back.toFront(), new KeyValue(rotateProperty(), 90d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS / 4 * 3), new KeyValue(rotateProperty(), 180d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS), new KeyValue(scaleXProperty(), 1d), new KeyValue(scaleYProperty(), 1d)));
 
-        flipBackward = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(rotateProperty(), 180d)),
-                new KeyFrame(Duration.seconds(FLIP_SECS / 2), t -> front.toFront(),
-                        new KeyValue(rotateProperty(), 90d)),
-                new KeyFrame(Duration.seconds(FLIP_SECS), new KeyValue(rotateProperty(), 0d)));
+        flipBackward = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(scaleXProperty(), 1d), new KeyValue(scaleYProperty(), 1d), new KeyValue(rotateProperty(), 180d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS / 4 * 1), new KeyValue(scaleXProperty(), 0.8d), new KeyValue(scaleYProperty(), 0.8d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS / 4 * 2), t -> front.toFront(), new KeyValue(rotateProperty(), 90d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS / 4 * 3), new KeyValue(rotateProperty(), 0d)),
+                new KeyFrame(Duration.seconds(FLIP_SECS), new KeyValue(scaleXProperty(), 1d), new KeyValue(scaleYProperty(), 1d)));
     }
 
     private void loadDefaultAlbumArt() {

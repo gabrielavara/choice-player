@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTreeTableView?>
+<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
@@ -23,7 +24,7 @@
                 <Insets bottom="12.0" left="24.0" right="24.0" top="24.0"/>
             </VBox.margin>
         </JFXSlider>
-        <HBox prefHeight="100.0" prefWidth="200.0">
+        <HBox prefHeight="20.0" prefWidth="200.0">
             <VBox.margin>
                 <Insets left="24.0" right="24.0"/>
             </VBox.margin>
@@ -32,22 +33,53 @@
             <Label fx:id="remainingLabel"/>
         </HBox>
         <HBox alignment="CENTER" prefWidth="500.0">
-            <JFXButton fx:id="previousTrackButton" mnemonicParsing="false" styleClass="roundButton" text="&lt;&lt;">
+            <JFXButton fx:id="dislikeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                <graphic>
+                    <MaterialDesignIconView glyphName="THUMB_DOWN" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
+                                            styleClass="icon"/>
+                </graphic>
                 <HBox.margin>
                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                 </HBox.margin>
             </JFXButton>
-            <JFXButton fx:id="playPauseButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
-                       styleClass="roundButton" text="&gt;">
+            <JFXButton fx:id="previousTrackButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
+                       styleClass="roundButton">
                 <HBox.margin>
                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                 </HBox.margin>
+                <graphic>
+                    <MaterialDesignIconView glyphName="SKIP_PREVIOUS" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
+                                            styleClass="icon"/>
+                </graphic>
             </JFXButton>
-            <JFXButton fx:id="nextTrackButton" layoutX="35.0" layoutY="10.0" mnemonicParsing="false"
-                       styleClass="roundButton" text="&gt;&gt;">
+            <JFXButton fx:id="playPauseButton" contentDisplay="GRAPHIC_ONLY" layoutX="10.0" layoutY="10.0"
+                       mnemonicParsing="false">
                 <HBox.margin>
                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                 </HBox.margin>
+                <graphic>
+                    <MaterialDesignIconView glyphName="PLAY" size="56" strokeType="OUTSIDE" strokeWidth="0.0"
+                                            styleClass="icon"/>
+                </graphic>
+            </JFXButton>
+            <JFXButton fx:id="nextTrackButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="35.0"
+                       layoutY="10.0" mnemonicParsing="false">
+                <HBox.margin>
+                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                </HBox.margin>
+                <graphic>
+                    <MaterialDesignIconView glyphName="SKIP_NEXT" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
+                                            styleClass="icon"/>
+                </graphic>
+            </JFXButton>
+            <JFXButton fx:id="likeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" text="Button">
+                <HBox.margin>
+                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                </HBox.margin>
+                <graphic>
+                    <MaterialDesignIconView glyphName="THUMB_UP" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
+                                            styleClass="icon"/>
+                </graphic>
             </JFXButton>
         </HBox>
     </VBox>

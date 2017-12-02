@@ -26,6 +26,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -49,6 +50,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.Arrays.asList;
+
 @Getter
 @FXMLController
 public class PlayerController implements Initializable {
@@ -61,6 +64,10 @@ public class PlayerController implements Initializable {
     private JFXTreeTableView<TableItem> playlist;
     @FXML
     private VBox currentlyPlayingBox;
+    @FXML
+    private JFXButton likeButton;
+    @FXML
+    private JFXButton dislikeButton;
     @FXML
     private JFXButton previousTrackButton;
     @FXML
@@ -124,26 +131,26 @@ public class PlayerController implements Initializable {
 
     private void animateItems() {
         Animator animator = new Animator(Animator.Direction.IN);
-        animator.setup(albumArtStackPane, artist, title, timeSlider, elapsedLabel, remainingLabel, previousTrackButton,
-                playPauseButton, nextTrackButton);
+        animator.setup(albumArtStackPane, artist, title, timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
+                playPauseButton, nextTrackButton, likeButton);
         animator.add(albumArtStackPane).add(artist).add(title).add(timeSlider).add(elapsedLabel, remainingLabel)
-                .add(previousTrackButton, playPauseButton, nextTrackButton);
+                .add(dislikeButton)
+                .add(previousTrackButton)
+                .add(playPauseButton)
+                .add(nextTrackButton)
+                .add(likeButton);
         ParallelTransition transition = animator.build();
         transition.play();
     }
 
     private void setButtonListeners() {
-        previousTrackButton.setOnMouseClicked(event -> {
-            goToPreviousTrack();
-        });
+        previousTrackButton.setOnMouseClicked(event -> goToPreviousTrack());
 
-        nextTrackButton.setOnMouseClicked(event -> {
-            goToNextTrack();
-        });
+        nextTrackButton.setOnMouseClicked(event -> goToNextTrack());
 
         playPauseButton.setOnMouseClicked(event -> {
             if (mediaPlayer == null) {
-                return;
+                select(mp3Files.get(0));
             }
             MediaPlayer.Status status = mediaPlayer.getStatus();
             if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
@@ -157,13 +164,13 @@ public class PlayerController implements Initializable {
             }
         });
 
-        timeSlider.setOnMouseClicked(event -> {
-            seek(false);
-        });
+        timeSlider.setOnMouseClicked(event -> seek(false));
 
-        timeSlider.valueProperty().addListener(ov -> {
-            seek(true);
-        });
+        timeSlider.valueProperty().addListener(ov -> seek(true));
+
+        likeButton.setOnMouseClicked(event -> moveFileToGoodFolder());
+
+        dislikeButton.setOnMouseClicked(event -> moveFileToRecycleBin());
     }
 
     private void seek(boolean shouldConsiderValueChanging) {
@@ -176,15 +183,17 @@ public class PlayerController implements Initializable {
     }
 
     public void goToPreviousTrack() {
-        getPreviousTrack().ifPresent(nextTrack -> {
-            playlistSelectionChangedListener.changed(getCurrentlyPlaying().orElse(null), nextTrack);
-        });
+        getPreviousTableItem().ifPresent(this::select);
     }
 
     public void goToNextTrack() {
-        getNextTrack().ifPresent(previousTrack -> {
-            playlistSelectionChangedListener.changed(getCurrentlyPlaying().orElse(null), previousTrack);
-        });
+        getNextTableItem().ifPresent(this::select);
+    }
+
+    private void select(TableItem tableItem) {
+        int index = Integer.valueOf(tableItem.getIndex().get()) - 1;
+        TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
+        selectionModel.select(index);
     }
 
     private void loadPlaylist() {
@@ -257,7 +266,7 @@ public class PlayerController implements Initializable {
         lengthColumn.setOnEditCommit((TreeTableColumn.CellEditEvent<TableItem, String> t) -> t.getTreeTableView()
                 .getTreeItem(t.getTreeTablePosition().getRow()).getValue().getLength().set(t.getNewValue()));
 
-        playlist.getColumns().setAll(indexColumn, artistColumn, titleColumn, lengthColumn);
+        playlist.getColumns().setAll(asList(indexColumn, artistColumn, titleColumn, lengthColumn));
     }
 
     void loadMp3Files() {
@@ -274,23 +283,31 @@ public class PlayerController implements Initializable {
     }
 
     Optional<Mp3> getNextTrack() {
+        return getNextTableItem().map(TableItem::getMp3);
+    }
+
+    private Optional<TableItem> getNextTableItem() {
         OptionalInt first = IntStream.range(0, mp3Files.size())
                 .filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            return mp3Files.size() > index + 1 ? Optional.of(mp3Files.get(index + 1).getMp3()) : Optional.empty();
+            return mp3Files.size() > index + 1 ? Optional.of(mp3Files.get(index + 1)) : Optional.empty();
         }
-        return Optional.of(mp3Files.get(0).getMp3());
+        return Optional.of(mp3Files.get(0));
     }
 
     Optional<Mp3> getPreviousTrack() {
+        return getPreviousTableItem().map(TableItem::getMp3);
+    }
+
+    private Optional<TableItem> getPreviousTableItem() {
         OptionalInt first = IntStream.range(0, mp3Files.size())
                 .filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            return 0 <= index - 1 ? Optional.of(mp3Files.get(index - 1).getMp3()) : Optional.empty();
+            return 0 <= index - 1 ? Optional.of(mp3Files.get(index - 1)) : Optional.empty();
         }
-        return Optional.of(mp3Files.get(0).getMp3());
+        return Optional.of(mp3Files.get(0));
     }
 
     void setAlbumArt() {
@@ -319,6 +336,7 @@ public class PlayerController implements Initializable {
 
     public void moveFileToGoodFolder() {
         log.info("Move file to good folder");
+
     }
 
     public void moveFileToRecycleBin() {

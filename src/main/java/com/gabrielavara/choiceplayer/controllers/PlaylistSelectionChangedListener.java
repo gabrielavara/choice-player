@@ -1,17 +1,11 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.file.Paths;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.views.TableItem;
 import com.jfoenix.controls.JFXSlider;
-
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,6 +14,15 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.file.Paths;
+
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
 
 public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem<TableItem>> {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlaylistSelectionChangedListener");
@@ -31,12 +34,12 @@ public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem
 
     @Override
     public void changed(ObservableValue<? extends TreeItem<TableItem>> observable, TreeItem<TableItem> oldValue,
-                    TreeItem<TableItem> newValue) {
+                        TreeItem<TableItem> newValue) {
         changed(oldValue == null ? null : oldValue.getValue().getMp3(),
-                        newValue == null ? null : newValue.getValue().getMp3());
+                newValue == null ? null : newValue.getValue().getMp3());
     }
 
-    void changed(Mp3 oldValue, Mp3 newValue) {
+    private void changed(Mp3 oldValue, Mp3 newValue) {
         if (newValue == null) {
             return;
         }
@@ -80,13 +83,13 @@ public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem
                 playerController.setStopRequested(false);
             } else {
                 log.info("Play");
-                playerController.getPlayPauseButton().setText("||");
+                playerController.getPlayPauseButton().setGraphic(getIcon(PAUSE));
             }
         });
 
         mediaPlayer.setOnPaused(() -> {
             log.info("Paused");
-            playerController.getPlayPauseButton().setText(">");
+            playerController.getPlayPauseButton().setGraphic(getIcon(PLAY));
         });
 
         mediaPlayer.setOnReady(() -> {
@@ -96,9 +99,16 @@ public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem
 
         mediaPlayer.setOnEndOfMedia(() -> {
             log.info("Reached end of media");
-            playerController.getPlayPauseButton().setText(">");
+            playerController.getPlayPauseButton().setGraphic(getIcon(PLAY));
             playerController.goToNextTrack();
         });
+    }
+
+    private MaterialDesignIconView getIcon(MaterialDesignIcon icon) {
+        MaterialDesignIconView iconView = new MaterialDesignIconView(icon);
+        iconView.setSize("56");
+        iconView.setStyleClass("icon");
+        return iconView;
     }
 
     private void updateValues() {
