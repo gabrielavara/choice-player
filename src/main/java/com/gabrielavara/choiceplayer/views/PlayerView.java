@@ -1,5 +1,6 @@
 package com.gabrielavara.choiceplayer.views;
 
+import com.gabrielavara.choiceplayer.settings.AccentColor;
 import com.gabrielavara.choiceplayer.settings.ThemeSettings;
 import com.gabrielavara.choiceplayer.settings.ThemeStyle;
 import de.felixroske.jfxsupport.AbstractFxmlView;
@@ -20,7 +21,7 @@ public class PlayerView extends AbstractFxmlView {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.views.PlayerView");
 
     private void modifyCss(ThemeSettings theme) {
-        Color accentColor = theme.getAccentColor();
+        AccentColor accentColor = theme.getAccentColor();
         boolean transparent = theme.isTransparent();
         ThemeStyle style = theme.getStyle();
         Color backgroundColor = style.getBackgroundColor();
@@ -38,7 +39,7 @@ public class PlayerView extends AbstractFxmlView {
         }
     }
 
-    private static String replaceAccentColor(String content, Color accentColor, boolean transparent) {
+    private static String replaceAccentColor(String content, AccentColor accentColor, boolean transparent) {
         return content.replaceAll("accent-color: rgb(29, 185, 84);",
                 format("accent-color: rgba({0}, {1}, {2}, {3})", accentColor.getRed(),
                         accentColor.getGreen(), accentColor.getBlue(), opacity(transparent)));

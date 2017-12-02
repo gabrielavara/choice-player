@@ -36,6 +36,7 @@ dependencies {
     compile group: 'com.jfoenix', name: 'jfoenix', version: '1.9.1'
     compile group: 'de.jensd', name: 'fontawesomefx', version: '8.9'
     compile group: 'com.1stleg', name: 'jnativehook', version: '2.1.0'
+    compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.0'
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

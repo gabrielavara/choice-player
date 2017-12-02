@@ -16,7 +16,7 @@
     <VBox fx:id="currentlyPlayingBox">
         <StackPane fx:id="albumArtStackPane">
             <VBox.margin>
-                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>
+                <Insets bottom="24.0" left="24.0" right="24.0" top="64.0"/>
             </VBox.margin>
         </StackPane>
         <JFXSlider fx:id="timeSlider">

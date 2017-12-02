@@ -1,5 +1,11 @@
 package com.gabrielavara.choiceplayer.api.service;
 
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -13,43 +19,40 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
-
 public class PlaylistLoader {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.service.PlaylistLoader");
 
     public List<Mp3> load(Path folder) {
+        if (!Files.exists(folder)) {
+            folder = Paths.get("src/test/resources/mp3folder");
+        }
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
             Map<String, List<Mp3>> albums = getAlbums(directoryStream);
             TreeMap<Double, List<Mp3>> sortedAlbums = getSortedAlbums(albums);
             return getSortedPlaylist(sortedAlbums);
         } catch (IOException | DirectoryIteratorException e) {
-            log.error("Could not find folder: {0}. Message: {1}", folder, e.getMessage());
+            log.error("Could not find folder: {}. Message: {}", folder, e.getMessage());
         }
         return Collections.emptyList();
     }
 
     private Map<String, List<Mp3>> getAlbums(DirectoryStream<Path> directoryStream) {
         Stream<Path> paths = StreamSupport.stream(directoryStream.spliterator(), false);
-        return paths.filter(isMp3()).map(PlaylistLoader::createMp3File).collect(Collectors.groupingBy(Mp3::getAlbum));
+        return paths.filter(isMp3()).map(PlaylistLoader::createMp3File).filter(Objects::nonNull).collect(Collectors.groupingBy(Mp3::getAlbum));
     }
 
     private TreeMap<Double, List<Mp3>> getSortedAlbums(Map<String, List<Mp3>> albums) {
         TreeMap<Double, List<Mp3>> sortedAlbums = new TreeMap<>();
         for (List<Mp3> tracks : albums.values()) {
             Double averageTime = tracks.stream().map(PlaylistLoader::getCreationTime)
-                            .collect(Collectors.averagingLong(FileTime::toMillis));
+                    .collect(Collectors.averagingLong(FileTime::toMillis));
             sortedAlbums.put(averageTime, tracks);
         }
         return sortedAlbums;
@@ -73,11 +76,11 @@ public class PlaylistLoader {
             Mp3File mp3File = new Mp3File(path);
             return new Mp3(mp3File);
         } catch (IOException e) {
-            log.error("Could not load file: {0}. Message: {1}", path, e.getMessage());
+            log.error("Could not load file: {}. Message: {}", path, e.getMessage());
         } catch (UnsupportedTagException e) {
-            log.error("Unsupported tag in file: {0}. Message: {1}", path, e.getMessage());
+            log.error("Unsupported tag in file: {}. Message: {}", path, e.getMessage());
         } catch (InvalidDataException e) {
-            log.error("Invalid data for file: {0}. Message: {1}", path, e.getMessage());
+            log.error("Invalid data for file: {}. Message: {}", path, e.getMessage());
         }
         return null;
     }
@@ -87,7 +90,7 @@ public class PlaylistLoader {
             Path path = Paths.get(mp3.getFilename());
             return Files.getFileAttributeView(path, BasicFileAttributeView.class).readAttributes().creationTime();
         } catch (IOException e) {
-            log.error("Could not get creation time: {0}", e.getMessage());
+            log.error("Could not get creation time: {}", e.getMessage());
             return FileTime.fromMillis(System.currentTimeMillis());
         }
     }

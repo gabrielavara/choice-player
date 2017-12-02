@@ -37,7 +37,7 @@ public class GlobalKeyListener implements NativeKeyListener {
             playerController.goToNextTrack();
         } else if (e.getKeyCode() == NativeKeyEvent.VC_LEFT && isAltPressed && isCtrlPressed) {
             playerController.rewind();
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_DOWN && isAltPressed && isCtrlPressed) {
+        } else if (e.getKeyCode() == NativeKeyEvent.VC_RIGHT && isAltPressed && isCtrlPressed) {
             playerController.fastForward();
         }
     }

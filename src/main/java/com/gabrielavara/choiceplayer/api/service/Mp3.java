@@ -3,17 +3,19 @@ package com.gabrielavara.choiceplayer.api.service;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Optional;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 public class Mp3 {
     private static final String EMPTY = "";
+    public static final String DEFAULT_TRACK = "1";
     private final String artist;
     private final String title;
     private final String year;
@@ -73,11 +75,11 @@ public class Mp3 {
     private String extractAlbum(Mp3File mp3) {
         if (mp3.hasId3v2Tag()) {
             ID3v2 id3v2Tag = mp3.getId3v2Tag();
-            return id3v2Tag.getAlbum();
+            return Optional.ofNullable(id3v2Tag.getAlbum()).orElse(EMPTY);
         }
         if (mp3.hasId3v1Tag()) {
             ID3v1 id3v1Tag = mp3.getId3v1Tag();
-            return id3v1Tag.getAlbum();
+            return Optional.ofNullable(id3v1Tag.getAlbum()).orElse(EMPTY);
         }
         return EMPTY;
     }
@@ -85,12 +87,12 @@ public class Mp3 {
     private String extractTrack(Mp3File mp3) {
         if (mp3.hasId3v2Tag()) {
             ID3v2 id3v2Tag = mp3.getId3v2Tag();
-            return id3v2Tag.getTrack();
+            return Optional.ofNullable(id3v2Tag.getTrack()).orElse(DEFAULT_TRACK);
         }
         if (mp3.hasId3v1Tag()) {
             ID3v1 id3v1Tag = mp3.getId3v1Tag();
-            return id3v1Tag.getTrack();
+            return Optional.ofNullable(id3v1Tag.getTrack()).orElse(DEFAULT_TRACK);
         }
-        return "1";
+        return DEFAULT_TRACK;
     }
 }

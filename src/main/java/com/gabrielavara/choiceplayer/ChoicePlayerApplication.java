@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.gabrielavara.choiceplayer.settings.Settings;
 import com.gabrielavara.choiceplayer.views.ChoicePlayerSplashScreen;
 import com.gabrielavara.choiceplayer.views.PlayerView;
@@ -17,7 +18,9 @@ import java.io.IOException;
 
 @SpringBootApplication
 public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
+    private static final String SETTINGS_FILE = "settings.json";
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.ChoicePlayerApplication");
+
     @Getter
     private static Settings settings;
 
@@ -28,10 +31,22 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
 
     private static Settings loadSettings() {
         try {
-            return new ObjectMapper().readValue(new File("settings.json"), Settings.class);
+            return new ObjectMapper().readValue(new File(SETTINGS_FILE), Settings.class);
         } catch (IOException e) {
             log.info("Could not load settings.json file");
-            return new Settings();
+            Settings settings = new Settings();
+            saveSettings(settings);
+            return settings;
+        }
+    }
+
+    private static void saveSettings(Settings settings) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            mapper.writeValue(new File(SETTINGS_FILE), settings);
+        } catch (IOException e) {
+            log.info("Could not save settings.json file");
         }
     }
 

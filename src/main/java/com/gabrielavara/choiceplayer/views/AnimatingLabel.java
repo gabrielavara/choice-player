@@ -3,6 +3,7 @@ package com.gabrielavara.choiceplayer.views;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
@@ -64,8 +65,13 @@ public class AnimatingLabel extends StackPane {
     }
 
     public void setText(String text) {
-        second.setText(text);
-        animateOut(first);
-        animateIn(second);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                second.setText(text);
+                animateOut(first);
+                animateIn(second);
+            }
+        });
     }
 }
