@@ -11,6 +11,15 @@
 
 .label {
     -fx-text-fill: foreground-bright-color;
+    -fx-font-size: 14;
+}
+
+.artist-label {
+    -fx-font-size: 22;
+}
+
+.title-label {
+    -fx-font-size: 18;
 }
 
 .button {
@@ -21,9 +30,56 @@
     -fx-fill: foreground-bright-color;
 }
 
-.slider .track {
+.button .jfx-rippler {
+    -jfx-rippler-fill: accent-color;
+}
+
+.jfx-slider .track,
+.jfx-slider:vertical .track {
     -fx-background-color: background-color;
-    -fx-control-inner-background: accent-color;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-pref-width: 2px;
+    -fx-pref-height: 2px;
+}
+
+.jfx-slider .thumb,
+.jfx-slider:focused .thumb {
+    -fx-background-color: accent-color;
+    -fx-background-radius: 20;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider .colored-track {
+    -fx-background-color: accent-color;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider .slider-value {
+    -fx-stroke: foreground-bright-color;
+    -fx-font-size: 10;
+}
+
+.jfx-slider .animated-thumb {
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-color: accent-color;
+    -fx-background-radius: 50% 50% 50% 0%;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider:min .thumb,
+.jfx-slider:min:focused .thumb {
+    -fx-background-color: background-color;
+    -fx-background-radius: 20;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider:min .animated-thumb {
+    -fx-background-color: background-color;
+    -fx-background-radius: 50% 50% 50% 0%;
+    -fx-background-insets: 0;
 }
 
 .tree-table-view {
@@ -37,7 +93,8 @@
 
 .tree-table-view .tree-table-cell {
     -fx-border-color: background-bright-color;
-    -fx-border-width: 1 0 0 0;
+    -fx-border-width: 1 0 1 0;
+    -fx-font-size: 14;
 }
 
 .tree-table-view .tree-table-row-cell .tree-table-cell {
@@ -61,4 +118,21 @@
 
 .tree-table-view .column-header .label {
     -fx-text-fill: foreground-bright-color;
+}
+
+.tree-table-view .scroll-bar:vertical .track,
+.tree-table-view .scroll-bar:vertical .track-background,
+.tree-table-view .scroll-bar:vertical .increment-button,
+.tree-table-view .scroll-bar:vertical .decrement-button,
+.tree-table-view .scroll-bar:horizontal .track,
+.tree-table-view .scroll-bar:horizontal .track-background,
+.tree-table-view .scroll-bar:horizontal .thumb,
+.tree-table-view .scroll-bar:horizontal .increment-button,
+.tree-table-view .scroll-bar:horizontal .decrement-button,
+.tree-table-view .corner {
+    -fx-background-color: background-color;
+}
+
+.tree-table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: background-bright-color;
 }

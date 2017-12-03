@@ -39,6 +39,8 @@ public class GlobalKeyListener implements NativeKeyListener {
             playerController.rewind();
         } else if (e.getKeyCode() == NativeKeyEvent.VC_RIGHT && isAltPressed && isCtrlPressed) {
             playerController.fastForward();
+        } else if (e.getKeyCode() == NativeKeyEvent.VC_SLASH && isAltPressed) {
+            playerController.playPause();
         }
     }
 

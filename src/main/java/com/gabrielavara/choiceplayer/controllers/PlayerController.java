@@ -45,8 +45,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -59,6 +63,7 @@ import static java.util.Arrays.asList;
 @Getter
 @FXMLController
 public class PlayerController implements Initializable {
+    private static final double SEEK_VOLUME = 0.1;
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlayerController");
 
     @FXML
@@ -112,8 +117,8 @@ public class PlayerController implements Initializable {
         resourceBundle = ResourceBundle.getBundle("language.player");
 
         flippableAlbumArt = new FlippableImage();
-        artist = new AnimatingLabel("", 20);
-        title = new AnimatingLabel("", 16);
+        artist = new AnimatingLabel("artist-label");
+        title = new AnimatingLabel("title-label");
 
         playlistSelectionChangedListener = new PlaylistSelectionChangedListener(this);
         playlist.getSelectionModel().selectedItemProperty().addListener(playlistSelectionChangedListener);
@@ -149,32 +154,28 @@ public class PlayerController implements Initializable {
 
     private void setButtonListeners() {
         previousTrackButton.setOnMouseClicked(event -> goToPreviousTrack());
-
         nextTrackButton.setOnMouseClicked(event -> goToNextTrack());
-
-        playPauseButton.setOnMouseClicked(event -> {
-            if (mediaPlayer == null) {
-                select(mp3Files.get(0));
-            }
-            MediaPlayer.Status status = mediaPlayer.getStatus();
-            if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
-                return;
-            }
-            if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY
-                    || status == MediaPlayer.Status.STOPPED) {
-                mediaPlayer.play();
-            } else {
-                mediaPlayer.pause();
-            }
-        });
-
+        playPauseButton.setOnMouseClicked(event -> playPause());
         timeSlider.setOnMouseClicked(event -> seek(false));
-
         timeSlider.valueProperty().addListener(ov -> seek(true));
-
         likeButton.setOnMouseClicked(event -> moveFileToGoodFolder());
-
         dislikeButton.setOnMouseClicked(event -> moveFileToRecycleBin());
+    }
+
+    public void playPause() {
+        if (mediaPlayer == null) {
+            select(mp3Files.get(0));
+        }
+        MediaPlayer.Status status = mediaPlayer.getStatus();
+        if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
+            return;
+        }
+        if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY
+                || status == MediaPlayer.Status.STOPPED) {
+            mediaPlayer.play();
+        } else {
+            mediaPlayer.pause();
+        }
     }
 
     private void seek(boolean shouldConsiderValueChanging) {
@@ -195,7 +196,7 @@ public class PlayerController implements Initializable {
     }
 
     private void select(TableItem tableItem) {
-        int index = Integer.valueOf(tableItem.getIndex().get()) - 1;
+        int index = tableItem.getIndex().get() - 1;
         TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
         selectionModel.select(index);
     }
@@ -255,7 +256,19 @@ public class PlayerController implements Initializable {
         lengthColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(
                 new TextFieldEditorBuilder()));
 
-        playlist.getColumns().setAll(asList(indexColumn, artistColumn, titleColumn, lengthColumn));
+        indexColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.1));
+        artistColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.35));
+        titleColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.35));
+        lengthColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.2));
+
+        List<JFXTreeTableColumn<TableItem, ? extends Serializable>> columns = asList(indexColumn, artistColumn, titleColumn, lengthColumn);
+
+        columns.forEach(c -> {
+            c.setEditable(false);
+            c.setResizable(false);
+        });
+
+        playlist.getColumns().setAll(columns);
     }
 
     void loadMp3Files() {
@@ -328,22 +341,45 @@ public class PlayerController implements Initializable {
 
     public void moveFileToGoodFolder() {
         log.info("Move file to good folder");
-
+        getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            getNextTableItem().ifPresent(this::select);
+            try {
+                mp3Files.removeAll(tableItem);
+                Path from = Paths.get(tableItem.getMp3().getFilename());
+                String folderToMove = ChoicePlayerApplication.getSettings().getFolderToMove();
+                String fileName = from.getFileName().toString();
+                Path to = Paths.get(folderToMove, fileName);
+                Files.move(from, to);
+            } catch (IOException e) {
+                mp3Files.add(tableItem.getIndex().get() - 1, tableItem);
+                log.error("Could not move {}", tableItem.getMp3());
+                sortPlaylist();
+            }
+        });
     }
 
     public void moveFileToRecycleBin() {
         log.info("Move file to recycle bin");
         getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
             FileUtils fileUtils = FileUtils.getInstance();
             getNextTableItem().ifPresent(this::select);
             try {
-                fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
                 mp3Files.removeAll(tableItem);
+                fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
             } catch (IOException e) {
+                mp3Files.add(tableItem.getIndex().get() - 1, tableItem);
                 log.error("Could not delete {}", tableItem.getMp3());
+                sortPlaylist();
             }
         });
+    }
 
+    private void sortPlaylist() {
+        mp3Files.sort(Comparator.comparingInt(o -> o.getIndex().get()));
     }
 
     public void rewind() {
@@ -351,7 +387,7 @@ public class PlayerController implements Initializable {
         if (mediaPlayer == null) {
             return;
         }
-        mediaPlayer.setVolume(0.3);
+        mediaPlayer.setVolume(SEEK_VOLUME);
         mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(-5)));
         mediaPlayer.setVolume(1.0);
     }
@@ -361,7 +397,7 @@ public class PlayerController implements Initializable {
         if (mediaPlayer == null) {
             return;
         }
-        mediaPlayer.setVolume(0.3);
+        mediaPlayer.setVolume(SEEK_VOLUME);
         mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(5)));
         mediaPlayer.setVolume(1.0);
     }

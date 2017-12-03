@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
-      prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      prefWidth="1400.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController">
     <VBox fx:id="currentlyPlayingBox">
         <StackPane fx:id="albumArtStackPane">
@@ -21,12 +21,12 @@
         </StackPane>
         <JFXSlider fx:id="timeSlider">
             <VBox.margin>
-                <Insets bottom="12.0" left="24.0" right="24.0" top="24.0"/>
+                <Insets bottom="12.0" left="72.0" right="72.0" top="24.0"/>
             </VBox.margin>
         </JFXSlider>
         <HBox prefHeight="20.0" prefWidth="200.0">
             <VBox.margin>
-                <Insets left="24.0" right="24.0"/>
+                <Insets left="72.0" right="72.0"/>
             </VBox.margin>
             <Label fx:id="elapsedLabel"/>
             <Pane prefHeight="200.0" HBox.hgrow="ALWAYS"/>
@@ -83,5 +83,5 @@
             </JFXButton>
         </HBox>
     </VBox>
-    <JFXTreeTableView fx:id="playlist" maxWidth="1.7976931348623157E308" prefWidth="700.0"/>
+    <JFXTreeTableView fx:id="playlist" maxWidth="1.7976931348623157E308" prefWidth="700.0" HBox.hgrow="ALWAYS"/>
 </HBox>

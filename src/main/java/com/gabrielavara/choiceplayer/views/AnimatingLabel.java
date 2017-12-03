@@ -6,7 +6,6 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 public class AnimatingLabel extends StackPane {
@@ -14,20 +13,21 @@ public class AnimatingLabel extends StackPane {
     private Label first;
     private Label second;
 
-    public AnimatingLabel(String text, int fontSize) {
+    public AnimatingLabel(String styleClass) {
         first = new Label();
         second = new Label();
 
-        first.setFont(new Font(fontSize));
         first.setOpacity(0);
         first.setTranslateX(TRANSLATE_X);
+        first.getStyleClass().add(styleClass);
 
-        second.setFont(new Font(fontSize));
         second.setOpacity(0);
         second.setTranslateX(TRANSLATE_X);
+        second.getStyleClass().add(styleClass);
+
         getChildren().addAll(second, first);
 
-        setText(text);
+        setText("");
     }
 
     private void animateIn(Label label) {
@@ -65,13 +65,10 @@ public class AnimatingLabel extends StackPane {
     }
 
     public void setText(String text) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                second.setText(text);
-                animateOut(first);
-                animateIn(second);
-            }
+        Platform.runLater(() -> {
+            second.setText(text);
+            animateOut(first);
+            animateIn(second);
         });
     }
 }
