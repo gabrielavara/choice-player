@@ -82,57 +82,57 @@
     -fx-background-insets: 0;
 }
 
-.tree-table-view {
+.table-view {
     -fx-box-border: background-bright-color;
 }
 
-.tree-table-view .tree-table-row-cell {
+.table-view .table-row-cell {
     -fx-background-color: background-color;
     -fx-table-cell-border-color: background-bright-color;
 }
 
-.tree-table-view .tree-table-cell {
+.table-view .table-cell {
     -fx-border-color: background-bright-color;
     -fx-border-width: 1 0 1 0;
     -fx-font-size: 14;
 }
 
-.tree-table-view .tree-table-row-cell .tree-table-cell {
+.table-view .table-row-cell .table-cell {
     -fx-text-fill: foreground-bright-color;
 }
 
-.tree-table-view .tree-table-row-cell:selected {
+.table-view .table-row-cell:selected {
     -fx-background-color: accent-color;
 }
 
-.tree-table-view:focused .tree-table-row-cell:selected {
+.table-view:focused .table-row-cell:selected {
     -fx-background-color: accent-color;
 }
 
-.tree-table-view .column-header,
-.tree-table-view .column-header-background,
-.tree-table-view .column-header-background .filler {
+.table-view .column-header,
+.table-view .column-header-background,
+.table-view .column-header-background .filler {
     -fx-background-color: background-color;
     -fx-border-color: background-color;
 }
 
-.tree-table-view .column-header .label {
+.table-view .column-header .label {
     -fx-text-fill: foreground-bright-color;
 }
 
-.tree-table-view .scroll-bar:vertical .track,
-.tree-table-view .scroll-bar:vertical .track-background,
-.tree-table-view .scroll-bar:vertical .increment-button,
-.tree-table-view .scroll-bar:vertical .decrement-button,
-.tree-table-view .scroll-bar:horizontal .track,
-.tree-table-view .scroll-bar:horizontal .track-background,
-.tree-table-view .scroll-bar:horizontal .thumb,
-.tree-table-view .scroll-bar:horizontal .increment-button,
-.tree-table-view .scroll-bar:horizontal .decrement-button,
-.tree-table-view .corner {
+.table-view .scroll-bar:vertical .track,
+.table-view .scroll-bar:vertical .track-background,
+.table-view .scroll-bar:vertical .increment-button,
+.table-view .scroll-bar:vertical .decrement-button,
+.table-view .scroll-bar:horizontal .track,
+.table-view .scroll-bar:horizontal .track-background,
+.table-view .scroll-bar:horizontal .thumb,
+.table-view .scroll-bar:horizontal .increment-button,
+.table-view .scroll-bar:horizontal .decrement-button,
+.table-view .corner {
     -fx-background-color: background-color;
 }
 
-.tree-table-view .scroll-bar:vertical .thumb {
+.table-view .scroll-bar:vertical .thumb {
     -fx-background-color: background-bright-color;
 }

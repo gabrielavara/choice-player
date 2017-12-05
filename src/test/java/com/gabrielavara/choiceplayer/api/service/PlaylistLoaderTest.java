@@ -47,21 +47,21 @@ public class PlaylistLoaderTest {
         List<Mp3> mp3Files = playlistLoader.load(olderFilePath);
 
         // then
-        assertEquals(mp3Files.size(), 4);
-        assertEquals(mp3Files.get(0).getArtist(), "Test Artist");
-        assertEquals(mp3Files.get(0).getTitle(), "Test Older Title");
-        assertEquals(mp3Files.get(0).getTrack(), "1");
+        assertEquals(4, mp3Files.size());
+        assertEquals("Test Artist", mp3Files.get(0).getArtist());
+        assertEquals("Test Older Title", mp3Files.get(0).getTitle());
+        assertEquals("1", mp3Files.get(0).getTrack());
 
-        assertEquals(mp3Files.get(1).getArtist(), "Artist 2");
-        assertEquals(mp3Files.get(1).getTitle(), "Track 1");
-        assertEquals(mp3Files.get(1).getTrack(), "1");
+        assertEquals("Artist 2", mp3Files.get(1).getArtist());
+        assertEquals("Track 1", mp3Files.get(1).getTitle());
+        assertEquals("1", mp3Files.get(1).getTrack());
 
-        assertEquals(mp3Files.get(2).getArtist(), "Artist 1");
-        assertEquals(mp3Files.get(2).getTitle(), "Track 2");
-        assertEquals(mp3Files.get(2).getTrack(), "2");
+        assertEquals("Artist 1", mp3Files.get(2).getArtist());
+        assertEquals("Track 2", mp3Files.get(2).getTitle());
+        assertEquals("2", mp3Files.get(2).getTrack());
 
-        assertEquals(mp3Files.get(3).getArtist(), "The Super Artist Test");
-        assertEquals(mp3Files.get(3).getTitle(), "Test Newer Title");
-        assertEquals(mp3Files.get(3).getTrack(), "1");
+        assertEquals("The Super Artist Test", mp3Files.get(3).getArtist());
+        assertEquals("Test Newer Title", mp3Files.get(3).getTitle());
+        assertEquals("1", mp3Files.get(3).getTrack());
     }
 }

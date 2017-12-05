@@ -2,17 +2,17 @@ package com.gabrielavara.choiceplayer.views;
 
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.Getter;
 
 @Getter
-public class TableItem extends RecursiveTreeObject<TableItem> {
+public class TableItem {
     private SimpleIntegerProperty index;
     private StringProperty artist;
-    private StringProperty track;
+    private StringProperty title;
     private StringProperty length;
     private Mp3 mp3;
 
@@ -20,7 +20,7 @@ public class TableItem extends RecursiveTreeObject<TableItem> {
         this.mp3 = mp3;
         this.index = new SimpleIntegerProperty(index);
         artist = new SimpleStringProperty(mp3.getArtist());
-        track = new SimpleStringProperty(mp3.getTitle());
+        title = new SimpleStringProperty(mp3.getTitle());
         length = new SimpleStringProperty(TimeFormatter.getFormattedLength((int) mp3.getLength() / 1000));
     }
 }

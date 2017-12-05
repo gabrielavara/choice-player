@@ -1,5 +1,8 @@
 package com.gabrielavara.choiceplayer.views;
 
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_X;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -9,7 +12,6 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class AnimatingLabel extends StackPane {
-    private static final int TRANSLATE_X = 20;
     private Label first;
     private Label second;
 
@@ -31,11 +33,11 @@ public class AnimatingLabel extends StackPane {
     }
 
     private void animateIn(Label label) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(400), label);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), label);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(400), label);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), label);
         translateTransition.setByX(-TRANSLATE_X);
 
         ParallelTransition parallelTransition = new ParallelTransition();
@@ -51,11 +53,11 @@ public class AnimatingLabel extends StackPane {
     }
 
     private void animateOut(Label label) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(400), label);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), label);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(400), label);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), label);
         translateTransition.setByX(-TRANSLATE_X);
 
         ParallelTransition parallelTransition = new ParallelTransition();

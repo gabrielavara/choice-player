@@ -1,30 +1,30 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.util.TimeFormatter;
-import com.gabrielavara.choiceplayer.views.TableItem;
-import com.jfoenix.controls.JFXSlider;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Paths;
 
-import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
-import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem<TableItem>> {
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.util.TimeFormatter;
+import com.gabrielavara.choiceplayer.views.TableItem;
+import com.jfoenix.controls.JFXSlider;
+
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.scene.control.Label;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
+public class PlaylistSelectionChangedListener implements ListChangeListener<TableItem> {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlaylistSelectionChangedListener");
     private PlayerController playerController;
 
@@ -33,25 +33,24 @@ public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem
     }
 
     @Override
-    public void changed(ObservableValue<? extends TreeItem<TableItem>> observable, TreeItem<TableItem> oldValue,
-                        TreeItem<TableItem> newValue) {
-        changed(oldValue == null ? null : oldValue.getValue().getMp3(),
-                newValue == null ? null : newValue.getValue().getMp3());
+    public void onChanged(Change<? extends TableItem> c) {
+        changed(c.getRemovedSize() > 0 ? c.getRemoved().get(0).getMp3() : null, c.getAddedSize() > 0 ? c.getAddedSubList().get(0).getMp3() : null);
     }
 
     private void changed(Mp3 oldValue, Mp3 newValue) {
         if (newValue == null) {
             return;
         }
+
         log.info("Playlist selection changed from: {}, to {}", oldValue, newValue);
         newValue.setCurrentlyPlaying(true);
+        if (oldValue != null) {
+            oldValue.setCurrentlyPlaying(false);
+        }
         playerController.getArtist().setText(newValue.getArtist());
         playerController.getTitle().setText(newValue.getTitle());
         playerController.getTimeSliderConverter().setLength(newValue.getLength());
 
-        if (oldValue != null) {
-            oldValue.setCurrentlyPlaying(false);
-        }
         play(newValue);
     }
 
