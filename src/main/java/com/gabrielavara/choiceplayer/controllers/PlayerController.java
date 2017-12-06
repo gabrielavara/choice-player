@@ -1,10 +1,10 @@
 package com.gabrielavara.choiceplayer.controllers;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.DELAY;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
-import static com.gabrielavara.choiceplayer.Constants.TABLE_ITEM_ANIMATION_DIFF;
 import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_X;
-import static com.gabrielavara.choiceplayer.Constants.WAIT_TILL_ANIAMTING_ITEMS;
+import static com.gabrielavara.choiceplayer.Constants.WAIT_TILL_ANIMATING_ITEMS;
 import static java.util.Arrays.asList;
 
 import java.io.ByteArrayInputStream;
@@ -41,12 +41,12 @@ import com.gabrielavara.choiceplayer.views.TableItem;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTreeTableColumn;
+import com.jfoenix.controls.JFXTreeTableRow;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import com.sun.jna.platform.FileUtils;
 
 import de.felixroske.jfxsupport.FXMLController;
@@ -216,6 +216,11 @@ public class PlayerController implements Initializable {
         TreeItem<TableItem> root = new RecursiveTreeItem<>(mp3Files, RecursiveTreeObject::getChildren);
         playlist.setRoot(root);
         playlist.setShowRoot(false);
+        playlist.setRowFactory(row -> {
+            JFXTreeTableRow<TableItem> newRow = new JFXTreeTableRow<>();
+            newRowAdded(newRow);
+            return newRow;
+        });
         addColumns();
         loadMp3Files();
     }
@@ -286,15 +291,14 @@ public class PlayerController implements Initializable {
 
         playListLoaderTask.setOnSucceeded(e -> {
             List<TableItem> tableItems = playListLoaderTask.getValue();
-            PauseTransition wait = new PauseTransition(Duration.millis(TABLE_ITEM_ANIMATION_DIFF));
+            PauseTransition wait = new PauseTransition(Duration.millis(DELAY));
             wait.setOnFinished(ev -> {
-                if (System.currentTimeMillis() - loadStart < WAIT_TILL_ANIAMTING_ITEMS) {
+                if (System.currentTimeMillis() - loadStart < WAIT_TILL_ANIMATING_ITEMS) {
                     wait.playFromStart();
                 }
-                if (!tableItems.isEmpty()) {
+                else if (!tableItems.isEmpty()) {
                     TableItem tableItem = tableItems.remove(0);
                     mp3Files.add(tableItem);
-                    addNewRow();
                     wait.playFromStart();
                 }
             });
@@ -304,12 +308,8 @@ public class PlayerController implements Initializable {
         playListLoaderTask.run();
     }
 
-    private void addNewRow() {
-        VirtualFlow vf = (VirtualFlow) playlist.lookup(".virtual-flow");
-        if (!playlist.lookup(".scroll-bar").isVisible()) {
-            IndexedCell newRow = vf.getCell(playlist.getCurrentItemsCount() - 1);
-            animateRow(newRow);
-        }
+    private void newRowAdded(JFXTreeTableRow<TableItem> newRow) {
+        animateRow(newRow);
     }
 
     private void animateRow(IndexedCell newRow) {
