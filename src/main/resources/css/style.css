@@ -86,6 +86,10 @@
     -fx-box-border: background-bright-color;
 }
 
+.tree-table-view, .table-view{
+    -fx-background-color: background-color;
+}
+
 .tree-table-view .tree-table-row-cell {
     -fx-background-color: background-color;
     -fx-table-cell-border-color: background-bright-color;
