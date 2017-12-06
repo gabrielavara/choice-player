@@ -5,6 +5,7 @@ public class Constants {
     public static final int TRANSLATE_X = 20;
     public static final double SEEK_VOLUME = 0.1;
     public static final int TABLE_ITEM_ANIMATION_DIFF = 50;
+    public static final int WAIT_TILL_ANIAMTING_ITEMS = 800;
 
     private Constants() {
     }

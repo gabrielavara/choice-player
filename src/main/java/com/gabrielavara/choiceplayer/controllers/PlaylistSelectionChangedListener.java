@@ -18,13 +18,15 @@ import com.jfoenix.controls.JFXSlider;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
+import javafx.scene.control.TreeItem;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
-public class PlaylistSelectionChangedListener implements ListChangeListener<TableItem> {
+public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem<TableItem>> {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlaylistSelectionChangedListener");
     private PlayerController playerController;
 
@@ -33,24 +35,23 @@ public class PlaylistSelectionChangedListener implements ListChangeListener<Tabl
     }
 
     @Override
-    public void onChanged(Change<? extends TableItem> c) {
-        changed(c.getRemovedSize() > 0 ? c.getRemoved().get(0).getMp3() : null, c.getAddedSize() > 0 ? c.getAddedSubList().get(0).getMp3() : null);
+    public void changed(ObservableValue<? extends TreeItem<TableItem>> observable, TreeItem<TableItem> oldValue, TreeItem<TableItem> newValue) {
+        changed(oldValue == null ? null : oldValue.getValue().getMp3(), newValue == null ? null : newValue.getValue().getMp3());
     }
 
     private void changed(Mp3 oldValue, Mp3 newValue) {
         if (newValue == null) {
             return;
         }
-
         log.info("Playlist selection changed from: {}, to {}", oldValue, newValue);
         newValue.setCurrentlyPlaying(true);
-        if (oldValue != null) {
-            oldValue.setCurrentlyPlaying(false);
-        }
         playerController.getArtist().setText(newValue.getArtist());
         playerController.getTitle().setText(newValue.getTitle());
         playerController.getTimeSliderConverter().setLength(newValue.getLength());
 
+        if (oldValue != null) {
+            oldValue.setCurrentlyPlaying(false);
+        }
         play(newValue);
     }
 
