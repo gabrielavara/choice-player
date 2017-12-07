@@ -1,5 +1,34 @@
 package com.gabrielavara.choiceplayer.controllers;
 
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.DELAY;
+import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
+import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
+import static java.util.Arrays.asList;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.MusicService;
@@ -19,6 +48,7 @@ import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.sun.jna.platform.FileUtils;
+
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -31,53 +61,27 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.scene.control.IndexedCell;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.DELAY;
-import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
-import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
-import static java.util.Arrays.asList;
 
 @Getter
 @FXMLController
 public class PlayerController implements Initializable {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlayerController");
 
+    @FXML
+    private HBox rootContainer;
     @FXML
     private StackPane albumArtStackPane;
     @FXML
@@ -282,7 +286,6 @@ public class PlayerController implements Initializable {
     }
 
     private void loadMp3Files() {
-        long loadStart = System.currentTimeMillis();
         Task<List<TableItem>> playListLoaderTask = new Task<List<TableItem>>() {
             @Override
             protected List<TableItem> call() {
@@ -296,9 +299,7 @@ public class PlayerController implements Initializable {
             mp3Files.addAll(tableItems);
 
             PauseTransition wait = new PauseTransition(Duration.millis(DELAY));
-            wait.setOnFinished(ev -> {
-                animateTableItems();
-            });
+            wait.setOnFinished(ev -> animateTableItems());
             wait.play();
         });
 
@@ -306,10 +307,12 @@ public class PlayerController implements Initializable {
     }
 
     private void animateTableItems() {
+        int[] delay = new int[1];
+        delay[0] = DELAY;
         rows.forEach((JFXTreeTableRow<TableItem> row) -> {
             ImageView imageView = createImageView(row);
-            final Point2D animationEndPoint = row.localToScene(new Point2D(0, 0));
-            final Point2D animationStartPoint = row.localToScene(new Point2D(0, TRANSLATE_Y));
+            delay[0] += DELAY;
+            animateRow(row, imageView, delay[0]);
         });
     }
 
@@ -320,22 +323,42 @@ public class PlayerController implements Initializable {
         return imageView;
     }
 
-    private void animateRow(IndexedCell newRow) {
-        newRow.setOpacity(0);
-        newRow.setTranslateY(TRANSLATE_Y);
+    private void animateRow(JFXTreeTableRow<TableItem> row, ImageView imageView, int delay) {
+        row.setOpacity(0);
+        setStartStateForImageView(row, imageView);
+        rootContainer.getChildren().add(imageView);
 
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), newRow);
+        ParallelTransition parallelTransition = getRowTransition(imageView, delay);
+
+        parallelTransition.setOnFinished(e -> {
+            // row.setOpacity(1);
+            // imageView.setOpacity(0);
+            // rootContainer.getChildren().remove(imageView);
+        });
+
+        parallelTransition.play();
+    }
+
+    private void setStartStateForImageView(JFXTreeTableRow<TableItem> row, ImageView imageView) {
+        final Point2D animationStartPoint = row.localToScene(new Point2D(0, 0));
+        final Point2D startInRoot = rootContainer.sceneToLocal(animationStartPoint);
+        imageView.relocate(startInRoot.getX(), startInRoot.getY());
+        imageView.setOpacity(0);
+        imageView.setTranslateY(TRANSLATE_Y);
+    }
+
+    private ParallelTransition getRowTransition(ImageView imageView, int delay) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), imageView);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), newRow);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), imageView);
         translateTransition.setByY(-TRANSLATE_Y);
 
         ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.setDelay(Duration.millis(300));
+        parallelTransition.setDelay(Duration.millis(delay));
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
-
-        parallelTransition.play();
+        return parallelTransition;
     }
 
     public Optional<Mp3> getCurrentlyPlaying() {
