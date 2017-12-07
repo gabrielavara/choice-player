@@ -37,7 +37,7 @@ public class PlayerControllerTest {
     @Test
     public void getNextTrackOnStartup() {
         //when
-        Optional<Mp3> nextTrack = playerController.getNextTrack();
+        Optional<Mp3> nextTrack = playerController.getPlaylistUtil().getNextTrack();
 
         //then
         assertEquals(true, nextTrack.isPresent());
@@ -50,7 +50,7 @@ public class PlayerControllerTest {
         playerController.getMp3Files().get(0).getMp3().setCurrentlyPlaying(true);
 
         //when
-        Optional<Mp3> nextTrack = playerController.getNextTrack();
+        Optional<Mp3> nextTrack = playerController.getPlaylistUtil().getNextTrack();
 
         //then
         assertEquals(true, nextTrack.isPresent());
@@ -63,7 +63,7 @@ public class PlayerControllerTest {
         playerController.getMp3Files().get(3).getMp3().setCurrentlyPlaying(true);
 
         //when
-        Optional<Mp3> nextTrack = playerController.getNextTrack();
+        Optional<Mp3> nextTrack = playerController.getPlaylistUtil().getNextTrack();
 
         //then
         assertEquals(false, nextTrack.isPresent());
@@ -72,7 +72,7 @@ public class PlayerControllerTest {
     @Test
     public void getPreviousTrackOnStartup() {
         //when
-        Optional<Mp3> previousTrack = playerController.getPreviousTrack();
+        Optional<Mp3> previousTrack = playerController.getPlaylistUtil().getPreviousTrack();
 
         //then
         assertEquals(true, previousTrack.isPresent());
@@ -85,7 +85,7 @@ public class PlayerControllerTest {
         playerController.getMp3Files().get(1).getMp3().setCurrentlyPlaying(true);
 
         //when
-        Optional<Mp3> previousTrack = playerController.getPreviousTrack();
+        Optional<Mp3> previousTrack = playerController.getPlaylistUtil().getPreviousTrack();
 
         //then
         assertEquals(true, previousTrack.isPresent());
@@ -98,7 +98,7 @@ public class PlayerControllerTest {
         playerController.getMp3Files().get(0).getMp3().setCurrentlyPlaying(true);
 
         //when
-        Optional<Mp3> previousTrack = playerController.getPreviousTrack();
+        Optional<Mp3> previousTrack = playerController.getPlaylistUtil().getPreviousTrack();
 
         //then
         assertEquals(false, previousTrack.isPresent());

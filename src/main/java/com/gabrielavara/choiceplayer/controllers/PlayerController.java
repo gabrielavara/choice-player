@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -129,6 +128,9 @@ public class PlayerController implements Initializable {
     private ResourceBundle resourceBundle;
     private List<JFXTreeTableRow<TableItem>> rows = new ArrayList<>();
 
+    @Getter
+    private PlaylistUtil playlistUtil = new PlaylistUtil(mp3Files);
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = ResourceBundle.getBundle("language.player");
@@ -204,11 +206,11 @@ public class PlayerController implements Initializable {
     }
 
     public void goToPreviousTrack() {
-        getPreviousTableItem().ifPresent(this::select);
+        playlistUtil.getPreviousTableItem().ifPresent(this::select);
     }
 
     public void goToNextTrack() {
-        getNextTableItem().ifPresent(this::select);
+        playlistUtil.getNextTableItem().ifPresent(this::select);
     }
 
     private void select(TableItem tableItem) {
@@ -361,43 +363,6 @@ public class PlayerController implements Initializable {
         return parallelTransition;
     }
 
-    public Optional<Mp3> getCurrentlyPlaying() {
-        return getCurrentlyPlayingTableItem().map(TableItem::getMp3);
-    }
-
-    private Optional<TableItem> getCurrentlyPlayingTableItem() {
-        List<TableItem> playing = mp3Files.stream().filter(s -> s.getMp3().isCurrentlyPlaying()).collect(Collectors.toList());
-        return playing.size() == 1 ? Optional.of(playing.get(0)) : Optional.empty();
-    }
-
-    Optional<Mp3> getNextTrack() {
-        return getNextTableItem().map(TableItem::getMp3);
-    }
-
-    private Optional<TableItem> getNextTableItem() {
-        OptionalInt first = IntStream.range(0, mp3Files.size())
-                .filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
-        if (first.isPresent()) {
-            int index = first.getAsInt();
-            return mp3Files.size() > index + 1 ? Optional.of(mp3Files.get(index + 1)) : Optional.empty();
-        }
-        return Optional.of(mp3Files.get(0));
-    }
-
-    Optional<Mp3> getPreviousTrack() {
-        return getPreviousTableItem().map(TableItem::getMp3);
-    }
-
-    private Optional<TableItem> getPreviousTableItem() {
-        OptionalInt first = IntStream.range(0, mp3Files.size())
-                .filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
-        if (first.isPresent()) {
-            int index = first.getAsInt();
-            return 0 <= index - 1 ? Optional.of(mp3Files.get(index - 1)) : Optional.empty();
-        }
-        return Optional.of(mp3Files.get(0));
-    }
-
     void setAlbumArt() {
         Optional<byte[]> albumArtData = musicService.getCurrentlyPlayingAlbumArt();
         if (albumArtData.isPresent()) {
@@ -424,10 +389,10 @@ public class PlayerController implements Initializable {
 
     public void moveFileToGoodFolder() {
         log.info("Move file to good folder");
-        getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
             mediaPlayer.stop();
             mediaPlayer.dispose();
-            getNextTableItem().ifPresent(this::select);
+            playlistUtil.getNextTableItem().ifPresent(this::select);
             try {
                 mp3Files.removeAll(tableItem);
                 Path from = Paths.get(tableItem.getMp3().getFilename());
@@ -445,11 +410,11 @@ public class PlayerController implements Initializable {
 
     public void moveFileToRecycleBin() {
         log.info("Move file to recycle bin");
-        getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
             mediaPlayer.stop();
             mediaPlayer.dispose();
             FileUtils fileUtils = FileUtils.getInstance();
-            getNextTableItem().ifPresent(this::select);
+            playlistUtil.getNextTableItem().ifPresent(this::select);
             try {
                 mp3Files.removeAll(tableItem);
                 fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});

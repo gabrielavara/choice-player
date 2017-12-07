@@ -36,12 +36,12 @@ public class MusicService {
 
     public Optional<Mp3> getCurrentlyPlaying() {
         log.info("getCurrentlyPlaying called");
-        return playerController.getCurrentlyPlaying();
+        return playerController.getPlaylistUtil().getCurrentlyPlaying();
     }
 
     public Optional<byte[]> getCurrentlyPlayingAlbumArt() {
         log.info("getCurrentlyPlayingAlbumArt called");
-        Optional<Mp3> currentlyPlaying = playerController.getCurrentlyPlaying();
+        Optional<Mp3> currentlyPlaying = playerController.getPlaylistUtil().getCurrentlyPlaying();
         if (currentlyPlaying.isPresent()) {
             Mp3 mp3 = currentlyPlaying.get();
             Path path = Paths.get(mp3.getFilename());
