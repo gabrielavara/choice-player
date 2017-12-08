@@ -100,7 +100,7 @@ public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem
         mediaPlayer.setOnEndOfMedia(() -> {
             log.info("Reached end of media");
             playerController.getPlayPauseButton().setGraphic(getIcon(PLAY));
-            playerController.goToNextTrack();
+            playerController.playlistChanger.goToNextTrack();
         });
     }
 

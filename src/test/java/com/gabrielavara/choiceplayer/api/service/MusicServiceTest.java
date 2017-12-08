@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.gabrielavara.choiceplayer.controllers.PlayerController;
-import com.gabrielavara.choiceplayer.controllers.PlaylistUtil;
+import com.gabrielavara.choiceplayer.controllers.PlaylistChanger;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
@@ -22,7 +22,7 @@ public class MusicServiceTest {
     @Mock
     private PlayerController playerController;
     @Mock
-    private PlaylistUtil playlistUtilMock;
+    private PlaylistChanger playlistChangerMock;
 
     @Before
     public void setup() {
@@ -61,7 +61,7 @@ public class MusicServiceTest {
             throws IOException, UnsupportedTagException, InvalidDataException {
         Mp3File mp3File = new Mp3File(Paths.get("src/test/resources/mp3folder/" + mp3FileName));
         Mp3 mp3 = new Mp3(mp3File);
-        when(playerController.getPlaylistUtil()).thenReturn(playlistUtilMock);
-        when(playlistUtilMock.getCurrentlyPlaying()).thenReturn(Optional.of(mp3));
+        when(playerController.getPlaylistChanger()).thenReturn(playlistChangerMock);
+        when(playlistChangerMock.getCurrentlyPlaying()).thenReturn(Optional.of(mp3));
     }
 }

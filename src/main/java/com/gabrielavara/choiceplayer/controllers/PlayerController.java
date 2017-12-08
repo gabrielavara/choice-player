@@ -1,26 +1,17 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.DELAY;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
-import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
-import static java.util.Arrays.asList;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
@@ -29,9 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.MusicService;
-import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
@@ -39,33 +28,18 @@ import com.gabrielavara.choiceplayer.views.FlippableImage;
 import com.gabrielavara.choiceplayer.views.TableItem;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableRow;
 import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
-import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.sun.jna.platform.FileUtils;
 
 import de.felixroske.jfxsupport.FXMLController;
-import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -125,35 +99,35 @@ public class PlayerController implements Initializable {
     @Setter
     private Duration duration;
 
-    private ResourceBundle resourceBundle;
-    private List<JFXTreeTableRow<TableItem>> rows = new ArrayList<>();
-
     @Getter
-    private PlaylistUtil playlistUtil = new PlaylistUtil(mp3Files);
+    public PlaylistChanger playlistChanger = new PlaylistChanger(playlist, mp3Files);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        resourceBundle = ResourceBundle.getBundle("language.player");
+        addAlbumArt();
+        setupAlbumAndTitleLabels();
 
-        flippableAlbumArt = new FlippableImage();
-        artist = new AnimatingLabel("artist-label");
-        title = new AnimatingLabel("title-label");
-
-        playlist.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener(this));
-        loadPlaylist();
-
-        albumArtStackPane.getChildren().add(flippableAlbumArt);
-        VBox.setMargin(artist, new Insets(6, 24, 6, 24));
-        VBox.setMargin(title, new Insets(6, 24, 6, 24));
-
-        currentlyPlayingBox.getChildren().add(1, artist);
-        currentlyPlayingBox.getChildren().add(2, title);
+        new PlaylistInitializer(playlist, mp3Files, rootContainer).loadPlaylist();
 
         timeSlider.setLabelFormatter(timeSliderConverter);
 
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
+    }
+
+    private void addAlbumArt() {
+        flippableAlbumArt = new FlippableImage();
+        albumArtStackPane.getChildren().add(flippableAlbumArt);
+    }
+
+    private void setupAlbumAndTitleLabels() {
+        artist = new AnimatingLabel("artist-label");
+        title = new AnimatingLabel("title-label");
+        VBox.setMargin(artist, new Insets(6, 24, 6, 24));
+        VBox.setMargin(title, new Insets(6, 24, 6, 24));
+        currentlyPlayingBox.getChildren().add(1, artist);
+        currentlyPlayingBox.getChildren().add(2, title);
     }
 
     private void animateItems() {
@@ -171,8 +145,8 @@ public class PlayerController implements Initializable {
     }
 
     private void setButtonListeners() {
-        previousTrackButton.setOnMouseClicked(event -> goToPreviousTrack());
-        nextTrackButton.setOnMouseClicked(event -> goToNextTrack());
+        previousTrackButton.setOnMouseClicked(event -> playlistChanger.goToPreviousTrack());
+        nextTrackButton.setOnMouseClicked(event -> playlistChanger.goToNextTrack());
         playPauseButton.setOnMouseClicked(event -> playPause());
         timeSlider.setOnMouseClicked(event -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
@@ -182,7 +156,7 @@ public class PlayerController implements Initializable {
 
     public void playPause() {
         if (mediaPlayer == null) {
-            select(mp3Files.get(0));
+            playlistChanger.select(mp3Files.get(0));
         }
         MediaPlayer.Status status = mediaPlayer.getStatus();
         if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
@@ -203,164 +177,6 @@ public class PlayerController implements Initializable {
         if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
             mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
         }
-    }
-
-    public void goToPreviousTrack() {
-        playlistUtil.getPreviousTableItem().ifPresent(this::select);
-    }
-
-    public void goToNextTrack() {
-        playlistUtil.getNextTableItem().ifPresent(this::select);
-    }
-
-    private void select(TableItem tableItem) {
-        int index = tableItem.getIndex().get() - 1;
-        TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
-        selectionModel.select(index);
-    }
-
-    private void loadPlaylist() {
-        TreeItem<TableItem> root = new RecursiveTreeItem<>(mp3Files, RecursiveTreeObject::getChildren);
-        playlist.setRoot(root);
-        playlist.setShowRoot(false);
-
-        playlist.setRowFactory(row -> {
-            JFXTreeTableRow<TableItem> newRow = new JFXTreeTableRow<>();
-            rows.add(newRow);
-            return newRow;
-        });
-        addColumns();
-        loadMp3Files();
-    }
-
-    private void addColumns() {
-        JFXTreeTableColumn<TableItem, Number> indexColumn = new JFXTreeTableColumn<>("#");
-        indexColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, Number> param) -> {
-            if (indexColumn.validateValue(param)) {
-                return param.getValue().getValue().getIndex();
-            } else {
-                return indexColumn.getComputedValue(param);
-            }
-        });
-
-        JFXTreeTableColumn<TableItem, String> artistColumn = new JFXTreeTableColumn<>(resourceBundle.getString("artist").toUpperCase());
-        artistColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
-            if (artistColumn.validateValue(param)) {
-                return param.getValue().getValue().getArtist();
-            } else {
-                return artistColumn.getComputedValue(param);
-            }
-        });
-
-        JFXTreeTableColumn<TableItem, String> titleColumn = new JFXTreeTableColumn<>(resourceBundle.getString("title").toUpperCase());
-        titleColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
-            if (titleColumn.validateValue(param)) {
-                return param.getValue().getValue().getTitle();
-            } else {
-                return titleColumn.getComputedValue(param);
-            }
-        });
-
-        JFXTreeTableColumn<TableItem, String> lengthColumn = new JFXTreeTableColumn<>(resourceBundle.getString("length").toUpperCase());
-        lengthColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableItem, String> param) -> {
-            if (lengthColumn.validateValue(param)) {
-                return param.getValue().getValue().getLength();
-            } else {
-                return lengthColumn.getComputedValue(param);
-            }
-        });
-
-        indexColumn.setCellFactory((TreeTableColumn<TableItem, Number> param) -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
-        artistColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
-        titleColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
-        lengthColumn.setCellFactory((TreeTableColumn<TableItem, String> param) -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
-
-        indexColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.1));
-        artistColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.35));
-        titleColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.35));
-        lengthColumn.prefWidthProperty().bind(playlist.widthProperty().multiply(0.2));
-
-        List<JFXTreeTableColumn<TableItem, ? extends Serializable>> columns = asList(indexColumn, artistColumn, titleColumn, lengthColumn);
-
-        columns.forEach(c -> c.setResizable(false));
-
-        playlist.getColumns().setAll(columns);
-    }
-
-    private void loadMp3Files() {
-        Task<List<TableItem>> playListLoaderTask = new Task<List<TableItem>>() {
-            @Override
-            protected List<TableItem> call() {
-                List<Mp3> files = new PlaylistLoader().load(Paths.get(ChoicePlayerApplication.getSettings().getFolder()));
-                return IntStream.range(0, files.size()).mapToObj(index -> new TableItem(index + 1, files.get(index))).collect(Collectors.toList());
-            }
-        };
-
-        playListLoaderTask.setOnSucceeded(e -> {
-            List<TableItem> tableItems = playListLoaderTask.getValue();
-            mp3Files.addAll(tableItems);
-
-            PauseTransition wait = new PauseTransition(Duration.millis(DELAY));
-            wait.setOnFinished(ev -> animateTableItems());
-            wait.play();
-        });
-
-        playListLoaderTask.run();
-    }
-
-    private void animateTableItems() {
-        int[] delay = new int[1];
-        delay[0] = DELAY;
-        rows.forEach((JFXTreeTableRow<TableItem> row) -> {
-            ImageView imageView = createImageView(row);
-            delay[0] += DELAY;
-            animateRow(row, imageView, delay[0]);
-        });
-    }
-
-    private ImageView createImageView(final JFXTreeTableRow<TableItem> row) {
-        final Image image = row.snapshot(null, null);
-        final ImageView imageView = new ImageView(image);
-        imageView.setManaged(false);
-        return imageView;
-    }
-
-    private void animateRow(JFXTreeTableRow<TableItem> row, ImageView imageView, int delay) {
-        row.setOpacity(0);
-        setStartStateForImageView(row, imageView);
-        rootContainer.getChildren().add(imageView);
-
-        ParallelTransition parallelTransition = getRowTransition(imageView, delay);
-
-        parallelTransition.setOnFinished(e -> {
-            // row.setOpacity(1);
-            // imageView.setOpacity(0);
-            // rootContainer.getChildren().remove(imageView);
-        });
-
-        parallelTransition.play();
-    }
-
-    private void setStartStateForImageView(JFXTreeTableRow<TableItem> row, ImageView imageView) {
-        final Point2D animationStartPoint = row.localToScene(new Point2D(0, 0));
-        final Point2D startInRoot = rootContainer.sceneToLocal(animationStartPoint);
-        imageView.relocate(startInRoot.getX(), startInRoot.getY());
-        imageView.setOpacity(0);
-        imageView.setTranslateY(TRANSLATE_Y);
-    }
-
-    private ParallelTransition getRowTransition(ImageView imageView, int delay) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), imageView);
-        fadeTransition.setFromValue(0);
-        fadeTransition.setToValue(1);
-
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), imageView);
-        translateTransition.setByY(-TRANSLATE_Y);
-
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.setDelay(Duration.millis(delay));
-        parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
-        return parallelTransition;
     }
 
     void setAlbumArt() {
@@ -389,10 +205,10 @@ public class PlayerController implements Initializable {
 
     public void moveFileToGoodFolder() {
         log.info("Move file to good folder");
-        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+        playlistChanger.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
             mediaPlayer.stop();
             mediaPlayer.dispose();
-            playlistUtil.getNextTableItem().ifPresent(this::select);
+            playlistChanger.getNextTableItem().ifPresent(playlistChanger::select);
             try {
                 mp3Files.removeAll(tableItem);
                 Path from = Paths.get(tableItem.getMp3().getFilename());
@@ -410,11 +226,11 @@ public class PlayerController implements Initializable {
 
     public void moveFileToRecycleBin() {
         log.info("Move file to recycle bin");
-        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+        playlistChanger.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
             mediaPlayer.stop();
             mediaPlayer.dispose();
             FileUtils fileUtils = FileUtils.getInstance();
-            playlistUtil.getNextTableItem().ifPresent(this::select);
+            playlistChanger.getNextTableItem().ifPresent(playlistChanger::select);
             try {
                 mp3Files.removeAll(tableItem);
                 fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
