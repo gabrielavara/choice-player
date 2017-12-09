@@ -8,6 +8,14 @@ public class Constants {
     public static final int ANIMATION_DURATION = 700;
     public static final int DELAY = 100;
     public static final int TRANSLATE_Y = 50;
+    public static final String ICON_SIZE = "56";
+    public static final String ICON_STYLE_CLASS = "icon";
+    public static final String UTF_8 = "UTF-8";
+    public static final String PER = "\\";
+    public static final String SLASH = "/";
+    public static final String PLUS = "+";
+    public static final String ESCAPED_PLUS = "%20";
+    public static final String FILE = "file:/";
 
     private Constants() {
     }

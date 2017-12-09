@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer.controllers;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.Constants;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
@@ -53,8 +54,17 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.IntStream;
 
+import static com.gabrielavara.choiceplayer.Constants.ESCAPED_PLUS;
+import static com.gabrielavara.choiceplayer.Constants.FILE;
+import static com.gabrielavara.choiceplayer.Constants.ICON_SIZE;
+import static com.gabrielavara.choiceplayer.Constants.ICON_STYLE_CLASS;
+import static com.gabrielavara.choiceplayer.Constants.PER;
+import static com.gabrielavara.choiceplayer.Constants.PLUS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
+import static com.gabrielavara.choiceplayer.Constants.SLASH;
+import static com.gabrielavara.choiceplayer.Constants.UTF_8;
 import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
 import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
 
@@ -120,12 +130,6 @@ public class PlayerController implements Initializable {
         Messenger.register(TableItemSelectedMessage.class, this::selectTableItem);
     }
 
-    private void selectTableItem(TableItemSelectedMessage message) {
-        int index = message.getTableItem().getIndex().get() - 1;
-        TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
-        selectionModel.select(index);
-    }
-
     private void selectionChanged(SelectionChangedMessage message) {
         Mp3 mp3 = message.getMp3();
         artist.setText(mp3.getArtist());
@@ -135,9 +139,17 @@ public class PlayerController implements Initializable {
         play(mp3);
     }
 
+    private void selectTableItem(TableItemSelectedMessage message) {
+        int index = message.getTableItem().getIndex().get() - 1;
+        TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
+        selectionModel.select(index);
+        selectionModel.focus(index);
+    }
+
     private void play(Mp3 newValue) {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
+            mediaPlayer.dispose();
         }
         String mediaUrl = createMediaUrl(newValue);
         if (mediaUrl != null) {
@@ -151,8 +163,8 @@ public class PlayerController implements Initializable {
     private String createMediaUrl(Mp3 mp3) {
         try {
             String path = Paths.get(mp3.getFilename()).toAbsolutePath().toString();
-            String mediaUrl = URLEncoder.encode(path, "UTF-8");
-            return "file:/" + mediaUrl.replace("\\", "/").replace("+", "%20");
+            String mediaUrl = URLEncoder.encode(path, UTF_8);
+            return FILE + mediaUrl.replace(PER, SLASH).replace(PLUS, ESCAPED_PLUS);
         } catch (UnsupportedEncodingException e) {
             log.error("Could not play mp3: {}", e.getMessage());
         }
@@ -192,8 +204,8 @@ public class PlayerController implements Initializable {
 
     private MaterialDesignIconView getIcon(MaterialDesignIcon icon) {
         MaterialDesignIconView iconView = new MaterialDesignIconView(icon);
-        iconView.setSize("56");
-        iconView.setStyleClass("icon");
+        iconView.setSize(ICON_SIZE);
+        iconView.setStyleClass(ICON_STYLE_CLASS);
         return iconView;
     }
 
@@ -309,8 +321,6 @@ public class PlayerController implements Initializable {
     public void moveFileToGoodFolder() {
         log.info("Move file to good folder");
         playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
             playlistUtil.getNextTableItem().ifPresent(playlistUtil::select);
             try {
                 mp3Files.removeAll(tableItem);
@@ -319,6 +329,7 @@ public class PlayerController implements Initializable {
                 String fileName = from.getFileName().toString();
                 Path to = Paths.get(folderToMove, fileName);
                 Files.move(from, to);
+                IntStream.range(0, mp3Files.size()).forEach(i -> mp3Files.get(i).setIndex(i + 1));
             } catch (IOException e) {
                 mp3Files.add(tableItem.getIndex().get() - 1, tableItem);
                 log.error("Could not move {}", tableItem.getMp3());
@@ -330,13 +341,12 @@ public class PlayerController implements Initializable {
     public void moveFileToRecycleBin() {
         log.info("Move file to recycle bin");
         playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
             FileUtils fileUtils = FileUtils.getInstance();
             playlistUtil.getNextTableItem().ifPresent(playlistUtil::select);
             try {
                 mp3Files.removeAll(tableItem);
                 fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
+                IntStream.range(0, mp3Files.size()).forEach(i -> mp3Files.get(i).setIndex(i + 1));
             } catch (IOException e) {
                 mp3Files.add(tableItem.getIndex().get() - 1, tableItem);
                 log.error("Could not delete {}", tableItem.getMp3());
