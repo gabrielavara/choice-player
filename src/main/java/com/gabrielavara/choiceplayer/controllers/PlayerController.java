@@ -3,6 +3,7 @@ package com.gabrielavara.choiceplayer.controllers;
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
+import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.util.Messenger;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
@@ -26,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -115,6 +117,13 @@ public class PlayerController implements Initializable {
         animateItems();
         registerGlobalKeyListener();
         Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
+        Messenger.register(TableItemSelectedMessage.class, this::selectTableItem);
+    }
+
+    private void selectTableItem(TableItemSelectedMessage message) {
+        int index = message.getTableItem().getIndex().get() - 1;
+        TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
+        selectionModel.select(index);
     }
 
     private void selectionChanged(SelectionChangedMessage message) {

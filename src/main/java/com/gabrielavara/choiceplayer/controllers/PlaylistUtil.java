@@ -1,6 +1,8 @@
 package com.gabrielavara.choiceplayer.controllers;
 
 import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
+import com.gabrielavara.choiceplayer.util.Messenger;
 import com.gabrielavara.choiceplayer.views.TableItem;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -76,9 +78,7 @@ public class PlaylistUtil {
     }
 
     void select(TableItem tableItem) {
-//        int index = tableItem.getIndex().get() - 1;
-//        TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
-//        selectionModel.select(index);
+        Messenger.send(new TableItemSelectedMessage(tableItem));
     }
 
     public Optional<byte[]> getCurrentlyPlayingAlbumArt() {
