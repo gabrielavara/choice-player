@@ -9,6 +9,10 @@
     -fx-text-fill: foreground-color;
 }
 
+.playlistStackPane {
+    -fx-background: background-color;
+}
+
 .label {
     -fx-text-fill: foreground-bright-color;
     -fx-font-size: 14;

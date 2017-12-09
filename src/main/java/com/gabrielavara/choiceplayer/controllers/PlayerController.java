@@ -1,38 +1,25 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.api.service.MusicService;
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
+import com.gabrielavara.choiceplayer.util.Messenger;
+import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
 import com.gabrielavara.choiceplayer.views.FlippableImage;
 import com.gabrielavara.choiceplayer.views.TableItem;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
+import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.sun.jna.platform.FileUtils;
-
 import de.felixroske.jfxsupport.FXMLController;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import javafx.animation.ParallelTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -43,10 +30,31 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
-import lombok.Setter;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
 
 @Getter
 @FXMLController
@@ -54,11 +62,14 @@ public class PlayerController implements Initializable {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlayerController");
 
     @FXML
+    public JFXSpinner spinner;
+    @FXML
+    public StackPane playlistStackPane;
+    @FXML
     private HBox rootContainer;
     @FXML
     private StackPane albumArtStackPane;
     @FXML
-    @Setter
     private JFXTreeTableView<TableItem> playlist;
     @FXML
     private VBox currentlyPlayingBox;
@@ -79,12 +90,7 @@ public class PlayerController implements Initializable {
     @FXML
     private Label remainingLabel;
 
-    @Autowired
-    private MusicService musicService;
-
-    @Setter
     private MediaPlayer mediaPlayer;
-    @Setter
     private boolean stopRequested;
 
     private FlippableImage flippableAlbumArt = new FlippableImage();
@@ -93,27 +99,115 @@ public class PlayerController implements Initializable {
     @Getter
     private ObservableList<TableItem> mp3Files = FXCollections.observableArrayList();
 
-    @Getter
     private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
 
-    @Setter
     private Duration duration;
 
-    @Getter
-    public PlaylistChanger playlistChanger = new PlaylistChanger(playlist, mp3Files);
+    public PlaylistUtil playlistUtil = new PlaylistUtil(mp3Files);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addAlbumArt();
         setupAlbumAndTitleLabels();
-
-        new PlaylistInitializer(playlist, mp3Files, rootContainer).loadPlaylist();
-
+        new PlaylistInitializer(playlist, mp3Files, rootContainer, spinner, playlistStackPane).loadPlaylist();
         timeSlider.setLabelFormatter(timeSliderConverter);
-
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
+        Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
+    }
+
+    private void selectionChanged(SelectionChangedMessage message) {
+        Mp3 mp3 = message.getMp3();
+        artist.setText(mp3.getArtist());
+        title.setText(mp3.getTitle());
+        timeSliderConverter.setLength(mp3.getLength());
+        setAlbumArt();
+        play(mp3);
+    }
+
+    private void play(Mp3 newValue) {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+        String mediaUrl = createMediaUrl(newValue);
+        if (mediaUrl != null) {
+            Media media = new Media(mediaUrl);
+            mediaPlayer = new MediaPlayer(media);
+            addMediaPlayerListeners(mediaPlayer);
+            mediaPlayer.play();
+        }
+    }
+
+    private String createMediaUrl(Mp3 mp3) {
+        try {
+            String path = Paths.get(mp3.getFilename()).toAbsolutePath().toString();
+            String mediaUrl = URLEncoder.encode(path, "UTF-8");
+            return "file:/" + mediaUrl.replace("\\", "/").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            log.error("Could not play mp3: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    private void addMediaPlayerListeners(MediaPlayer mediaPlayer) {
+        mediaPlayer.currentTimeProperty().addListener(ov -> updateValues());
+
+        mediaPlayer.setOnPlaying(() -> {
+            if (stopRequested) {
+                log.info("Pause requested");
+                mediaPlayer.pause();
+                stopRequested = false;
+            } else {
+                log.info("Play");
+                playPauseButton.setGraphic(getIcon(PAUSE));
+            }
+        });
+
+        mediaPlayer.setOnPaused(() -> {
+            log.info("Paused");
+            playPauseButton.setGraphic(getIcon(PLAY));
+        });
+
+        mediaPlayer.setOnReady(() -> {
+            duration = mediaPlayer.getMedia().getDuration();
+            updateValues();
+        });
+
+        mediaPlayer.setOnEndOfMedia(() -> {
+            log.info("Reached end of media");
+            playPauseButton.setGraphic(getIcon(PLAY));
+            playlistUtil.goToNextTrack();
+        });
+    }
+
+    private MaterialDesignIconView getIcon(MaterialDesignIcon icon) {
+        MaterialDesignIconView iconView = new MaterialDesignIconView(icon);
+        iconView.setSize("56");
+        iconView.setStyleClass("icon");
+        return iconView;
+    }
+
+    private void updateValues() {
+        Platform.runLater(() -> {
+            Duration currentTime = updateElapsedRemainingLabels();
+            updateTimeSlider(currentTime);
+        });
+    }
+
+    private Duration updateElapsedRemainingLabels() {
+        Duration currentTime = mediaPlayer.getCurrentTime();
+        TimeFormatter.Times formattedTimes = TimeFormatter.getFormattedTimes(currentTime, duration);
+        elapsedLabel.setText(formattedTimes.getElapsed());
+        remainingLabel.setText(formattedTimes.getRemaining());
+        return currentTime;
+    }
+
+    private void updateTimeSlider(Duration currentTime) {
+        timeSlider.setDisable(duration.isUnknown());
+        if (!timeSlider.isDisabled() && duration.greaterThan(Duration.ZERO) && !timeSlider.isValueChanging()) {
+            timeSlider.setValue(currentTime.divide(duration.toMillis()).toMillis() * 100.0);
+        }
     }
 
     private void addAlbumArt() {
@@ -145,8 +239,8 @@ public class PlayerController implements Initializable {
     }
 
     private void setButtonListeners() {
-        previousTrackButton.setOnMouseClicked(event -> playlistChanger.goToPreviousTrack());
-        nextTrackButton.setOnMouseClicked(event -> playlistChanger.goToNextTrack());
+        previousTrackButton.setOnMouseClicked(event -> playlistUtil.goToPreviousTrack());
+        nextTrackButton.setOnMouseClicked(event -> playlistUtil.goToNextTrack());
         playPauseButton.setOnMouseClicked(event -> playPause());
         timeSlider.setOnMouseClicked(event -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
@@ -156,7 +250,7 @@ public class PlayerController implements Initializable {
 
     public void playPause() {
         if (mediaPlayer == null) {
-            playlistChanger.select(mp3Files.get(0));
+            playlistUtil.select(mp3Files.get(0));
         }
         MediaPlayer.Status status = mediaPlayer.getStatus();
         if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
@@ -179,8 +273,8 @@ public class PlayerController implements Initializable {
         }
     }
 
-    void setAlbumArt() {
-        Optional<byte[]> albumArtData = musicService.getCurrentlyPlayingAlbumArt();
+    private void setAlbumArt() {
+        Optional<byte[]> albumArtData = playlistUtil.getCurrentlyPlayingAlbumArt();
         if (albumArtData.isPresent()) {
             setExistingAlbumArt(albumArtData.get());
         } else {
@@ -205,10 +299,10 @@ public class PlayerController implements Initializable {
 
     public void moveFileToGoodFolder() {
         log.info("Move file to good folder");
-        playlistChanger.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
             mediaPlayer.stop();
             mediaPlayer.dispose();
-            playlistChanger.getNextTableItem().ifPresent(playlistChanger::select);
+            playlistUtil.getNextTableItem().ifPresent(playlistUtil::select);
             try {
                 mp3Files.removeAll(tableItem);
                 Path from = Paths.get(tableItem.getMp3().getFilename());
@@ -226,11 +320,11 @@ public class PlayerController implements Initializable {
 
     public void moveFileToRecycleBin() {
         log.info("Move file to recycle bin");
-        playlistChanger.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
+        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
             mediaPlayer.stop();
             mediaPlayer.dispose();
             FileUtils fileUtils = FileUtils.getInstance();
-            playlistChanger.getNextTableItem().ifPresent(playlistChanger::select);
+            playlistUtil.getNextTableItem().ifPresent(playlistUtil::select);
             try {
                 mp3Files.removeAll(tableItem);
                 fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
