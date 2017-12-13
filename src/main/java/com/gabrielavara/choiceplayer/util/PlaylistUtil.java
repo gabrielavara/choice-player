@@ -1,16 +1,4 @@
-package com.gabrielavara.choiceplayer.controllers;
-
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
-import com.gabrielavara.choiceplayer.util.Messenger;
-import com.gabrielavara.choiceplayer.views.TableItem;
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
-import javafx.collections.ObservableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.gabrielavara.choiceplayer.util;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,12 +9,25 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
+import com.gabrielavara.choiceplayer.views.TableItem;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
+
+import javafx.collections.ObservableList;
+
 public class PlaylistUtil {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.controllers.PlaylistUtil");
 
     private ObservableList<TableItem> mp3Files;
 
-    PlaylistUtil(ObservableList<TableItem> mp3Files) {
+    public PlaylistUtil(ObservableList<TableItem> mp3Files) {
         this.mp3Files = mp3Files;
     }
 
@@ -38,7 +39,7 @@ public class PlaylistUtil {
         return getCurrentlyPlayingTableItem().map(TableItem::getMp3);
     }
 
-    Optional<TableItem> getCurrentlyPlayingTableItem() {
+    public Optional<TableItem> getCurrentlyPlayingTableItem() {
         List<TableItem> playing = mp3Files.stream().filter(s -> s.getMp3().isCurrentlyPlaying()).collect(Collectors.toList());
         return playing.size() == 1 ? Optional.of(playing.get(0)) : Optional.empty();
     }
@@ -51,7 +52,7 @@ public class PlaylistUtil {
         return getNextTableItem().map(TableItem::getMp3);
     }
 
-    Optional<TableItem> getNextTableItem() {
+    public Optional<TableItem> getNextTableItem() {
         OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
@@ -77,7 +78,7 @@ public class PlaylistUtil {
         return Optional.of(mp3Files.get(0));
     }
 
-    void select(TableItem tableItem) {
+    public void select(TableItem tableItem) {
         Messenger.send(new TableItemSelectedMessage(tableItem));
     }
 

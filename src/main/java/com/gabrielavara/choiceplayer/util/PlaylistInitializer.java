@@ -1,4 +1,17 @@
-package com.gabrielavara.choiceplayer.controllers;
+package com.gabrielavara.choiceplayer.util;
+
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.DELAY;
+import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
+import static java.util.Arrays.asList;
+
+import java.io.Serializable;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
@@ -12,6 +25,7 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
@@ -30,19 +44,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import java.io.Serializable;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.DELAY;
-import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
-import static java.util.Arrays.asList;
-
 public class PlaylistInitializer {
 
     private JFXTreeTableView<TableItem> playlist;
@@ -53,7 +54,8 @@ public class PlaylistInitializer {
     private ResourceBundle resourceBundle;
     private List<JFXTreeTableRow<TableItem>> rows = new ArrayList<>();
 
-    PlaylistInitializer(JFXTreeTableView<TableItem> playlist, ObservableList<TableItem> mp3Files, HBox rootContainer, JFXSpinner spinner, StackPane playlistStackPane) {
+    public PlaylistInitializer(JFXTreeTableView<TableItem> playlist, ObservableList<TableItem> mp3Files, HBox rootContainer, JFXSpinner spinner,
+                    StackPane playlistStackPane) {
         this.playlist = playlist;
         this.mp3Files = mp3Files;
         this.rootContainer = rootContainer;
@@ -62,7 +64,7 @@ public class PlaylistInitializer {
         resourceBundle = ResourceBundle.getBundle("language.player");
     }
 
-    void loadPlaylist() {
+    public void loadPlaylist() {
         TreeItem<TableItem> root = new RecursiveTreeItem<>(mp3Files, RecursiveTreeObject::getChildren);
         playlist.setRoot(root);
         playlist.setShowRoot(false);

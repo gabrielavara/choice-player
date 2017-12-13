@@ -1,11 +1,12 @@
 package com.gabrielavara.choiceplayer.util;
 
-import com.gabrielavara.choiceplayer.controllers.PlayerController;
+import java.util.logging.Level;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-import java.util.logging.Level;
+import com.gabrielavara.choiceplayer.controllers.PlayerController;
 
 public class GlobalKeyListener implements NativeKeyListener {
     private final PlayerController playerController;
@@ -28,9 +29,9 @@ public class GlobalKeyListener implements NativeKeyListener {
         boolean isCtrlPressed = (e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0;
 
         if (e.getKeyCode() == NativeKeyEvent.VC_M && isAltPressed) {
-            playerController.moveFileToGoodFolder();
+            playerController.getGoodFolderFileMover().moveFile();
         } else if (e.getKeyCode() == NativeKeyEvent.VC_D && isAltPressed) {
-            playerController.moveFileToRecycleBin();
+            playerController.getRecycleBinFileMover().moveFile();
         } else if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_UP && isAltPressed && isCtrlPressed) {
             playerController.getPlaylistUtil().goToPreviousTrack();
         } else if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_DOWN && isAltPressed && isCtrlPressed) {

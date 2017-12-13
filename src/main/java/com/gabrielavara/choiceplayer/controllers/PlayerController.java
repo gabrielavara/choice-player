@@ -1,13 +1,34 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.Constants;
+import static com.gabrielavara.choiceplayer.Constants.ICON_SIZE;
+import static com.gabrielavara.choiceplayer.Constants.ICON_STYLE_CLASS;
+import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
+import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
+import com.gabrielavara.choiceplayer.util.FileMover;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
+import com.gabrielavara.choiceplayer.util.GoodFolderFileMover;
+import com.gabrielavara.choiceplayer.util.MediaUrl;
 import com.gabrielavara.choiceplayer.util.Messenger;
+import com.gabrielavara.choiceplayer.util.PlaylistInitializer;
+import com.gabrielavara.choiceplayer.util.PlaylistUtil;
+import com.gabrielavara.choiceplayer.util.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
+import com.gabrielavara.choiceplayer.util.TimeSliderConverter;
 import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
 import com.gabrielavara.choiceplayer.views.FlippableImage;
@@ -16,7 +37,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTreeTableView;
-import com.sun.jna.platform.FileUtils;
+
 import de.felixroske.jfxsupport.FXMLController;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
@@ -37,36 +58,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.stream.IntStream;
-
-import static com.gabrielavara.choiceplayer.Constants.ESCAPED_PLUS;
-import static com.gabrielavara.choiceplayer.Constants.FILE;
-import static com.gabrielavara.choiceplayer.Constants.ICON_SIZE;
-import static com.gabrielavara.choiceplayer.Constants.ICON_STYLE_CLASS;
-import static com.gabrielavara.choiceplayer.Constants.PER;
-import static com.gabrielavara.choiceplayer.Constants.PLUS;
-import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
-import static com.gabrielavara.choiceplayer.Constants.SLASH;
-import static com.gabrielavara.choiceplayer.Constants.UTF_8;
-import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
-import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
 
 @Getter
 @FXMLController
@@ -115,7 +106,10 @@ public class PlayerController implements Initializable {
 
     private Duration duration;
 
-    public PlaylistUtil playlistUtil = new PlaylistUtil(mp3Files);
+    private PlaylistUtil playlistUtil = new PlaylistUtil(mp3Files);
+
+    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, mp3Files);
+    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, mp3Files);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -146,29 +140,18 @@ public class PlayerController implements Initializable {
         selectionModel.focus(index);
     }
 
-    private void play(Mp3 newValue) {
+    private void play(Mp3 mp3) {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.dispose();
         }
-        String mediaUrl = createMediaUrl(newValue);
-        if (mediaUrl != null) {
-            Media media = new Media(mediaUrl);
+        Optional<String> mediaUrl = MediaUrl.create(mp3);
+        if (mediaUrl.isPresent()) {
+            Media media = new Media(mediaUrl.get());
             mediaPlayer = new MediaPlayer(media);
             addMediaPlayerListeners(mediaPlayer);
             mediaPlayer.play();
         }
-    }
-
-    private String createMediaUrl(Mp3 mp3) {
-        try {
-            String path = Paths.get(mp3.getFilename()).toAbsolutePath().toString();
-            String mediaUrl = URLEncoder.encode(path, UTF_8);
-            return FILE + mediaUrl.replace(PER, SLASH).replace(PLUS, ESCAPED_PLUS);
-        } catch (UnsupportedEncodingException e) {
-            log.error("Could not play mp3: {}", e.getMessage());
-        }
-        return null;
     }
 
     private void addMediaPlayerListeners(MediaPlayer mediaPlayer) {
@@ -265,8 +248,8 @@ public class PlayerController implements Initializable {
         playPauseButton.setOnMouseClicked(event -> playPause());
         timeSlider.setOnMouseClicked(event -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
-        likeButton.setOnMouseClicked(event -> moveFileToGoodFolder());
-        dislikeButton.setOnMouseClicked(event -> moveFileToRecycleBin());
+        likeButton.setOnMouseClicked(event -> goodFolderFileMover.moveFile());
+        dislikeButton.setOnMouseClicked(event -> recycleBinFileMover.moveFile());
     }
 
     public void playPause() {
@@ -316,47 +299,6 @@ public class PlayerController implements Initializable {
             log.error("There was a problem registering the native hook.", ex);
         }
         GlobalScreen.addNativeKeyListener(new GlobalKeyListener(this));
-    }
-
-    public void moveFileToGoodFolder() {
-        log.info("Move file to good folder");
-        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
-            playlistUtil.getNextTableItem().ifPresent(playlistUtil::select);
-            try {
-                mp3Files.removeAll(tableItem);
-                Path from = Paths.get(tableItem.getMp3().getFilename());
-                String folderToMove = ChoicePlayerApplication.getSettings().getFolderToMove();
-                String fileName = from.getFileName().toString();
-                Path to = Paths.get(folderToMove, fileName);
-                Files.move(from, to);
-                IntStream.range(0, mp3Files.size()).forEach(i -> mp3Files.get(i).setIndex(i + 1));
-            } catch (IOException e) {
-                mp3Files.add(tableItem.getIndex().get() - 1, tableItem);
-                log.error("Could not move {}", tableItem.getMp3());
-                sortPlaylist();
-            }
-        });
-    }
-
-    public void moveFileToRecycleBin() {
-        log.info("Move file to recycle bin");
-        playlistUtil.getCurrentlyPlayingTableItem().ifPresent(tableItem -> {
-            FileUtils fileUtils = FileUtils.getInstance();
-            playlistUtil.getNextTableItem().ifPresent(playlistUtil::select);
-            try {
-                mp3Files.removeAll(tableItem);
-                fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
-                IntStream.range(0, mp3Files.size()).forEach(i -> mp3Files.get(i).setIndex(i + 1));
-            } catch (IOException e) {
-                mp3Files.add(tableItem.getIndex().get() - 1, tableItem);
-                log.error("Could not delete {}", tableItem.getMp3());
-                sortPlaylist();
-            }
-        });
-    }
-
-    private void sortPlaylist() {
-        mp3Files.sort(Comparator.comparingInt(o -> o.getIndex().get()));
     }
 
     public void rewind() {

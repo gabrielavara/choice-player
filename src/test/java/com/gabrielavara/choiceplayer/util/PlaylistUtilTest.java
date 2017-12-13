@@ -1,12 +1,6 @@
-package com.gabrielavara.choiceplayer.controllers;
+package com.gabrielavara.choiceplayer.util;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
-import com.gabrielavara.choiceplayer.views.TableItem;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -14,7 +8,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
+import com.gabrielavara.choiceplayer.views.TableItem;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class PlaylistUtilTest {
     private ObservableList<Mp3> mp3List;

@@ -1,9 +1,9 @@
-package com.gabrielavara.choiceplayer.controllers;
+package com.gabrielavara.choiceplayer.util;
+
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class TimeSliderConverterTest {
     private static final double EPSILON = 1e-15;
@@ -15,7 +15,7 @@ public class TimeSliderConverterTest {
     }
 
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         // when
         String label = converter.toString(50d);
 
@@ -24,7 +24,7 @@ public class TimeSliderConverterTest {
     }
 
     @Test
-    public void fromString() throws Exception {
+    public void fromString() {
         // when
         Double value = converter.fromString("0:30");
 

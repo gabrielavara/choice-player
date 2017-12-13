@@ -1,6 +1,4 @@
-package com.gabrielavara.choiceplayer.controllers;
-
-import com.gabrielavara.choiceplayer.util.TimeFormatter;
+package com.gabrielavara.choiceplayer.util;
 
 import javafx.util.StringConverter;
 
@@ -32,7 +30,7 @@ public class TimeSliderConverter extends StringConverter<Double> {
         return (double) sumSeconds * 100000 / length;
     }
 
-    void setLength(long length) {
+    public void setLength(long length) {
         this.length = length;
     }
 }
