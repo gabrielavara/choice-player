@@ -3,40 +3,14 @@ package com.gabrielavara.choiceplayer.api.service;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.FileTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
-public class PlaylistLoaderTest {
-    private final Path olderFilePath = Paths.get("src/test/resources/mp3folder");
-    private final Path newerFilePath = Paths.get("src/test/resources/mp3folder/testNewer.mp3");
-    private final Path album1Path = Paths.get("src/test/resources/mp3folder/testAlbum1.mp3");
-    private final Path album2Path = Paths.get("src/test/resources/mp3folder/testAlbum2.mp3");
-
-    @Before
-    public void setup() throws IOException {
-        Date now = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-        Date twoMinutesAgo = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).minusMinutes(2).toInstant());
-        Date oneMinuteAgo = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).minusMinutes(1).toInstant());
-        setFileCreationDate(newerFilePath, now);
-        setFileCreationDate(album1Path, twoMinutesAgo);
-        setFileCreationDate(album2Path, oneMinuteAgo);
-    }
-
-    private void setFileCreationDate(Path filePath, Date creationDate) throws IOException {
-        BasicFileAttributeView attributes = Files.getFileAttributeView(filePath, BasicFileAttributeView.class);
-        FileTime time = FileTime.fromMillis(creationDate.getTime());
-        attributes.setTimes(time, time, time);
-    }
+public class PlaylistLoaderTest extends PlaylistTestInitializer {
+    private final static Path testResourcesFolder = Paths.get("src/test/resources/mp3folder");
 
     @Test
     public void testLoad() throws IOException {
@@ -44,7 +18,7 @@ public class PlaylistLoaderTest {
         PlaylistLoader playlistLoader = new PlaylistLoader();
 
         // when
-        List<Mp3> mp3Files = playlistLoader.load(olderFilePath);
+        List<Mp3> mp3Files = playlistLoader.load(testResourcesFolder);
 
         // then
         assertEquals(4, mp3Files.size());

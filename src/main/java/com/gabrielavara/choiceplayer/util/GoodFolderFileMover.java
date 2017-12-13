@@ -29,6 +29,7 @@ public class GoodFolderFileMover extends FileMover {
         String folderToMove = getTarget();
         String fileName = from.getFileName().toString();
         Path to = Paths.get(folderToMove, fileName);
-        Files.move(from, to, REPLACE_EXISTING);
+        Files.copy(from, to, REPLACE_EXISTING);
+        Files.delete(from);
     }
 }
