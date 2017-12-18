@@ -1,13 +1,14 @@
 package com.gabrielavara.choiceplayer.util;
 
+import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.DELAY;
-import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
+import static com.gabrielavara.choiceplayer.Constants.LESS_DELAY;
 import static java.util.Arrays.asList;
 
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -25,40 +26,31 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
+import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.geometry.Point2D;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class PlaylistInitializer {
 
     private JFXTreeTableView<TableItem> playlist;
     private ObservableList<TableItem> mp3Files;
-    private HBox rootContainer;
     private JFXSpinner spinner;
     private StackPane playlistStackPane;
     private ResourceBundle resourceBundle;
     private List<JFXTreeTableRow<TableItem>> rows = new ArrayList<>();
 
-    public PlaylistInitializer(JFXTreeTableView<TableItem> playlist, ObservableList<TableItem> mp3Files, HBox rootContainer, JFXSpinner spinner,
-                    StackPane playlistStackPane) {
+    public PlaylistInitializer(JFXTreeTableView<TableItem> playlist, ObservableList<TableItem> mp3Files, JFXSpinner spinner,
+                               StackPane playlistStackPane) {
         this.playlist = playlist;
         this.mp3Files = mp3Files;
-        this.rootContainer = rootContainer;
         this.spinner = spinner;
         this.playlistStackPane = playlistStackPane;
         resourceBundle = ResourceBundle.getBundle("language.player");
@@ -71,6 +63,7 @@ public class PlaylistInitializer {
 
         playlist.setRowFactory(row -> {
             JFXTreeTableRow<TableItem> newRow = new JFXTreeTableRow<>();
+            newRow.setOpacity(ALMOST_TOTALLY_HIDDEN);
             rows.add(newRow);
             return newRow;
         });
@@ -146,7 +139,7 @@ public class PlaylistInitializer {
             List<TableItem> tableItems = playListLoaderTask.getValue();
             mp3Files.addAll(tableItems);
 
-            PauseTransition wait = new PauseTransition(Duration.millis(1));
+            PauseTransition wait = new PauseTransition(Duration.millis(50));
             wait.setOnFinished(ev -> {
                 animateOutSpinner();
                 animateTableItems();
@@ -166,69 +159,31 @@ public class PlaylistInitializer {
     private void animateTableItems() {
         int[] delay = new int[1];
         delay[0] = 0;
-        final Color backgroundColor = getBackgroundColor();
+        Collections.shuffle(rows);
+        int i = rows.size() - 1;
         rows.forEach((JFXTreeTableRow<TableItem> row) -> {
-            ImageView imageView = createImageView(row, backgroundColor);
-            delay[0] += DELAY;
-            animateRow(row, imageView, delay[0]);
+            animateRow(row, delay[0]);
+            delay[0] += LESS_DELAY;
         });
     }
 
-    private Color getBackgroundColor() {
-        java.awt.Color color = ChoicePlayerApplication.getSettings().getTheme().getStyle().getBackgroundColor();
-        double r = (double) color.getRed() / 255;
-        double g = (double) color.getGreen() / 255;
-        double b = (double) color.getBlue() / 255;
-        double a = (double) color.getAlpha() / 255;
-        return new Color(r, g, b, a);
-    }
-
-    private ImageView createImageView(final JFXTreeTableRow<TableItem> row, Color color) {
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(color);
-        final Image image = row.snapshot(params, new WritableImage((int) row.getWidth() - 12, (int) row.getHeight()));
-        final ImageView imageView = new ImageView(image);
-        imageView.setStyle("-fx-background-color: BLACK");
-        imageView.setManaged(false);
-        return imageView;
-    }
-
-    private void animateRow(JFXTreeTableRow<TableItem> row, ImageView imageView, int delay) {
-        row.setOpacity(0);
-        setStartStateForImageView(row, imageView);
-        rootContainer.getChildren().add(imageView);
-
-        ParallelTransition parallelTransition = getRowTransition(imageView, delay);
-
-        parallelTransition.setOnFinished(e -> {
+    private void animateRow(JFXTreeTableRow<TableItem> row, int delay) {
+        Transition transition = getRowTransition(row, delay);
+        transition.setOnFinished(e -> {
             row.setOpacity(1);
-            imageView.setOpacity(0);
-            rootContainer.getChildren().remove(imageView);
+            if (rows.indexOf(row) == rows.size() - 1) {
+                playlist.setRowFactory(r -> new JFXTreeTableRow<>());
+            }
         });
-
-        parallelTransition.play();
+        transition.play();
     }
 
-    private void setStartStateForImageView(JFXTreeTableRow<TableItem> row, ImageView imageView) {
-        final Point2D animationStartPoint = row.localToScene(new Point2D(0, -13));
-        final Point2D startInRoot = rootContainer.sceneToLocal(animationStartPoint);
-        imageView.relocate(startInRoot.getX(), startInRoot.getY());
-        imageView.setOpacity(0);
-        imageView.setTranslateY(TRANSLATE_Y);
-    }
-
-    private ParallelTransition getRowTransition(ImageView imageView, int delay) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), imageView);
-        fadeTransition.setFromValue(0);
+    private Transition getRowTransition(JFXTreeTableRow<TableItem> tableRow, int delay) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), tableRow);
+        fadeTransition.setFromValue(ALMOST_TOTALLY_HIDDEN);
         fadeTransition.setToValue(1);
-
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), imageView);
-        translateTransition.setByY(-TRANSLATE_Y);
-
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.setDelay(Duration.millis(delay));
-        parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
-        return parallelTransition;
+        fadeTransition.setDelay(Duration.millis(delay));
+        return fadeTransition;
     }
 
     private ParallelTransition getSpinnerOutAnimation() {

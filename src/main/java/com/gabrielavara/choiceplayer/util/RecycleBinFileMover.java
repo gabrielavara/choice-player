@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import com.gabrielavara.choiceplayer.views.TableItem;
 import com.sun.jna.platform.FileUtils;
-
 import javafx.collections.ObservableList;
 
 public class RecycleBinFileMover extends FileMover {
@@ -22,6 +21,6 @@ public class RecycleBinFileMover extends FileMover {
     @Override
     protected void moveFile(TableItem tableItem) throws IOException {
         FileUtils fileUtils = FileUtils.getInstance();
-        fileUtils.moveToTrash(new File[] {new File(tableItem.getMp3().getFilename())});
+        fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
     }
 }

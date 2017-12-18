@@ -1,21 +1,13 @@
 package com.gabrielavara.choiceplayer.util;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
-import java.util.concurrent.Callable;
 import java.util.stream.IntStream;
 
+import com.gabrielavara.choiceplayer.views.TableItem;
+import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.choiceplayer.views.TableItem;
-
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 
 public abstract class FileMover {
     private static final int WAIT_MS = 500;
@@ -44,55 +36,6 @@ public abstract class FileMover {
                 sortPlaylist();
             }
         });
-    }
-
-    void delete(final String url) {
-        Path path = Paths.get(url);
-
-        Task<Boolean> deleterTask = new Task<Boolean>() {
-            @Override
-            protected Boolean call() {
-                boolean deleted = false;
-                int count = 0;
-
-                while (!deleted && count < MAX_WAIT_COUNT) {
-                    try {
-                        Files.delete(path);
-                        deleted = true;
-                    } catch (IOException e) {
-                        log.debug("Could not delete {}, wait a little...", path);
-                        sleep();
-                        count++;
-                    }
-                }
-
-                return deleted;
-            }
-        };
-
-        deleterTask.setOnSucceeded(e -> {
-            Boolean couldDelete = deleterTask.getValue();
-            if (!couldDelete) {
-                log.info("Could not delete {}", url);
-                new File(url).deleteOnExit();
-            } else {
-                log.info("Deleted {}", url);
-            }
-        });
-
-        new Thread(deleterTask).start();
-
-        // Awaitility.with().pollInterval(500, MILLISECONDS).await().atMost(5, SECONDS).until(deleteFile(path), CoreMatchers.equalTo(false));
-    }
-
-    private Callable<Boolean> deleteFile(Path path) {
-        try {
-            Files.delete(path);
-            log.info("File deleted {}", path);
-        } catch (IOException e) {
-            log.debug("Could not delete {}, wait a little...", path);
-        }
-        return () -> path.toFile().exists();
     }
 
     private void sleep() {

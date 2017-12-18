@@ -5,6 +5,11 @@ import static com.gabrielavara.choiceplayer.Constants.ICON_STYLE_CLASS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
 import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
 import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
+import static javafx.scene.media.MediaPlayer.Status.HALTED;
+import static javafx.scene.media.MediaPlayer.Status.PAUSED;
+import static javafx.scene.media.MediaPlayer.Status.READY;
+import static javafx.scene.media.MediaPlayer.Status.STOPPED;
+import static javafx.scene.media.MediaPlayer.Status.UNKNOWN;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -108,12 +113,13 @@ public class PlayerController implements Initializable {
 
     private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, mp3Files);
     private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, mp3Files);
+    private boolean timeSliderUpdateDisabled;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addAlbumArt();
         setupAlbumAndTitleLabels();
-        new PlaylistInitializer(playlist, mp3Files, rootContainer, spinner, playlistStackPane).loadPlaylist();
+        new PlaylistInitializer(playlist, mp3Files, spinner, playlistStackPane).loadPlaylist();
         timeSlider.setLabelFormatter(timeSliderConverter);
         setButtonListeners();
         animateItems();
@@ -203,6 +209,9 @@ public class PlayerController implements Initializable {
     }
 
     private void updateValues() {
+        if (timeSliderUpdateDisabled) {
+            return;
+        }
         Platform.runLater(() -> {
             Duration currentTime = updateElapsedRemainingLabels();
             updateTimeSlider(currentTime);
@@ -256,10 +265,20 @@ public class PlayerController implements Initializable {
         previousTrackButton.setOnMouseClicked(event -> playlistUtil.goToPreviousTrack());
         nextTrackButton.setOnMouseClicked(event -> playlistUtil.goToNextTrack());
         playPauseButton.setOnMouseClicked(event -> playPause());
+        timeSlider.setOnMousePressed(event -> disableTimeSliderUpdate());
+        timeSlider.setOnMouseReleased(event -> enableTimeSliderUpdate());
         timeSlider.setOnMouseClicked(event -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(event -> goodFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(event -> recycleBinFileMover.moveFile());
+    }
+
+    private void enableTimeSliderUpdate() {
+        timeSliderUpdateDisabled = false;
+    }
+
+    private void disableTimeSliderUpdate() {
+        timeSliderUpdateDisabled = true;
     }
 
     public void playPause() {
@@ -267,11 +286,10 @@ public class PlayerController implements Initializable {
             playlistUtil.select(mp3Files.get(0));
         }
         MediaPlayer.Status status = mediaPlayer.getStatus();
-        if (status == MediaPlayer.Status.UNKNOWN || status == MediaPlayer.Status.HALTED) {
+        if (status == UNKNOWN || status == HALTED) {
             return;
         }
-        if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY
-                || status == MediaPlayer.Status.STOPPED) {
+        if (status == PAUSED || status == READY || status == STOPPED) {
             mediaPlayer.play();
         } else {
             mediaPlayer.pause();
