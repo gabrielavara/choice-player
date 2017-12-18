@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.stream.IntStream;
 
+import com.gabrielavara.choiceplayer.views.TableItem;
+import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.choiceplayer.views.TableItem;
-
-import javafx.collections.ObservableList;
 
 public abstract class FileMover {
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");

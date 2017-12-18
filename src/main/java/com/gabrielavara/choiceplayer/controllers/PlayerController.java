@@ -11,11 +11,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
@@ -37,7 +32,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTreeTableView;
-
 import de.felixroske.jfxsupport.FXMLController;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
@@ -58,6 +52,10 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Getter
 @FXMLController
@@ -144,13 +142,25 @@ public class PlayerController implements Initializable {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.dispose();
+            waitForDispose();
         }
+
         Optional<String> mediaUrl = MediaUrl.create(mp3);
         if (mediaUrl.isPresent()) {
             Media media = new Media(mediaUrl.get());
             mediaPlayer = new MediaPlayer(media);
             addMediaPlayerListeners(mediaPlayer);
             mediaPlayer.play();
+        }
+    }
+
+    private void waitForDispose() {
+        while (!MediaPlayer.Status.DISPOSED.equals(mediaPlayer.statusProperty().get())) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                log.error("Sleep interrupted");
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package com.gabrielavara.choiceplayer.util;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +10,6 @@ import java.nio.file.Paths;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.views.TableItem;
-
 import javafx.collections.ObservableList;
 
 public class GoodFolderFileMover extends FileMover {
@@ -30,6 +30,10 @@ public class GoodFolderFileMover extends FileMover {
         String fileName = from.getFileName().toString();
         Path to = Paths.get(folderToMove, fileName);
         Files.copy(from, to, REPLACE_EXISTING);
-        Files.delete(from);
+        File file = new File(from.toString());
+        boolean couldDelete = file.delete();
+        if (!couldDelete) {
+            file.deleteOnExit();
+        }
     }
 }
