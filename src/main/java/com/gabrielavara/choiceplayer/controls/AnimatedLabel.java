@@ -1,6 +1,6 @@
-package com.gabrielavara.choiceplayer.views;
+package com.gabrielavara.choiceplayer.controls;
 
-import static com.gabrielavara.choiceplayer.Constants.LABEL_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_X;
 
 import javafx.animation.FadeTransition;
@@ -11,11 +11,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-public class AnimatingLabel extends StackPane {
+public class AnimatedLabel extends StackPane {
     private Label first;
     private Label second;
 
-    public AnimatingLabel(String styleClass) {
+    public AnimatedLabel(String styleClass) {
         first = new Label();
         second = new Label();
 
@@ -33,31 +33,31 @@ public class AnimatingLabel extends StackPane {
     }
 
     private void animateIn(Label label) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LABEL_ANIMATION_DURATION), label);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), label);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LABEL_ANIMATION_DURATION), label);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), label);
         translateTransition.setByX(-TRANSLATE_X);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
 
-        parallelTransition.play();
         parallelTransition.setOnFinished(event -> {
             Label temp = first;
             first = second;
             second = temp;
             second.setTranslateX(TRANSLATE_X);
         });
+        parallelTransition.play();
     }
 
     private void animateOut(Label label) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LABEL_ANIMATION_DURATION), label);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), label);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LABEL_ANIMATION_DURATION), label);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), label);
         translateTransition.setByX(-TRANSLATE_X);
 
         ParallelTransition parallelTransition = new ParallelTransition();

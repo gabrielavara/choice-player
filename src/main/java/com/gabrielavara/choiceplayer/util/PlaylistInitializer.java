@@ -2,7 +2,7 @@ package com.gabrielavara.choiceplayer.util;
 
 import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.LESS_DELAY;
+import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
 import static java.util.Arrays.asList;
 
 import java.io.Serializable;
@@ -26,6 +26,7 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
@@ -160,10 +161,9 @@ public class PlaylistInitializer {
         int[] delay = new int[1];
         delay[0] = 0;
         Collections.shuffle(rows);
-        int i = rows.size() - 1;
         rows.forEach((JFXTreeTableRow<TableItem> row) -> {
             animateRow(row, delay[0]);
-            delay[0] += LESS_DELAY;
+            delay[0] += SHORT_DELAY;
         });
     }
 

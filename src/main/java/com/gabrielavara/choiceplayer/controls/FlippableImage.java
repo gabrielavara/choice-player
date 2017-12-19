@@ -1,4 +1,10 @@
-package com.gabrielavara.choiceplayer.views;
+package com.gabrielavara.choiceplayer.controls;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -9,15 +15,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class FlippableImage extends StackPane {
     private static final int SIZE = 350;
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.views.FlippableImage");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.FlippableImage");
 
     private Timeline flipForward;
     private Timeline flipBackward;

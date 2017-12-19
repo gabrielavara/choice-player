@@ -1,22 +1,38 @@
 package com.gabrielavara.choiceplayer.controllers;
 
+import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_MAX_WAIT_S;
+import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.ICON_SIZE;
 import static com.gabrielavara.choiceplayer.Constants.ICON_STYLE_CLASS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
 import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
 import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
 import static javafx.scene.media.MediaPlayer.Status.HALTED;
 import static javafx.scene.media.MediaPlayer.Status.PAUSED;
 import static javafx.scene.media.MediaPlayer.Status.READY;
 import static javafx.scene.media.MediaPlayer.Status.STOPPED;
 import static javafx.scene.media.MediaPlayer.Status.UNKNOWN;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
+import com.gabrielavara.choiceplayer.controls.FlippableImage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
 import com.gabrielavara.choiceplayer.util.FileMover;
@@ -29,14 +45,13 @@ import com.gabrielavara.choiceplayer.util.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.util.TimeSliderConverter;
-import com.gabrielavara.choiceplayer.views.AnimatingLabel;
 import com.gabrielavara.choiceplayer.views.Animator;
-import com.gabrielavara.choiceplayer.views.FlippableImage;
 import com.gabrielavara.choiceplayer.views.TableItem;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTreeTableView;
+
 import de.felixroske.jfxsupport.FXMLController;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
@@ -57,10 +72,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Getter
 @FXMLController
@@ -100,8 +111,8 @@ public class PlayerController implements Initializable {
     private boolean stopRequested;
 
     private FlippableImage flippableAlbumArt = new FlippableImage();
-    private AnimatingLabel artist;
-    private AnimatingLabel title;
+    private AnimatedLabel artist;
+    private AnimatedLabel title;
     @Getter
     private ObservableList<TableItem> mp3Files = FXCollections.observableArrayList();
 
@@ -161,13 +172,16 @@ public class PlayerController implements Initializable {
     }
 
     private void waitForDispose() {
-        while (!MediaPlayer.Status.DISPOSED.equals(mediaPlayer.statusProperty().get())) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                log.error("Sleep interrupted");
-            }
+        try {
+            Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS).until(getStatus(),
+                            equalTo(DISPOSED));
+        } catch (ConditionTimeoutException e) {
+            log.debug("Media player not disposed :( {}");
         }
+    }
+
+    private Callable<MediaPlayer.Status> getStatus() {
+        return () -> mediaPlayer.statusProperty().get();
     }
 
     private void addMediaPlayerListeners(MediaPlayer mediaPlayer) {
@@ -239,8 +253,8 @@ public class PlayerController implements Initializable {
     }
 
     private void setupAlbumAndTitleLabels() {
-        artist = new AnimatingLabel("artist-label");
-        title = new AnimatingLabel("title-label");
+        artist = new AnimatedLabel("artist-label");
+        title = new AnimatedLabel("title-label");
         VBox.setMargin(artist, new Insets(6, 24, 6, 24));
         VBox.setMargin(title, new Insets(6, 24, 6, 24));
         currentlyPlayingBox.getChildren().add(1, artist);
