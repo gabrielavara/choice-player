@@ -1,5 +1,7 @@
 package com.gabrielavara.choiceplayer.util;
 
+import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_MAX_WAIT_S;
+import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_WAIT_MS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -10,12 +12,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
-import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.views.TableItem;
-import javafx.collections.ObservableList;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import org.hamcrest.CoreMatchers;
+
+import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.views.TableItem;
+
+import javafx.collections.ObservableList;
 
 public class GoodFolderFileMover extends FileMover {
 
@@ -41,7 +45,7 @@ public class GoodFolderFileMover extends FileMover {
     void delete(final String url) {
         Path path = Paths.get(url);
         try {
-            Awaitility.with().pollInterval(500, MILLISECONDS).await().atMost(5, SECONDS)
+            Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS)
                     .until(deleteFile(path), CoreMatchers.equalTo(false));
         } catch (ConditionTimeoutException e) {
             log.debug("Could not delete :( {}", path);

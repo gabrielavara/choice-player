@@ -18,6 +18,8 @@ public class Constants {
     public static final String ESCAPED_PLUS = "%20";
     public static final String FILE = "file:/";
     public static final double ALMOST_TOTALLY_HIDDEN = 0.0001;
+    public static final int FILE_MOVER_WAIT_MS = 500;
+    public static final int FILE_MOVER_MAX_WAIT_S = 5;
 
     private Constants() {
     }
