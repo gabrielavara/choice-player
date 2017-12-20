@@ -25,7 +25,7 @@ public class PlaylistUtilTest {
 
     @Before
     public void setup() {
-        List<Mp3> files = new PlaylistLoader().load(Paths.get("src/test/resources/mp3folder"));
+        List<Mp3> files = new PlaylistLoader().load(Paths.get("src/test/resources/mp3"));
         mp3List = FXCollections.observableList(files);
         List<TableItem> tableItems = IntStream.range(0, files.size()).mapToObj(index -> new TableItem(index + 1, files.get(index)))
                 .collect(Collectors.toList());

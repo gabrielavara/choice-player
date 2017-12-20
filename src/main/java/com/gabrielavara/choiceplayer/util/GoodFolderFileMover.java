@@ -5,7 +5,6 @@ import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_WAIT_MS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,19 +44,19 @@ public class GoodFolderFileMover extends FileMover {
     void delete(final String url) {
         Path path = Paths.get(url);
         try {
-             Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS)
-             .until(fileDeleted(path));
+            Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS).until(fileDeleted(path));
+            log.info("File deleted {}", path);
         } catch (ConditionTimeoutException e) {
-            log.debug("Could not delete :( {}", path);
+            log.error("Could not delete :( {}", path);
         }
     }
 
     private Callable<Boolean> fileDeleted(Path path) {
         try {
             Files.delete(path);
-            log.info("File deleted {}", path);
+            log.info("File could be deleted {}", path);
         } catch (IOException e) {
-            log.debug("Could not delete {}, wait a little...", path);
+            log.error("Could not delete {}, wait a little...", path);
         }
         return () -> !path.toFile().exists();
     }

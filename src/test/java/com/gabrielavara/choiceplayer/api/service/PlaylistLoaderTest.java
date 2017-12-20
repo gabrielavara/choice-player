@@ -2,7 +2,6 @@ package com.gabrielavara.choiceplayer.api.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -10,10 +9,10 @@ import java.util.List;
 import org.junit.Test;
 
 public class PlaylistLoaderTest extends PlaylistTestInitializer {
-    private final static Path testResourcesFolder = Paths.get("src/test/resources/mp3folder");
+    private final static Path testResourcesFolder = Paths.get("src/test/resources/mp3");
 
     @Test
-    public void testLoad() throws IOException {
+    public void testLoad() {
         // given
         PlaylistLoader playlistLoader = new PlaylistLoader();
 

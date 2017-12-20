@@ -30,7 +30,6 @@ import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,7 @@ import javafx.scene.media.MediaPlayer;
 public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.util.GoodFolderFileMoverTest");
     private static final String C_DRIVE = "C:\\";
-    private static final String TEST_RESOURCES = "src/test/resources/mp3folder";
+    private static final String TEST_RESOURCES = "src/test/resources/mp3";
     private static final String TEST_FILE = "testOlder.mp3";
     private static final String TEMP = "temp";
     private ObservableList<TableItem> mp3Files = FXCollections.observableArrayList();
@@ -113,9 +112,8 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
         createMediaPlayer(mp3);
     }
 
-    @Ignore
     @Test
-    public void testMoveFileToGoodFolder() throws IOException, InterruptedException {
+    public void testMoveFileToGoodFolder() throws IOException {
         Path tempPath = Paths.get(temp + "\\" + TEST_FILE);
         Path resourcesPath = Paths.get(TEST_RESOURCES + "\\" + TEST_FILE);
 
@@ -135,18 +133,8 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
             assertTrue(mp3Files.get(0).getMp3().isCurrentlyPlaying());
         } finally {
             // tear down
-            if (mp3Files.size() == 4) {
-                Files.delete(tempPath);
-            } else {
-                if (Files.notExists(resourcesPath)) {
-                    Files.copy(tempPath, resourcesPath);
-                }
-                log.debug("Test tear down");
-                goodFolderFileMover.delete(temp + "\\" + TEST_FILE);
-            }
-            if (!didTempExist) {
-                assertTrue(temp.delete());
-            }
+            log.debug("Test tear down");
+            tearDown(tempPath, resourcesPath);
         }
     }
 
@@ -155,12 +143,27 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     }
 
     private void createMediaPlayer(Mp3 mp3) {
+        disposeMediaPlayer();
+        loadBeep();
+        disposeMediaPlayer();
+        loadMediaPlayer(mp3);
+    }
+
+    private void loadBeep() {
+        Optional<String> mediaUrl = MediaUrl.create(Paths.get("src/main/resources/mp3/beep.mp3"));
+        mediaUrl.ifPresent(url -> mediaPlayer = new MediaPlayer(new Media(url)));
+    }
+
+    private void loadMediaPlayer(Mp3 mp3) {
+        Optional<String> mediaUrl = MediaUrl.create(mp3);
+        mediaUrl.ifPresent(url -> mediaPlayer = new MediaPlayer(new Media(url)));
+    }
+
+    private void disposeMediaPlayer() {
         if (mediaPlayer != null) {
             mediaPlayer.dispose();
             waitForDispose();
         }
-        Optional<String> s = MediaUrl.create(mp3);
-        s.ifPresent(url -> mediaPlayer = new MediaPlayer(new Media(url)));
     }
 
     private void waitForDispose() {
@@ -169,6 +172,20 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
                             .until(() -> mediaPlayer.statusProperty().get(), equalTo(DISPOSED));
         } catch (ConditionTimeoutException e) {
             log.debug("Media player not disposed :( {}");
+        }
+    }
+
+    private void tearDown(Path tempPath, Path resourcesPath) throws IOException {
+        if (mp3Files.size() == 4) {
+            goodFolderFileMover.delete(temp + "\\" + TEST_FILE);
+        } else {
+            if (Files.notExists(resourcesPath)) {
+                Files.copy(tempPath, resourcesPath);
+            }
+            goodFolderFileMover.delete(temp + "\\" + TEST_FILE);
+        }
+        if (!didTempExist) {
+            assertTrue(temp.delete());
         }
     }
 }
