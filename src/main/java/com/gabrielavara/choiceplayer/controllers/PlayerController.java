@@ -1,7 +1,7 @@
 package com.gabrielavara.choiceplayer.controllers;
 
-import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_MAX_WAIT_S;
-import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_WAIT_MS;
+import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_S;
+import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.ICON_SIZE;
 import static com.gabrielavara.choiceplayer.Constants.ICON_STYLE_CLASS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
@@ -173,7 +173,7 @@ public class PlayerController implements Initializable {
 
     private void waitForDispose() {
         try {
-            Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS).until(getStatus(),
+            Awaitility.with().pollInterval(DISPOSE_WAIT_MS, MILLISECONDS).await().atMost(DISPOSE_MAX_WAIT_S, SECONDS).until(getStatus(),
                             equalTo(DISPOSED));
         } catch (ConditionTimeoutException e) {
             log.debug("Media player not disposed :( {}");

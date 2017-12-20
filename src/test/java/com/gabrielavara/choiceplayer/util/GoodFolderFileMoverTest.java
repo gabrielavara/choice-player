@@ -1,6 +1,13 @@
 package com.gabrielavara.choiceplayer.util;
 
+import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_S;
+import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
+import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_MAX_WAIT_S;
+import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_WAIT_MS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -12,12 +19,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.*;
 
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -116,7 +126,7 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
 
             // when
             goodFolderFileMover.moveFile();
-            Thread.sleep(5100);
+            Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS).until(fileDeleted(resourcesPath));
 
             // then
             assertEquals(3, mp3Files.size());
@@ -140,6 +150,10 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
         }
     }
 
+    private Callable<Boolean> fileDeleted(Path path) {
+        return () -> !path.toFile().exists();
+    }
+
     private void createMediaPlayer(Mp3 mp3) {
         if (mediaPlayer != null) {
             mediaPlayer.dispose();
@@ -150,12 +164,11 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     }
 
     private void waitForDispose() {
-        while (!MediaPlayer.Status.DISPOSED.equals(mediaPlayer.statusProperty().get())) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                // Nothing to do
-            }
+        try {
+            Awaitility.with().pollInterval(DISPOSE_WAIT_MS, MILLISECONDS).await().atMost(DISPOSE_MAX_WAIT_S, SECONDS)
+                            .until(() -> mediaPlayer.statusProperty().get(), equalTo(DISPOSED));
+        } catch (ConditionTimeoutException e) {
+            log.debug("Media player not disposed :( {}");
         }
     }
 }

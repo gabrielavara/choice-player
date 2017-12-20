@@ -9,6 +9,7 @@ import static com.gabrielavara.choiceplayer.Constants.UTF_8;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -24,9 +25,12 @@ public class MediaUrl {
     }
 
     public static Optional<String> create(Mp3 mp3) {
+        return create(Paths.get(mp3.getFilename()));
+    }
+
+    public static Optional<String> create(Path path) {
         try {
-            String path = Paths.get(mp3.getFilename()).toAbsolutePath().toString();
-            String mediaUrl = URLEncoder.encode(path, UTF_8);
+            String mediaUrl = URLEncoder.encode(path.toAbsolutePath().toString(), UTF_8);
             return Optional.of(FILE + mediaUrl.replace(PER, SLASH).replace(PLUS, ESCAPED_PLUS));
         } catch (UnsupportedEncodingException e) {
             log.error("Could not get url: {}", e.getMessage());

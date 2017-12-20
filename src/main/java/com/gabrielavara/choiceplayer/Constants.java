@@ -25,6 +25,8 @@ public class Constants {
 
     public static final int FILE_MOVER_WAIT_MS = 500;
     public static final int FILE_MOVER_MAX_WAIT_S = 5;
+    public static final int DISPOSE_WAIT_MS = 50;
+    public static final int DISPOSE_MAX_WAIT_S = 1;
 
     private Constants() {
     }
