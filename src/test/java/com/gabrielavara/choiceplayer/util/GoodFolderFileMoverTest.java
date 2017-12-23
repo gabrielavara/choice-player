@@ -12,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import javax.swing.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,8 +26,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.swing.*;
-
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
+import com.gabrielavara.choiceplayer.api.service.PlaylistTestInitializer;
+import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
+import com.gabrielavara.choiceplayer.views.TableItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.Before;
@@ -34,25 +44,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
-import com.gabrielavara.choiceplayer.api.service.PlaylistTestInitializer;
-import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
-import com.gabrielavara.choiceplayer.views.TableItem;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
 public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.util.GoodFolderFileMoverTest");
     private static final String C_DRIVE = "C:\\";
-    private static final String TEST_RESOURCES = "src/test/resources/mp3";
     private static final String TEST_FILE = "testOlder.mp3";
     private static final String TEMP = "temp";
-    private ObservableList<TableItem> mp3Files = FXCollections.observableArrayList();
+    private ObservableList<TableItem> tableItems = FXCollections.observableArrayList();
     private GoodFolderFileMover goodFolderFileMover;
     private MediaPlayer mediaPlayer;
     private boolean didTempExist;
@@ -76,18 +73,15 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     public void setup() throws IOException {
         super.setup();
         List<Mp3> files = new PlaylistLoader().load(Paths.get(TEST_RESOURCES));
-        assertFalse(files.get(0).getFilename().contains("Album"));
-        assertTrue(files.get(0).getFilename().contains("Older"));
-
         ObservableList<Mp3> mp3List = FXCollections.observableList(files);
-        List<TableItem> tableItems = IntStream.range(0, files.size()).mapToObj(index -> new TableItem(index + 1, files.get(index)))
+        List<TableItem> items = IntStream.range(0, files.size()).mapToObj(index -> new TableItem(index + 1, files.get(index)))
                 .collect(Collectors.toList());
-        mp3Files.addAll(tableItems);
-        PlaylistUtil playlistUtil = new PlaylistUtil(mp3Files);
+        tableItems.addAll(items);
+        PlaylistUtil playlistUtil = new PlaylistUtil(tableItems);
 
         didTempExist = createTempIfNotExists();
 
-        goodFolderFileMover = new GoodFolderFileMover(playlistUtil, GoodFolderFileMoverTest.this.mp3Files) {
+        goodFolderFileMover = new GoodFolderFileMover(playlistUtil, tableItems) {
             @Override
             protected String getTarget() {
                 return C_DRIVE + TEMP + "\\";
@@ -107,7 +101,7 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
 
     private void selectionChanged(TableItemSelectedMessage message) {
         Mp3 mp3 = message.getTableItem().getMp3();
-        mp3Files.get(0).getMp3().setCurrentlyPlaying(false);
+        tableItems.get(0).getMp3().setCurrentlyPlaying(false);
         mp3.setCurrentlyPlaying(true);
         createMediaPlayer(mp3);
     }
@@ -119,18 +113,18 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
 
         try {
             // given
-            mp3Files.get(0).getMp3().setCurrentlyPlaying(true);
-            createMediaPlayer(mp3Files.get(0).getMp3());
+            tableItems.get(0).getMp3().setCurrentlyPlaying(true);
+            createMediaPlayer(tableItems.get(0).getMp3());
 
             // when
             goodFolderFileMover.moveFile();
             Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS).until(fileDeleted(resourcesPath));
 
             // then
-            assertEquals(3, mp3Files.size());
+            assertEquals(3, tableItems.size());
             assertFalse(Files.exists(resourcesPath));
             assertTrue(Files.exists(tempPath));
-            assertTrue(mp3Files.get(0).getMp3().isCurrentlyPlaying());
+            assertTrue(tableItems.get(0).getMp3().isCurrentlyPlaying());
         } finally {
             // tear down
             log.debug("Test tear down");
@@ -169,14 +163,14 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     private void waitForDispose() {
         try {
             Awaitility.with().pollInterval(DISPOSE_WAIT_MS, MILLISECONDS).await().atMost(DISPOSE_MAX_WAIT_S, SECONDS)
-                            .until(() -> mediaPlayer.statusProperty().get(), equalTo(DISPOSED));
+                    .until(() -> mediaPlayer.statusProperty().get(), equalTo(DISPOSED));
         } catch (ConditionTimeoutException e) {
             log.debug("Media player not disposed :( {}");
         }
     }
 
     private void tearDown(Path tempPath, Path resourcesPath) throws IOException {
-        if (mp3Files.size() == 4) {
+        if (tableItems.size() == 4) {
             goodFolderFileMover.delete(temp + "\\" + TEST_FILE);
         } else {
             if (Files.notExists(resourcesPath)) {

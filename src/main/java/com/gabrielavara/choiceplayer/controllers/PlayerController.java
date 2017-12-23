@@ -24,13 +24,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
-import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionTimeoutException;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.FlippableImage;
@@ -52,7 +45,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTreeTableView;
-
 import de.felixroske.jfxsupport.FXMLController;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
@@ -73,6 +65,12 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import lombok.Getter;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Getter
 @FXMLController
@@ -115,23 +113,23 @@ public class PlayerController implements Initializable {
     private AnimatedLabel artist;
     private AnimatedLabel title;
     @Getter
-    private ObservableList<TableItem> mp3Files = FXCollections.observableArrayList();
+    private ObservableList<TableItem> tableItems = FXCollections.observableArrayList();
 
     private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
 
     private Duration duration;
 
-    private PlaylistUtil playlistUtil = new PlaylistUtil(mp3Files);
+    private PlaylistUtil playlistUtil = new PlaylistUtil(tableItems);
 
-    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, mp3Files);
-    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, mp3Files);
+    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, tableItems);
+    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, tableItems);
     private boolean timeSliderUpdateDisabled;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addAlbumArt();
         setupAlbumAndTitleLabels();
-        new PlaylistInitializer(playlist, mp3Files, spinner, playlistStackPane).loadPlaylist();
+        new PlaylistInitializer(playlist, tableItems, spinner, playlistStackPane).loadPlaylist();
         timeSlider.setLabelFormatter(timeSliderConverter);
         setButtonListeners();
         animateItems();
@@ -187,7 +185,7 @@ public class PlayerController implements Initializable {
     private void waitForDispose() {
         try {
             Awaitility.with().pollInterval(DISPOSE_WAIT_MS, MILLISECONDS).await().atMost(DISPOSE_MAX_WAIT_S, SECONDS).until(getStatus(),
-                            equalTo(DISPOSED));
+                    equalTo(DISPOSED));
         } catch (ConditionTimeoutException e) {
             log.debug("Media player not disposed :( {}");
         }
@@ -310,7 +308,7 @@ public class PlayerController implements Initializable {
 
     public void playPause() {
         if (mediaPlayer == null) {
-            playlistUtil.select(mp3Files.get(0));
+            playlistUtil.select(tableItems.get(0));
         }
         MediaPlayer.Status status = mediaPlayer.getStatus();
         if (status == UNKNOWN || status == HALTED) {

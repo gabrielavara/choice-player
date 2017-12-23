@@ -20,12 +20,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlaylistLoader {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.service.PlaylistLoader");
