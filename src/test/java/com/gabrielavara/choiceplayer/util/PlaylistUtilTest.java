@@ -1,6 +1,8 @@
 package com.gabrielavara.choiceplayer.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -41,7 +43,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<Mp3> nextTrack = playlistUtil.getNextTrack();
 
         // then
-        assertEquals(true, nextTrack.isPresent());
+        assertTrue(nextTrack.isPresent());
         nextTrack.ifPresent(t -> assertEquals(mp3List.get(0), t));
     }
 
@@ -54,7 +56,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<Mp3> nextTrack = playlistUtil.getNextTrack();
 
         // then
-        assertEquals(true, nextTrack.isPresent());
+        assertTrue(nextTrack.isPresent());
         nextTrack.ifPresent(t -> assertEquals(mp3List.get(1), t));
     }
 
@@ -67,7 +69,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<Mp3> nextTrack = playlistUtil.getNextTrack();
 
         // then
-        assertEquals(false, nextTrack.isPresent());
+        assertFalse(nextTrack.isPresent());
     }
 
     @Test
@@ -76,7 +78,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<Mp3> previousTrack = playlistUtil.getPreviousTrack();
 
         // then
-        assertEquals(true, previousTrack.isPresent());
+        assertTrue(previousTrack.isPresent());
         previousTrack.ifPresent(t -> assertEquals(mp3List.get(0), t));
     }
 
@@ -89,7 +91,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<Mp3> previousTrack = playlistUtil.getPreviousTrack();
 
         // then
-        assertEquals(true, previousTrack.isPresent());
+        assertTrue(previousTrack.isPresent());
         previousTrack.ifPresent(t -> assertEquals(mp3List.get(0), t));
     }
 
@@ -102,7 +104,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<Mp3> previousTrack = playlistUtil.getPreviousTrack();
 
         // then
-        assertEquals(false, previousTrack.isPresent());
+        assertFalse(previousTrack.isPresent());
     }
 
     @Test
@@ -114,7 +116,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<byte[]> currentlyPlayingAlbumArt = playlistUtil.getCurrentlyPlayingAlbumArt();
 
         // then
-        assertEquals(false, currentlyPlayingAlbumArt.isPresent());
+        assertFalse(currentlyPlayingAlbumArt.isPresent());
     }
 
     @Test
@@ -126,6 +128,6 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         Optional<byte[]> currentlyPlayingAlbumArt = playlistUtil.getCurrentlyPlayingAlbumArt();
 
         // then
-        assertEquals(true, currentlyPlayingAlbumArt.isPresent());
+        assertTrue(currentlyPlayingAlbumArt.isPresent());
     }
 }
