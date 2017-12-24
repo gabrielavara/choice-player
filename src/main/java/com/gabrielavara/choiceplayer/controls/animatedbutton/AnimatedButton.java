@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AnimatedButton extends AnchorPane {
+    private static final String COULD_NOT_LOAD = "Could not load animated button";
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton");
 
     private AnimatedButtonController controller;
@@ -26,8 +27,8 @@ public class AnimatedButton extends AnchorPane {
             Node view = fxmlLoader.load();
             getChildren().add(view);
         } catch (IOException e) {
-            log.error("Could not load animated button");
-            throw new IllegalStateException("Could not load animated button", e);
+            log.error(COULD_NOT_LOAD);
+            throw new IllegalStateException(COULD_NOT_LOAD, e);
         }
     }
 

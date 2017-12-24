@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.controls.animatedalbumart.AnimatedAlbumArt;
+import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import com.gabrielavara.choiceplayer.settings.AccentColor;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -26,7 +26,7 @@ public class PlaylistItemController implements Initializable {
     @FXML
     public Label indexLabel;
     @FXML
-    public AnimatedAlbumArt albumArt;
+    public AlbumArt albumArt;
     @FXML
     public Label artistLabel;
     @FXML

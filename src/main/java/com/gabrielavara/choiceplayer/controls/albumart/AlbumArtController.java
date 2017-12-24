@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.controls.animatedalbumart;
+package com.gabrielavara.choiceplayer.controls.albumart;
 
 import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
@@ -24,7 +24,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-public class AnimatedAlbumArtController implements Initializable {
+public class AlbumArtController implements Initializable {
     private static final int TRANSLATE_X = 20;
     @FXML
     public ImageView albumArt;

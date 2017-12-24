@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
-import com.gabrielavara.choiceplayer.controls.animatedalbumart.AnimatedAlbumArt;
+import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import com.gabrielavara.choiceplayer.views.TableItem;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTreeTableColumn;
@@ -61,7 +61,7 @@ public class PlaylistInitializer {
         t.setDaemon(true);
         return t;
     });
-    private Map<TableItem, AnimatedAlbumArt> map = new HashMap<>();
+    private Map<TableItem, AlbumArt> map = new HashMap<>();
 
     public PlaylistInitializer(JFXTreeTableView<TableItem> playlist, ObservableList<TableItem> tableItems, JFXSpinner spinner,
                                StackPane playlistStackPane) {
@@ -194,20 +194,20 @@ public class PlaylistInitializer {
     }
 
     private ObservableValue<AnchorPane> createAlbumArt(TreeTableColumn.CellDataFeatures<TableItem, AnchorPane> param) {
-        AnimatedAlbumArt animatedAlbumArt = new AnimatedAlbumArt();
+        AlbumArt albumArt = new AlbumArt();
 
         PauseTransition wait = new PauseTransition(Duration.millis(random.nextInt(200)));
         wait.setOnFinished(ev -> {
             Mp3 mp3 = param.getValue().getValue().getMp3();
             AlbumArtLoaderTask task = new AlbumArtLoaderTask(mp3);
-            task.setOnSucceeded(e -> animatedAlbumArt.setImage(task.getValue()));
+            task.setOnSucceeded(e -> albumArt.setImage(task.getValue()));
             executorService.submit(task);
         });
         wait.play();
 
-        map.put(param.getValue().getValue(), animatedAlbumArt);
+        map.put(param.getValue().getValue(), albumArt);
 
-        return new SimpleObjectProperty<>(animatedAlbumArt);
+        return new SimpleObjectProperty<>(albumArt);
     }
 
     private TreeTableRow<TableItem> playListRowFactory(TreeTableView<TableItem> r) {
@@ -215,8 +215,8 @@ public class PlaylistInitializer {
         newRow.hoverProperty().addListener((observable, oldValue, newValue) -> {
             TableItem item = newRow.getItem();
             if (map.containsKey(item)) {
-                AnimatedAlbumArt animatedAlbumArt = map.get(item);
-                animatedAlbumArt.hover(newValue);
+                AlbumArt albumArt = map.get(item);
+                albumArt.hover(newValue);
             }
         });
         return newRow;

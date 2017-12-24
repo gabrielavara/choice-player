@@ -9,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PlaylistItem extends HBox {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.animatedalbumart.AnimatedAlbumArtController");
+    private static final String COULD_NOT_LOAD = "Could not load playlist item";
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.albumart.PlaylistItem");
 
     private PlaylistItemController controller;
 
@@ -25,8 +26,8 @@ public class PlaylistItem extends HBox {
             Node view = fxmlLoader.load();
             getChildren().add(view);
         } catch (IOException e) {
-            log.error("Could not load animated button");
-            throw new IllegalStateException("Could not load animated button", e);
+            log.error(COULD_NOT_LOAD);
+            throw new IllegalStateException(COULD_NOT_LOAD, e);
         }
     }
 }
