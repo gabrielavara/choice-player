@@ -2,15 +2,16 @@ package com.gabrielavara.choiceplayer.util;
 
 import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
 import static java.util.Arrays.asList;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,6 +55,7 @@ public class PlaylistInitializer {
     private StackPane playlistStackPane;
     private ResourceBundle resourceBundle;
     private List<JFXTreeTableRow<TableItem>> rows = new ArrayList<>();
+    private Random random = new Random();
     private final ExecutorService executorService = Executors.newFixedThreadPool(10, r -> {
         Thread t = new Thread(r);
         t.setDaemon(true);
@@ -153,7 +155,6 @@ public class PlaylistInitializer {
     private void animateTableItems() {
         int[] delay = new int[1];
         delay[0] = 0;
-        Collections.shuffle(rows);
         rows.forEach((JFXTreeTableRow<TableItem> row) -> {
             animateRow(row, delay[0]);
             delay[0] += SHORT_DELAY;
@@ -172,7 +173,7 @@ public class PlaylistInitializer {
     }
 
     private Transition getRowTransition(JFXTreeTableRow<TableItem> tableRow, int delay) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), tableRow);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), tableRow);
         fadeTransition.setFromValue(ALMOST_TOTALLY_HIDDEN);
         fadeTransition.setToValue(1);
         fadeTransition.setDelay(Duration.millis(delay));
@@ -180,11 +181,11 @@ public class PlaylistInitializer {
     }
 
     private ParallelTransition getSpinnerOutAnimation() {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION / 7 * 5), spinner);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), spinner);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION / 7 * 5), spinner);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), spinner);
         translateTransition.setByY(350);
 
         ParallelTransition parallelTransition = new ParallelTransition();
@@ -195,10 +196,9 @@ public class PlaylistInitializer {
     private ObservableValue<AnchorPane> createAlbumArt(TreeTableColumn.CellDataFeatures<TableItem, AnchorPane> param) {
         AnimatedAlbumArt animatedAlbumArt = new AnimatedAlbumArt();
 
-        PauseTransition wait = new PauseTransition(Duration.millis(100));
+        PauseTransition wait = new PauseTransition(Duration.millis(random.nextInt(200)));
         wait.setOnFinished(ev -> {
             Mp3 mp3 = param.getValue().getValue().getMp3();
-
             AlbumArtLoaderTask task = new AlbumArtLoaderTask(mp3);
             task.setOnSucceeded(e -> animatedAlbumArt.setImage(task.getValue()));
             executorService.submit(task);

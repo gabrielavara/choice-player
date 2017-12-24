@@ -18,12 +18,20 @@
     -fx-font-size: 14;
 }
 
+.index-label {
+    -fx-font-size: 30;
+}
+
 .artist-label {
     -fx-font-size: 22;
 }
 
 .title-label {
     -fx-font-size: 18;
+}
+
+.duration-label {
+    -fx-font-size: 24;
 }
 
 .button {

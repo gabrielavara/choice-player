@@ -273,20 +273,12 @@ public class PlayerController implements Initializable {
     private void setButtonListeners() {
         previousTrackButton.setOnMouseClicked(event -> playlistUtil.goToPreviousTrack());
         nextTrackButton.setOnMouseClicked(event -> playlistUtil.goToNextTrack());
-        timeSlider.setOnMousePressed(event -> disableTimeSliderUpdate());
-        timeSlider.setOnMouseReleased(event -> enableTimeSliderUpdate());
+        timeSlider.setOnMousePressed(event -> timeSliderUpdateDisabled = true);
+        timeSlider.setOnMouseReleased(event -> timeSliderUpdateDisabled = false);
         timeSlider.setOnMouseClicked(event -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(event -> goodFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(event -> recycleBinFileMover.moveFile());
-    }
-
-    private void enableTimeSliderUpdate() {
-        timeSliderUpdateDisabled = false;
-    }
-
-    private void disableTimeSliderUpdate() {
-        timeSliderUpdateDisabled = true;
     }
 
     public void playPause() {

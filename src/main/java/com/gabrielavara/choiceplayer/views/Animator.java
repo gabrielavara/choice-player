@@ -1,7 +1,7 @@
 package com.gabrielavara.choiceplayer.views;
 
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.DELAY;
+import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.views.Animator.Direction.IN;
 
@@ -35,12 +35,12 @@ public class Animator {
     public Animator add(Node... nodes) {
         step++;
         for (Node node : nodes) {
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), node);
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
             fadeTransition.setFromValue(direction == IN ? 0 : 1);
             fadeTransition.setToValue(direction == IN ? 1 : 0);
             fadeTransition.setDelay(Duration.millis(step * DELAY));
 
-            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), node);
+            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
             translateTransition.setByY(direction == IN ? -TRANSLATE_Y : TRANSLATE_Y);
             translateTransition.setDelay(Duration.millis(step * DELAY));
 

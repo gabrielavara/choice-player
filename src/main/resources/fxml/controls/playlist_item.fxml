@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gabrielavara.choiceplayer.controls.animatedalbumart.AnimatedAlbumArt?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<HBox fx:id="root" prefWidth="700.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.121"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemController">
+    <StackPane>
+        <Rectangle fx:id="indicator" strokeType="INSIDE" strokeWidth="0.0" width="6.0"
+                   StackPane.alignment="TOP_CENTER"/>
+    </StackPane>
+    <StackPane>
+        <Label fx:id="indexLabel" styleClass="index-label">
+            <StackPane.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            </StackPane.margin>
+        </Label>
+    </StackPane>
+    <AnimatedAlbumArt fx:id="albumArt">
+        <HBox.margin>
+            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
+        </HBox.margin>
+    </AnimatedAlbumArt>
+    <VBox HBox.hgrow="ALWAYS">
+        <Label fx:id="artistLabel" styleClass="artist-label">
+            <VBox.margin>
+                <Insets bottom="6.0" left="12.0" right="12.0" top="12.0"/>
+            </VBox.margin>
+        </Label>
+        <Label fx:id="titleLabel" styleClass="title-label">
+            <VBox.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="6.0"/>
+            </VBox.margin>
+        </Label>
+    </VBox>
+    <StackPane>
+        <Label fx:id="durationLabel" styleClass="duration-label">
+            <StackPane.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            </StackPane.margin>
+        </Label>
+    </StackPane>
+</HBox>

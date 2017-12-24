@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.stream.IntStream;
 
+import com.gabrielavara.choiceplayer.views.TableItem;
+import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.choiceplayer.views.TableItem;
-
-import javafx.collections.ObservableList;
 
 public abstract class FileMover {
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");
@@ -32,7 +30,7 @@ public abstract class FileMover {
                 IntStream.range(0, mp3Files.size()).forEach(i -> mp3Files.get(i).setIndex(i + 1));
             } catch (IOException e) {
                 mp3Files.add(tableItem.getIndex().get() - 1, tableItem);
-                log.error("Could not move {} to {}", tableItem.getMp3(), getTarget());
+                log.error("Could not move {} to {} because {}", tableItem.getMp3(), getTarget(), e.getMessage());
                 sortPlaylist();
             }
         });

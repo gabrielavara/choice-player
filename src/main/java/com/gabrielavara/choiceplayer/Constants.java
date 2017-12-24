@@ -1,8 +1,9 @@
 package com.gabrielavara.choiceplayer;
 
 public class Constants {
-    public static final int SHORT_ANIMATION_DURATION = 400;
-    public static final int ANIMATION_DURATION = 700;
+    public static final int SHORT_ANIMATION_DURATION = 200;
+    public static final int ANIMATION_DURATION = 400;
+    public static final int LONG_ANIMATION_DURATION = 700;
     public static final int DELAY = 100;
     public static final int SHORT_DELAY = 50;
     public static final int WAIT_TILL_ANIMATING_ITEMS = 800;

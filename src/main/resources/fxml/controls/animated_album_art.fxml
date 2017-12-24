@@ -4,15 +4,14 @@
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="50.0" prefWidth="50.0" xmlns:fx="http://javafx.com/fxml"
+<AnchorPane fx:id="pane" prefHeight="72.0" prefWidth="72.0" xmlns="http://javafx.com/javafx/8.0.121"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.gabrielavara.choiceplayer.controls.animatedalbumart.AnimatedAlbumArtController">
-    <ImageView fx:id="albumArt" fitHeight="50.0" fitWidth="50.0" opacity="0">
-    </ImageView>
-    <JFXButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
-               AnchorPane.bottomAnchor="4.0"
-               AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
+    <ImageView fx:id="albumArt" fitHeight="72.0" fitWidth="72.0" opacity="0"/>
+    <JFXButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" AnchorPane.bottomAnchor="0.0"
+               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <graphic>
-            <MaterialDesignIconView glyphName="PLAY" size="26" strokeType="OUTSIDE" strokeWidth="0.0"
+            <MaterialDesignIconView glyphName="PLAY" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                     styleClass="icon"/>
         </graphic>
     </JFXButton>

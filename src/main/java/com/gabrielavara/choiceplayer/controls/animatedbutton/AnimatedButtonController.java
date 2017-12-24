@@ -58,11 +58,11 @@ public class AnimatedButtonController implements Initializable {
     }
 
     private void animate(JFXButton button, Direction direction) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION / 2), button);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), button);
         fadeTransition.setFromValue(direction == IN ? 0 : 1);
         fadeTransition.setToValue(direction == IN ? 1 : 0);
 
-        RotateTransition rotateTransition = new RotateTransition(Duration.millis(SHORT_ANIMATION_DURATION / 2), button);
+        RotateTransition rotateTransition = new RotateTransition(Duration.millis(SHORT_ANIMATION_DURATION), button);
         rotateTransition.setFromAngle(direction == IN ? -90 : 0);
         rotateTransition.setToAngle(direction == IN ? 0 : 90);
 
@@ -75,8 +75,4 @@ public class AnimatedButtonController implements Initializable {
 
         parallelTransition.play();
     }
-}
-
-enum Direction {
-    IN, OUT
 }
