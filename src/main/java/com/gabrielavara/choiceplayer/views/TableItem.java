@@ -27,4 +27,18 @@ public class TableItem extends RecursiveTreeObject<TableItem> {
     public void setIndex(int index) {
         this.index.set(index);
     }
+
+    @Override
+    public int hashCode() {
+        return mp3.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TableItem) {
+            TableItem other = (TableItem) obj;
+            return mp3.equals(other.mp3);
+        }
+        return false;
+    }
 }

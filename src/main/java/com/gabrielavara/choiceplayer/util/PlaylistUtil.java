@@ -9,9 +9,6 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
 import com.gabrielavara.choiceplayer.views.TableItem;
@@ -19,8 +16,9 @@ import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
-
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlaylistUtil {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.controllers.PlaylistUtil");
@@ -85,15 +83,15 @@ public class PlaylistUtil {
     public Optional<byte[]> getCurrentlyPlayingAlbumArt() {
         log.info("getCurrentlyPlayingAlbumArt called");
         Optional<Mp3> currentlyPlaying = getCurrentlyPlaying();
-        if (currentlyPlaying.isPresent()) {
-            Mp3 mp3 = currentlyPlaying.get();
-            Path path = Paths.get(mp3.getFilename());
-            return getAlbumArtBytes(path);
-        }
-        return Optional.empty();
+        return currentlyPlaying.flatMap(PlaylistUtil::getAlbumArt);
     }
 
-    private Optional<byte[]> getAlbumArtBytes(Path path) {
+    public static Optional<byte[]> getAlbumArt(Mp3 mp3) {
+        Path path = Paths.get(mp3.getFilename());
+        return getAlbumArtBytes(path);
+    }
+
+    private static Optional<byte[]> getAlbumArtBytes(Path path) {
         try {
             Mp3File mp3File = new Mp3File(path);
             if (mp3File.hasId3v2Tag()) {

@@ -3,18 +3,20 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.scene.layout.AnchorPane?>
-<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="com.gabrielavara.choiceplayer.controls.AnimatedButton">
-    <AnchorPane maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity">
-        <JFXButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
-            <graphic>
-                <MaterialDesignIconView glyphName="PLAY" size="56" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
-            </graphic>
-        </JFXButton>
-        <JFXButton fx:id="pauseButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
-            <graphic>
-                <MaterialDesignIconView glyphName="PAUSE" size="56" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
-            </graphic>
-        </JFXButton>
-    </AnchorPane>
-</fx:root>
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButtonController"
+            maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity"
+            minWidth="-Infinity">
+    <JFXButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+        <graphic>
+            <MaterialDesignIconView glyphName="PLAY" size="56" strokeType="OUTSIDE" strokeWidth="0.0"
+                                    styleClass="icon"/>
+        </graphic>
+    </JFXButton>
+    <JFXButton fx:id="pauseButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+        <graphic>
+            <MaterialDesignIconView glyphName="PAUSE" size="56" strokeType="OUTSIDE" strokeWidth="0.0"
+                                    styleClass="icon"/>
+        </graphic>
+    </JFXButton>
+</AnchorPane>

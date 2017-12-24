@@ -2,11 +2,7 @@ package com.gabrielavara.choiceplayer.controllers;
 
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_S;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
-import static com.gabrielavara.choiceplayer.Constants.ICON_SIZE;
-import static com.gabrielavara.choiceplayer.Constants.ICON_STYLE_CLASS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
-import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PAUSE;
-import static de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon.PLAY;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
@@ -17,7 +13,6 @@ import static javafx.scene.media.MediaPlayer.Status.STOPPED;
 import static javafx.scene.media.MediaPlayer.Status.UNKNOWN;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -27,11 +22,13 @@ import java.util.concurrent.Callable;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.FlippableImage;
+import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
 import com.gabrielavara.choiceplayer.util.FileMover;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.util.GoodFolderFileMover;
+import com.gabrielavara.choiceplayer.util.ImageUtil;
 import com.gabrielavara.choiceplayer.util.MediaUrl;
 import com.gabrielavara.choiceplayer.util.Messenger;
 import com.gabrielavara.choiceplayer.util.PlaylistInitializer;
@@ -46,8 +43,6 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTreeTableView;
 import de.felixroske.jfxsupport.FXMLController;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -57,7 +52,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -98,7 +92,7 @@ public class PlayerController implements Initializable {
     @FXML
     private JFXButton nextTrackButton;
     @FXML
-    private JFXButton playPauseButton;
+    private AnimatedButton playPauseButton;
     @FXML
     private JFXSlider timeSlider;
     @FXML
@@ -127,24 +121,16 @@ public class PlayerController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        playPauseButton.setController(this);
         addAlbumArt();
         setupAlbumAndTitleLabels();
-        new PlaylistInitializer(playlist, tableItems, spinner, playlistStackPane).loadPlaylist();
         timeSlider.setLabelFormatter(timeSliderConverter);
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
-        Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
         Messenger.register(TableItemSelectedMessage.class, this::selectTableItem);
-    }
-
-    private void selectionChanged(SelectionChangedMessage message) {
-        Mp3 mp3 = message.getMp3();
-        artist.setText(mp3.getArtist());
-        title.setText(mp3.getTitle());
-        timeSliderConverter.setLength(mp3.getLength());
-        setAlbumArt();
-        play(mp3);
+        Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
+        new PlaylistInitializer(playlist, tableItems, spinner, playlistStackPane).loadPlaylist();
     }
 
     private void selectTableItem(TableItemSelectedMessage message) {
@@ -152,6 +138,16 @@ public class PlayerController implements Initializable {
         TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
         selectionModel.select(index);
         selectionModel.focus(index);
+    }
+
+    private void selectionChanged(SelectionChangedMessage message) {
+        Mp3 mp3 = message.getMp3();
+        artist.setText(mp3.getArtist());
+        title.setText(mp3.getTitle());
+        timeSliderConverter.setLength(mp3.getLength());
+        setCurrentlyPlayingAlbumArt();
+        play(mp3);
+        playPauseButton.play();
     }
 
     private void play(Mp3 mp3) {
@@ -205,14 +201,10 @@ public class PlayerController implements Initializable {
                 stopRequested = false;
             } else {
                 log.info("Play");
-                playPauseButton.setGraphic(getIcon(PAUSE));
             }
         });
 
-        mediaPlayer.setOnPaused(() -> {
-            log.info("Paused");
-            playPauseButton.setGraphic(getIcon(PLAY));
-        });
+        mediaPlayer.setOnPaused(() -> log.info("Paused"));
 
         mediaPlayer.setOnReady(() -> {
             duration = mediaPlayer.getMedia().getDuration();
@@ -221,16 +213,8 @@ public class PlayerController implements Initializable {
 
         mediaPlayer.setOnEndOfMedia(() -> {
             log.info("Reached end of media");
-            playPauseButton.setGraphic(getIcon(PLAY));
             playlistUtil.goToNextTrack();
         });
-    }
-
-    private MaterialDesignIconView getIcon(MaterialDesignIcon icon) {
-        MaterialDesignIconView iconView = new MaterialDesignIconView(icon);
-        iconView.setSize(ICON_SIZE);
-        iconView.setStyleClass(ICON_STYLE_CLASS);
-        return iconView;
     }
 
     private void updateValues() {
@@ -289,7 +273,6 @@ public class PlayerController implements Initializable {
     private void setButtonListeners() {
         previousTrackButton.setOnMouseClicked(event -> playlistUtil.goToPreviousTrack());
         nextTrackButton.setOnMouseClicked(event -> playlistUtil.goToNextTrack());
-        playPauseButton.setOnMouseClicked(event -> playPause());
         timeSlider.setOnMousePressed(event -> disableTimeSliderUpdate());
         timeSlider.setOnMouseReleased(event -> enableTimeSliderUpdate());
         timeSlider.setOnMouseClicked(event -> seek(false));
@@ -310,14 +293,16 @@ public class PlayerController implements Initializable {
         if (mediaPlayer == null) {
             playlistUtil.select(tableItems.get(0));
         }
-        MediaPlayer.Status status = mediaPlayer.getStatus();
-        if (status == UNKNOWN || status == HALTED) {
-            return;
-        }
-        if (status == PAUSED || status == READY || status == STOPPED) {
-            mediaPlayer.play();
-        } else {
-            mediaPlayer.pause();
+        if (mediaPlayer != null) {
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+            if (status == UNKNOWN || status == HALTED) {
+                return;
+            }
+            if (status == PAUSED || status == READY || status == STOPPED) {
+                mediaPlayer.play();
+            } else {
+                mediaPlayer.pause();
+            }
         }
     }
 
@@ -330,19 +315,9 @@ public class PlayerController implements Initializable {
         }
     }
 
-    private void setAlbumArt() {
+    private void setCurrentlyPlayingAlbumArt() {
         Optional<byte[]> albumArtData = playlistUtil.getCurrentlyPlayingAlbumArt();
-        if (albumArtData.isPresent()) {
-            setExistingAlbumArt(albumArtData.get());
-        } else {
-            flippableAlbumArt.setImage(flippableAlbumArt.getDefaultImage());
-        }
-    }
-
-    private void setExistingAlbumArt(byte[] albumArtData) {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(albumArtData);
-        Image image = new Image(inputStream);
-        flippableAlbumArt.setImage(image);
+        flippableAlbumArt.setImage(ImageUtil.getAlbumArt(albumArtData));
     }
 
     private void registerGlobalKeyListener() {

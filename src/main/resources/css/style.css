@@ -109,12 +109,8 @@
     -fx-text-fill: foreground-bright-color;
 }
 
-.tree-table-view .tree-table-row-cell:selected {
-    -fx-background-color: accent-color;
-}
-
-.tree-table-view:focused .tree-table-row-cell:selected {
-    -fx-background-color: accent-color;
+.tree-table-view .tree-table-row-cell:selected .tree-table-cell {
+    -fx-text-fill: accent-color;
 }
 
 .tree-table-view .column-header,
