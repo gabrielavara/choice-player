@@ -12,17 +12,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
+import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import javafx.collections.ObservableList;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 
-import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.views.TableItem;
-
-import javafx.collections.ObservableList;
-
 public class GoodFolderFileMover extends FileMover {
 
-    public GoodFolderFileMover(PlaylistUtil playlistUtil, ObservableList<TableItem> mp3Files) {
+    public GoodFolderFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files) {
         super(playlistUtil, mp3Files);
     }
 
@@ -32,8 +30,8 @@ public class GoodFolderFileMover extends FileMover {
     }
 
     @Override
-    protected void moveFile(TableItem tableItem) throws IOException {
-        Path from = Paths.get(tableItem.getMp3().getFilename());
+    protected void moveFile(PlaylistItemView itemView) throws IOException {
+        Path from = Paths.get(itemView.getMp3().getFilename());
         String folderToMove = getTarget();
         String fileName = from.getFileName().toString();
         Path to = Paths.get(folderToMove, fileName);

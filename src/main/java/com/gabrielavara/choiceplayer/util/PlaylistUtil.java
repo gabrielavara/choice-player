@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
-import com.gabrielavara.choiceplayer.views.TableItem;
+import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -23,61 +23,64 @@ import org.slf4j.LoggerFactory;
 public class PlaylistUtil {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.controllers.PlaylistUtil");
 
-    private ObservableList<TableItem> mp3Files;
+    private ObservableList<PlaylistItemView> playlistItems;
 
-    public PlaylistUtil(ObservableList<TableItem> mp3Files) {
-        this.mp3Files = mp3Files;
+    public PlaylistUtil(ObservableList<PlaylistItemView> playlistItems) {
+        this.playlistItems = playlistItems;
     }
 
     public List<Mp3> getPlayList() {
-        return mp3Files.stream().map(TableItem::getMp3).collect(Collectors.toList());
+        return playlistItems.stream().map(PlaylistItemView::getMp3).collect(Collectors.toList());
     }
 
     public Optional<Mp3> getCurrentlyPlaying() {
-        return getCurrentlyPlayingTableItem().map(TableItem::getMp3);
+        return getCurrentlyPlayingPlaylistItemView().map(PlaylistItemView::getMp3);
     }
 
-    public Optional<TableItem> getCurrentlyPlayingTableItem() {
-        List<TableItem> playing = mp3Files.stream().filter(s -> s.getMp3().isCurrentlyPlaying()).collect(Collectors.toList());
-        return playing.size() == 1 ? Optional.of(playing.get(0)) : Optional.empty();
+    public Optional<PlaylistItemView> getCurrentlyPlayingPlaylistItemView() {
+        return playlistItems.stream().filter(s -> s.getMp3().isCurrentlyPlaying()).findFirst();
+    }
+
+    public Optional<PlaylistItemView> getPlaylistItemView(Mp3 mp3) {
+        return playlistItems.stream().filter(s -> mp3.equals(s.getMp3())).findFirst();
     }
 
     public void goToNextTrack() {
-        getNextTableItem().ifPresent(this::select);
+        getNextPlaylistItemView().ifPresent(this::select);
     }
 
     Optional<Mp3> getNextTrack() {
-        return getNextTableItem().map(TableItem::getMp3);
+        return getNextPlaylistItemView().map(PlaylistItemView::getMp3);
     }
 
-    public Optional<TableItem> getNextTableItem() {
-        OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
+    public Optional<PlaylistItemView> getNextPlaylistItemView() {
+        OptionalInt first = IntStream.range(0, playlistItems.size()).filter(i -> playlistItems.get(i).getMp3().isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            return mp3Files.size() > index + 1 ? Optional.of(mp3Files.get(index + 1)) : Optional.empty();
+            return playlistItems.size() > index + 1 ? Optional.of(playlistItems.get(index + 1)) : Optional.empty();
         }
-        return Optional.of(mp3Files.get(0));
+        return Optional.of(playlistItems.get(0));
     }
 
     public void goToPreviousTrack() {
-        getPreviousTableItem().ifPresent(this::select);
+        getPreviousPlaylistItemView().ifPresent(this::select);
     }
 
     Optional<Mp3> getPreviousTrack() {
-        return getPreviousTableItem().map(TableItem::getMp3);
+        return getPreviousPlaylistItemView().map(PlaylistItemView::getMp3);
     }
 
-    private Optional<TableItem> getPreviousTableItem() {
-        OptionalInt first = IntStream.range(0, mp3Files.size()).filter(i -> mp3Files.get(i).getMp3().isCurrentlyPlaying()).findFirst();
+    private Optional<PlaylistItemView> getPreviousPlaylistItemView() {
+        OptionalInt first = IntStream.range(0, playlistItems.size()).filter(i -> playlistItems.get(i).getMp3().isCurrentlyPlaying()).findFirst();
         if (first.isPresent()) {
             int index = first.getAsInt();
-            return 0 <= index - 1 ? Optional.of(mp3Files.get(index - 1)) : Optional.empty();
+            return 0 <= index - 1 ? Optional.of(playlistItems.get(index - 1)) : Optional.empty();
         }
-        return Optional.of(mp3Files.get(0));
+        return Optional.of(playlistItems.get(0));
     }
 
-    public void select(TableItem tableItem) {
-        Messenger.send(new TableItemSelectedMessage(tableItem));
+    public void select(PlaylistItemView item) {
+        Messenger.send(new PlaylistItemSelectedMessage(item));
     }
 
     public Optional<byte[]> getCurrentlyPlayingAlbumArt() {

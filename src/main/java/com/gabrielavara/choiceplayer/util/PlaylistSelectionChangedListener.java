@@ -1,22 +1,19 @@
 package com.gabrielavara.choiceplayer.util;
 
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
-import com.gabrielavara.choiceplayer.views.TableItem;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TreeItem;
-
-public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem<TableItem>> {
+public class PlaylistSelectionChangedListener implements ChangeListener<PlaylistItemView> {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.util.PlaylistSelectionChangedListener");
 
     @Override
-    public void changed(ObservableValue<? extends TreeItem<TableItem>> observable, TreeItem<TableItem> oldValue, TreeItem<TableItem> newValue) {
-        changed(oldValue == null ? null : oldValue.getValue().getMp3(), newValue == null ? null : newValue.getValue().getMp3());
+    public void changed(ObservableValue<? extends PlaylistItemView> observable, PlaylistItemView oldValue, PlaylistItemView newValue) {
+        changed(oldValue == null ? null : oldValue.getMp3(), newValue == null ? null : newValue.getMp3());
     }
 
     private void changed(Mp3 oldValue, Mp3 newValue) {
@@ -29,6 +26,6 @@ public class PlaylistSelectionChangedListener implements ChangeListener<TreeItem
             oldValue.setCurrentlyPlaying(false);
         }
 
-        Messenger.send(new SelectionChangedMessage(newValue));
+        Messenger.send(new SelectionChangedMessage(newValue, oldValue));
     }
 }

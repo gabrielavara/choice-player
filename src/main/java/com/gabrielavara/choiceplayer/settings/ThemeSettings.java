@@ -6,5 +6,5 @@ import lombok.Data;
 public class ThemeSettings {
     private ThemeStyle style = ThemeStyle.DARK;
     private boolean transparent = false;
-    private AccentColor accentColor = new AccentColor(255, 185, 84);
+    private AccentColor accentColor = new AccentColor(29, 185, 84);
 }

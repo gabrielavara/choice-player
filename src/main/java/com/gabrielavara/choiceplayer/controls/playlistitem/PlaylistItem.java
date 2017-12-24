@@ -2,6 +2,7 @@ package com.gabrielavara.choiceplayer.controls.playlistitem;
 
 import java.io.IOException;
 
+import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
@@ -29,5 +30,29 @@ public class PlaylistItem extends HBox {
             log.error(COULD_NOT_LOAD);
             throw new IllegalStateException(COULD_NOT_LOAD, e);
         }
+    }
+
+    public void setIndex(String index) {
+        controller.setIndex(index);
+    }
+
+    public void setArtist(String artist) {
+        controller.setArtist(artist);
+    }
+
+    public void setTitle(String title) {
+        controller.setTitle(title);
+    }
+
+    public void setLength(String length) {
+        controller.setLength(length);
+    }
+
+    public AlbumArt getAlbumArt() {
+        return controller.getAlbumArt();
+    }
+
+    public void setState(PlaylistItemState state) {
+        controller.setState(state);
     }
 }

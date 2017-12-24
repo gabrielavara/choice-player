@@ -21,18 +21,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import lombok.Getter;
 
 public class PlaylistItemController implements Initializable {
     @FXML
     public Label indexLabel;
     @FXML
+    @Getter
     public AlbumArt albumArt;
     @FXML
     public Label artistLabel;
     @FXML
     public Label titleLabel;
     @FXML
-    public Label durationLabel;
+    public Label lengthLabel;
     @FXML
     public HBox root;
     @FXML
@@ -44,14 +46,14 @@ public class PlaylistItemController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         root.hoverProperty().addListener((ov, oldValue, newValue) -> albumArt.hover(newValue));
         AccentColor ac = ChoicePlayerApplication.getSettings().getTheme().getAccentColor();
-        accentColor = new Color((float) ac.getRed() / 255, (float) ac.getGreen(), (float) ac.getBlue(), 1);
+        accentColor = new Color(((double) ac.getRed()) / 255, ((double) ac.getGreen()) / 255, ((double) ac.getBlue()) / 255, 1.0);
         indicator.setFill(accentColor);
     }
 
     public void setState(PlaylistItemState state) {
         double height = root.getHeight();
         Timeline indicatorTimeLine = createIndicatorTimeLine(state, height);
-        for (Label label : asList(indexLabel, artistLabel, titleLabel, durationLabel)) {
+        for (Label label : asList(indexLabel, artistLabel, titleLabel, lengthLabel)) {
             Transition transition = createColorTransition(state, label);
             transition.play();
         }
@@ -68,5 +70,21 @@ public class PlaylistItemController implements Initializable {
         Color from = state == SELECTED ? (Color) label.getTextFill() : accentColor;
         Color to = state == SELECTED ? accentColor : (Color) label.getTextFill();
         return new ColorTransition(label, from, to);
+    }
+
+    public void setIndex(String index) {
+        indexLabel.setText(index);
+    }
+
+    public void setArtist(String artist) {
+        artistLabel.setText(artist);
+    }
+
+    public void setTitle(String title) {
+        titleLabel.setText(title);
+    }
+
+    public void setLength(String length) {
+        lengthLabel.setText(length);
     }
 }

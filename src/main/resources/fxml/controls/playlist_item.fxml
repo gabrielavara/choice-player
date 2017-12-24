@@ -7,14 +7,14 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
-<HBox fx:id="root" prefWidth="700.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.121"
+<HBox fx:id="root" prefWidth="500.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.121"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemController">
     <StackPane>
         <Rectangle fx:id="indicator" strokeType="INSIDE" strokeWidth="0.0" width="6.0"
                    StackPane.alignment="TOP_CENTER"/>
     </StackPane>
-    <StackPane>
+    <StackPane prefWidth="64.0">
         <Label fx:id="indexLabel" styleClass="index-label">
             <StackPane.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
@@ -39,7 +39,7 @@
         </Label>
     </VBox>
     <StackPane>
-        <Label fx:id="durationLabel" styleClass="duration-label">
+        <Label fx:id="lengthLabel" styleClass="duration-label">
             <StackPane.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </StackPane.margin>

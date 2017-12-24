@@ -3,13 +3,13 @@ package com.gabrielavara.choiceplayer.util;
 import java.io.File;
 import java.io.IOException;
 
-import com.gabrielavara.choiceplayer.views.TableItem;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.sun.jna.platform.FileUtils;
 import javafx.collections.ObservableList;
 
 public class RecycleBinFileMover extends FileMover {
 
-    public RecycleBinFileMover(PlaylistUtil playlistUtil, ObservableList<TableItem> mp3Files) {
+    public RecycleBinFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files) {
         super(playlistUtil, mp3Files);
     }
 
@@ -19,8 +19,8 @@ public class RecycleBinFileMover extends FileMover {
     }
 
     @Override
-    protected void moveFile(TableItem tableItem) throws IOException {
+    protected void moveFile(PlaylistItemView itemView) throws IOException {
         FileUtils fileUtils = FileUtils.getInstance();
-        fileUtils.moveToTrash(new File[]{new File(tableItem.getMp3().getFilename())});
+        fileUtils.moveToTrash(new File[]{new File(itemView.getMp3().getFilename())});
     }
 }

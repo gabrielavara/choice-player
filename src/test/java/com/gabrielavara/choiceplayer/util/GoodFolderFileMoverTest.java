@@ -29,8 +29,8 @@ import java.util.stream.IntStream;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.api.service.PlaylistTestInitializer;
-import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
-import com.gabrielavara.choiceplayer.views.TableItem;
+import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
@@ -51,7 +51,7 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     private static final String C_DRIVE = "C:\\";
     private static final String TEST_FILE = "testOlder.mp3";
     private static final String TEMP = "temp";
-    private ObservableList<TableItem> tableItems = FXCollections.observableArrayList();
+    private ObservableList<PlaylistItemView> playlistItemViews = FXCollections.observableArrayList();
     private GoodFolderFileMover goodFolderFileMover;
     private MediaPlayer mediaPlayer;
     private boolean didTempExist;
@@ -80,20 +80,20 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
         super.setup();
         List<Mp3> files = new PlaylistLoader().load(Paths.get(TEST_RESOURCES));
         ObservableList<Mp3> mp3List = FXCollections.observableList(files);
-        List<TableItem> items = IntStream.range(0, files.size()).mapToObj(index -> new TableItem(index + 1, files.get(index)))
+        List<PlaylistItemView> items = IntStream.range(0, files.size()).mapToObj(index -> new PlaylistItemView(index + 1, files.get(index)))
                 .collect(Collectors.toList());
-        tableItems.addAll(items);
-        PlaylistUtil playlistUtil = new PlaylistUtil(tableItems);
+        playlistItemViews.addAll(items);
+        PlaylistUtil playlistUtil = new PlaylistUtil(playlistItemViews);
 
         didTempExist = createTempIfNotExists();
 
-        goodFolderFileMover = new GoodFolderFileMover(playlistUtil, tableItems) {
+        goodFolderFileMover = new GoodFolderFileMover(playlistUtil, GoodFolderFileMoverTest.this.playlistItemViews) {
             @Override
             protected String getTarget() {
                 return C_DRIVE + TEMP + "\\";
             }
         };
-        Messenger.register(TableItemSelectedMessage.class, this::selectionChanged);
+        Messenger.register(PlaylistItemSelectedMessage.class, this::selectionChanged);
     }
 
     private boolean createTempIfNotExists() {
@@ -105,9 +105,9 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
         }
     }
 
-    private void selectionChanged(TableItemSelectedMessage message) {
-        Mp3 mp3 = message.getTableItem().getMp3();
-        tableItems.get(0).getMp3().setCurrentlyPlaying(false);
+    private void selectionChanged(PlaylistItemSelectedMessage message) {
+        Mp3 mp3 = message.getPlaylistItemView().getMp3();
+        playlistItemViews.get(0).getMp3().setCurrentlyPlaying(false);
         mp3.setCurrentlyPlaying(true);
         createMediaPlayer(mp3);
     }
@@ -123,18 +123,18 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
 
         try {
             // given
-            tableItems.get(0).getMp3().setCurrentlyPlaying(true);
-            createMediaPlayer(tableItems.get(0).getMp3());
+            playlistItemViews.get(0).getMp3().setCurrentlyPlaying(true);
+            createMediaPlayer(playlistItemViews.get(0).getMp3());
 
             // when
             goodFolderFileMover.moveFile();
             Awaitility.with().pollInterval(FILE_MOVER_WAIT_MS, MILLISECONDS).await().atMost(FILE_MOVER_MAX_WAIT_S, SECONDS).until(fileDeleted(resourcesPath));
 
             // then
-            assertEquals(3, tableItems.size());
+            assertEquals(3, playlistItemViews.size());
             assertFalse(Files.exists(resourcesPath));
             assertTrue(Files.exists(tempPath));
-            assertTrue(tableItems.get(0).getMp3().isCurrentlyPlaying());
+            assertTrue(playlistItemViews.get(0).getMp3().isCurrentlyPlaying());
         } finally {
             // tear down
             log.debug("Test tear down");
@@ -180,7 +180,7 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
     }
 
     private void tearDown(Path tempPath, Path resourcesPath) throws IOException {
-        if (tableItems.size() == 4) {
+        if (playlistItemViews.size() == 4) {
             goodFolderFileMover.delete(temp + "\\" + TEST_FILE);
         } else {
             if (Files.notExists(resourcesPath)) {

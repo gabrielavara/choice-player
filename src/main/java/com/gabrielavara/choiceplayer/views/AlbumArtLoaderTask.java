@@ -1,8 +1,10 @@
-package com.gabrielavara.choiceplayer.util;
+package com.gabrielavara.choiceplayer.views;
 
 import java.util.Optional;
 
 import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.util.ImageUtil;
+import com.gabrielavara.choiceplayer.util.PlaylistUtil;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import lombok.Getter;

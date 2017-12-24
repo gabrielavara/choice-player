@@ -2,9 +2,9 @@
 
 <?import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton?>
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXSpinner?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <HBox fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="800.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController">
     <VBox fx:id="currentlyPlayingBox">
         <StackPane fx:id="albumArtStackPane">
@@ -81,14 +81,14 @@
         </HBox>
     </VBox>
     <StackPane fx:id="playlistStackPane" styleClass="playlistStackPane" HBox.hgrow="ALWAYS">
-        <JFXTreeTableView fx:id="playlist" maxWidth="1.7976931348623157E308" prefWidth="700.0" HBox.hgrow="ALWAYS">
+        <JFXListView fx:id="playlist" maxWidth="1.7976931348623157E308" prefWidth="500.0" HBox.hgrow="ALWAYS">
             <placeholder>
                 <Label text=""/>
             </placeholder>
-        </JFXTreeTableView>
+        </JFXListView>
         <JFXSpinner fx:id="spinner">
             <StackPane.margin>
-                <Insets bottom="375.0" left="375.0" right="375.0" top="375.0"/>
+                <Insets bottom="320.0" left="320.0" right="320.0" top="320.0"/>
             </StackPane.margin>
         </JFXSpinner>
     </StackPane>

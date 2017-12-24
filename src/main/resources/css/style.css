@@ -2,8 +2,8 @@
     accent-color: rgb(29, 185, 84);
     background-bright-color: rgb(60, 60, 60);
     background-color: rgb(40, 40, 40);
-    foreground-color: rgb(139, 139, 139);
     foreground-bright-color: rgb(225, 225, 225);
+    foreground-color: rgb(139, 139, 139);
 
     -fx-background: background-bright-color;
     -fx-text-fill: foreground-color;
@@ -18,20 +18,28 @@
     -fx-font-size: 14;
 }
 
-.index-label {
-    -fx-font-size: 30;
-}
-
-.artist-label {
+.currently-playing-artist-label {
     -fx-font-size: 22;
 }
 
-.title-label {
+.currently-playing-title-label {
     -fx-font-size: 18;
 }
 
+.index-label {
+    -fx-font-size: 22;
+}
+
+.artist-label {
+    -fx-font-size: 16;
+}
+
+.title-label {
+    -fx-font-size: 14;
+}
+
 .duration-label {
-    -fx-font-size: 24;
+    -fx-font-size: 16;
 }
 
 .button {
@@ -94,57 +102,27 @@
     -fx-background-insets: 0;
 }
 
-.tree-table-view {
+.list-view {
     -fx-box-border: background-bright-color;
-}
-
-.tree-table-view, .table-view {
     -fx-background-color: background-color;
 }
 
-.tree-table-view .tree-table-row-cell {
-    -fx-background-color: background-color;
-    -fx-table-cell-border-color: background-bright-color;
-}
-
-.tree-table-view .tree-table-cell {
-    -fx-border-color: background-bright-color;
-    -fx-border-width: 1 0 0 0;
-    -fx-font-size: 14;
-}
-
-.tree-table-view .tree-table-row-cell .tree-table-cell {
-    -fx-text-fill: foreground-bright-color;
-}
-
-.tree-table-view .tree-table-row-cell:selected .tree-table-cell {
-    -fx-text-fill: accent-color;
-}
-
-.tree-table-view .column-header,
-.tree-table-view .column-header-background,
-.tree-table-view .column-header-background .filler {
-    -fx-background-color: background-color;
-    -fx-border-color: background-color;
-}
-
-.tree-table-view .column-header .label {
-    -fx-text-fill: foreground-bright-color;
-}
-
-.tree-table-view .scroll-bar:vertical .track,
-.tree-table-view .scroll-bar:vertical .track-background,
-.tree-table-view .scroll-bar:vertical .increment-button,
-.tree-table-view .scroll-bar:vertical .decrement-button,
-.tree-table-view .scroll-bar:horizontal .track,
-.tree-table-view .scroll-bar:horizontal .track-background,
-.tree-table-view .scroll-bar:horizontal .thumb,
-.tree-table-view .scroll-bar:horizontal .increment-button,
-.tree-table-view .scroll-bar:horizontal .decrement-button,
-.tree-table-view .corner {
+.list-view .scroll-bar:vertical .track,
+.list-view .scroll-bar:vertical .track-background,
+.list-view .scroll-bar:vertical .increment-button,
+.list-view .scroll-bar:vertical .decrement-button,
+.list-view .scroll-bar:horizontal .track-background,
+.list-view .scroll-bar:horizontal .increment-button,
+.list-view .scroll-bar:horizontal .decrement-button,
+.list-view .corner {
     -fx-background-color: background-color;
 }
 
-.tree-table-view .scroll-bar:vertical .thumb {
+.list-view .scroll-bar:vertical .thumb,
+.list-view .scroll-bar:horizontal .thumb {
     -fx-background-color: background-bright-color;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
 }

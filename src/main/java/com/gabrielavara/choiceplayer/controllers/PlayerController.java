@@ -3,6 +3,8 @@ package com.gabrielavara.choiceplayer.controllers;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_S;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
+import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
+import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
@@ -23,8 +25,8 @@ import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.FlippableImage;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
+import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
-import com.gabrielavara.choiceplayer.messages.TableItemSelectedMessage;
 import com.gabrielavara.choiceplayer.util.FileMover;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.util.GoodFolderFileMover;
@@ -37,11 +39,12 @@ import com.gabrielavara.choiceplayer.util.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.util.TimeSliderConverter;
 import com.gabrielavara.choiceplayer.views.Animator;
-import com.gabrielavara.choiceplayer.views.TableItem;
+import com.gabrielavara.choiceplayer.views.PlaylistCell;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
-import com.jfoenix.controls.JFXTreeTableView;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
@@ -51,7 +54,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.TreeTableView;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -80,7 +83,7 @@ public class PlayerController implements Initializable {
     @FXML
     private StackPane albumArtStackPane;
     @FXML
-    private JFXTreeTableView<TableItem> playlist;
+    private JFXListView<PlaylistItemView> playlist;
     @FXML
     private VBox currentlyPlayingBox;
     @FXML
@@ -107,17 +110,18 @@ public class PlayerController implements Initializable {
     private AnimatedLabel artist;
     private AnimatedLabel title;
     @Getter
-    private ObservableList<TableItem> tableItems = FXCollections.observableArrayList();
+    private ObservableList<PlaylistItemView> playlistItems = FXCollections.observableArrayList();
 
     private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
 
     private Duration duration;
 
-    private PlaylistUtil playlistUtil = new PlaylistUtil(tableItems);
+    private PlaylistUtil playlistUtil = new PlaylistUtil(playlistItems);
 
-    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, tableItems);
-    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, tableItems);
+    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, playlistItems);
+    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems);
     private boolean timeSliderUpdateDisabled;
+    private PlaylistInitializer playlistInitializer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -128,26 +132,43 @@ public class PlayerController implements Initializable {
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
-        Messenger.register(TableItemSelectedMessage.class, this::selectTableItem);
+        Messenger.register(PlaylistItemSelectedMessage.class, this::selectPlaylistItem);
         Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
-        new PlaylistInitializer(playlist, tableItems, spinner, playlistStackPane).loadPlaylist();
+        playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
+        playlistInitializer.loadPlaylist();
     }
 
-    private void selectTableItem(TableItemSelectedMessage message) {
-        int index = message.getTableItem().getIndex().get() - 1;
-        TreeTableView.TreeTableViewSelectionModel<TableItem> selectionModel = playlist.getSelectionModel();
+    private void selectPlaylistItem(PlaylistItemSelectedMessage message) {
+        int index = message.getPlaylistItemView().getIndex() - 1;
+        MultipleSelectionModel<PlaylistItemView> selectionModel = playlist.getSelectionModel();
         selectionModel.select(index);
-        selectionModel.focus(index);
     }
 
     private void selectionChanged(SelectionChangedMessage message) {
-        Mp3 mp3 = message.getMp3();
-        artist.setText(mp3.getArtist());
-        title.setText(mp3.getTitle());
-        timeSliderConverter.setLength(mp3.getLength());
+        Mp3 newValue = message.getNewValue();
+        artist.setText(newValue.getArtist());
+        title.setText(newValue.getTitle());
+        timeSliderConverter.setLength(newValue.getLength());
         setCurrentlyPlayingAlbumArt();
-        play(mp3);
+        play(newValue);
         playPauseButton.play();
+        setPlaylistItemStates(message);
+    }
+
+    private void setPlaylistItemStates(SelectionChangedMessage message) {
+        message.getOldValue().ifPresent(ov -> {
+            Optional<PlaylistItemView> oldPlaylistItem = playlistUtil.getPlaylistItemView(ov);
+            oldPlaylistItem.ifPresent(i -> {
+                Optional<PlaylistCell> cell = playlistInitializer.getCell(i);
+                cell.ifPresent(c -> c.getPlaylistItem().setState(DESELECTED));
+            });
+        });
+
+        Optional<PlaylistItemView> newPlaylistItem = playlistUtil.getCurrentlyPlayingPlaylistItemView();
+        newPlaylistItem.ifPresent(i -> {
+            Optional<PlaylistCell> cell = playlistInitializer.getCell(i);
+            cell.ifPresent(c -> c.getPlaylistItem().setState(SELECTED));
+        });
     }
 
     private void play(Mp3 mp3) {
@@ -248,8 +269,8 @@ public class PlayerController implements Initializable {
     }
 
     private void setupAlbumAndTitleLabels() {
-        artist = new AnimatedLabel("artist-label");
-        title = new AnimatedLabel("title-label");
+        artist = new AnimatedLabel("currently-playing-artist-label");
+        title = new AnimatedLabel("currently-playing-title-label");
         VBox.setMargin(artist, new Insets(6, 24, 6, 24));
         VBox.setMargin(title, new Insets(6, 24, 6, 24));
         currentlyPlayingBox.getChildren().add(1, artist);
@@ -271,19 +292,37 @@ public class PlayerController implements Initializable {
     }
 
     private void setButtonListeners() {
-        previousTrackButton.setOnMouseClicked(event -> playlistUtil.goToPreviousTrack());
-        nextTrackButton.setOnMouseClicked(event -> playlistUtil.goToNextTrack());
-        timeSlider.setOnMousePressed(event -> timeSliderUpdateDisabled = true);
-        timeSlider.setOnMouseReleased(event -> timeSliderUpdateDisabled = false);
-        timeSlider.setOnMouseClicked(event -> seek(false));
+        previousTrackButton.setOnMouseClicked(e -> playlistUtil.goToPreviousTrack());
+        nextTrackButton.setOnMouseClicked(e -> playlistUtil.goToNextTrack());
+        timeSlider.setOnMousePressed(e -> disableTimeSliderUpdate());
+        timeSlider.setOnMouseReleased(e -> enableTimeSliderUpdate());
+        timeSlider.setOnMouseClicked(e -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
-        likeButton.setOnMouseClicked(event -> goodFolderFileMover.moveFile());
-        dislikeButton.setOnMouseClicked(event -> recycleBinFileMover.moveFile());
+        likeButton.setOnMouseClicked(e -> goodFolderFileMover.moveFile());
+        dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
+    }
+
+    private void disableTimeSliderUpdate() {
+        timeSliderUpdateDisabled = true;
+    }
+
+    private void enableTimeSliderUpdate() {
+        timeSliderUpdateDisabled = false;
+        mediaPlayer.currentTimeProperty().addListener(ov -> updateValues());
+    }
+
+    private void seek(boolean shouldConsiderValueChanging) {
+        if (mediaPlayer == null) {
+            return;
+        }
+        if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
+            mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
+        }
     }
 
     public void playPause() {
         if (mediaPlayer == null) {
-            playlistUtil.select(tableItems.get(0));
+            playlistUtil.select(playlistItems.get(0));
         }
         if (mediaPlayer != null) {
             MediaPlayer.Status status = mediaPlayer.getStatus();
@@ -295,15 +334,6 @@ public class PlayerController implements Initializable {
             } else {
                 mediaPlayer.pause();
             }
-        }
-    }
-
-    private void seek(boolean shouldConsiderValueChanging) {
-        if (mediaPlayer == null) {
-            return;
-        }
-        if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
-            mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
         }
     }
 

@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.api.service.PlaylistTestInitializer;
-import com.gabrielavara.choiceplayer.views.TableItem;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import org.junit.Test;
 public class PlaylistUtilTest extends PlaylistTestInitializer {
     private ObservableList<Mp3> mp3List;
     private PlaylistUtil playlistUtil;
-    private ObservableList<TableItem> tableItems = FXCollections.observableArrayList();
+    private ObservableList<PlaylistItemView> playlistItemViews = FXCollections.observableArrayList();
 
     @Override
     @Before
@@ -31,10 +31,10 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
         super.setup();
         List<Mp3> files = new PlaylistLoader().load(Paths.get("src/test/resources/mp3"));
         mp3List = FXCollections.observableList(files);
-        List<TableItem> items = IntStream.range(0, files.size()).mapToObj(index -> new TableItem(index + 1, files.get(index)))
+        List<PlaylistItemView> items = IntStream.range(0, files.size()).mapToObj(index -> new PlaylistItemView(index + 1, files.get(index)))
                 .collect(Collectors.toList());
-        tableItems.addAll(items);
-        playlistUtil = new PlaylistUtil(tableItems);
+        playlistItemViews.addAll(items);
+        playlistUtil = new PlaylistUtil(playlistItemViews);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
     @Test
     public void testGetNextTrack() {
         // given
-        tableItems.get(0).getMp3().setCurrentlyPlaying(true);
+        playlistItemViews.get(0).getMp3().setCurrentlyPlaying(true);
 
         // when
         Optional<Mp3> nextTrack = playlistUtil.getNextTrack();
@@ -63,7 +63,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
     @Test
     public void testGetNextTrackOnEndOfPlaylist() {
         // given
-        tableItems.get(3).getMp3().setCurrentlyPlaying(true);
+        playlistItemViews.get(3).getMp3().setCurrentlyPlaying(true);
 
         // when
         Optional<Mp3> nextTrack = playlistUtil.getNextTrack();
@@ -85,7 +85,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
     @Test
     public void testGetPreviousTrack() {
         // given
-        tableItems.get(1).getMp3().setCurrentlyPlaying(true);
+        playlistItemViews.get(1).getMp3().setCurrentlyPlaying(true);
 
         // when
         Optional<Mp3> previousTrack = playlistUtil.getPreviousTrack();
@@ -98,7 +98,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
     @Test
     public void testGetPreviousTrackOnStartOfPlaylist() {
         // given
-        tableItems.get(0).getMp3().setCurrentlyPlaying(true);
+        playlistItemViews.get(0).getMp3().setCurrentlyPlaying(true);
 
         // when
         Optional<Mp3> previousTrack = playlistUtil.getPreviousTrack();
@@ -110,7 +110,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
     @Test
     public void testGetCurrentlyPlayingAlbumArtNotExisting() {
         // given
-        tableItems.get(0).getMp3().setCurrentlyPlaying(true);
+        playlistItemViews.get(0).getMp3().setCurrentlyPlaying(true);
 
         // when
         Optional<byte[]> currentlyPlayingAlbumArt = playlistUtil.getCurrentlyPlayingAlbumArt();
@@ -122,7 +122,7 @@ public class PlaylistUtilTest extends PlaylistTestInitializer {
     @Test
     public void testGetCurrentlyPlayingAlbumArtExisting() {
         // given
-        tableItems.get(3).getMp3().setCurrentlyPlaying(true);
+        playlistItemViews.get(3).getMp3().setCurrentlyPlaying(true);
 
         // when
         Optional<byte[]> currentlyPlayingAlbumArt = playlistUtil.getCurrentlyPlayingAlbumArt();
