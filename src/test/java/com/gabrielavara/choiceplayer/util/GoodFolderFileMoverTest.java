@@ -68,7 +68,7 @@ public class GoodFolderFileMoverTest extends PlaylistTestInitializer {
                 latch.countDown();
             });
 
-            if (!latch.await(10L, SECONDS)) {
+            if (!latch.await(5L, SECONDS)) {
                 throw new ExceptionInInitializerError();
             }
         }
