@@ -29,6 +29,8 @@ public class Constants {
     public static final int DISPOSE_WAIT_MS = 50;
     public static final int DISPOSE_MAX_WAIT_S = 1;
 
+    public static final int SEEK_SECONDS = 5;
+
     private Constants() {
     }
 }

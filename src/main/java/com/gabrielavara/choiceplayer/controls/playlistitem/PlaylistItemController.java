@@ -1,6 +1,6 @@
 package com.gabrielavara.choiceplayer.controls.playlistitem;
 
-import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.Arrays.asList;
 
@@ -92,7 +92,7 @@ public class PlaylistItemController implements Initializable {
     private Timeline createIndicatorTimeLine(PlaylistItemState state) {
         return new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(indicator.heightProperty(), state == SELECTED ? 0d : height)),
-                new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION), new KeyValue(indicator.heightProperty(), state == SELECTED ? height : 0d)));
+                new KeyFrame(Duration.millis(ANIMATION_DURATION), new KeyValue(indicator.heightProperty(), state == SELECTED ? height : 0d)));
     }
 
     private Transition createColorTransition(PlaylistItemState state, Label label) {

@@ -1,6 +1,6 @@
 package com.gabrielavara.choiceplayer.controls.playlistitem;
 
-import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 
 import javafx.animation.Transition;
 import javafx.scene.control.Label;
@@ -16,7 +16,7 @@ public class ColorTransition extends Transition {
         this.label = label;
         this.from = from;
         this.to = to;
-        setCycleDuration(Duration.millis(SHORT_ANIMATION_DURATION));
+        setCycleDuration(Duration.millis(ANIMATION_DURATION));
     }
 
     @Override

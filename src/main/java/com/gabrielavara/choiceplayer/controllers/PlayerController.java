@@ -1,8 +1,10 @@
 package com.gabrielavara.choiceplayer.controllers;
 
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_S;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
-import static com.gabrielavara.choiceplayer.Constants.SEEK_VOLUME;
+import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
+import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -46,10 +48,16 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -104,7 +112,6 @@ public class PlayerController implements Initializable {
     private Label remainingLabel;
 
     private MediaPlayer mediaPlayer;
-    private boolean stopRequested;
 
     private FlippableImage flippableAlbumArt = new FlippableImage();
     private AnimatedLabel artist;
@@ -180,6 +187,9 @@ public class PlayerController implements Initializable {
 
     private void disposeMediaPlayer() {
         if (mediaPlayer != null) {
+            mediaPlayer.setOnReady(null);
+            mediaPlayer.setOnEndOfMedia(null);
+            mediaPlayer.currentTimeProperty().removeListener(updateValueListener());
             mediaPlayer.dispose();
             waitForDispose();
         }
@@ -194,8 +204,8 @@ public class PlayerController implements Initializable {
         Optional<String> mediaUrl = MediaUrl.create(mp3);
         mediaUrl.ifPresent(url -> {
             mediaPlayer = new MediaPlayer(new Media(url));
-            addMediaPlayerListeners(mediaPlayer);
-            mediaPlayer.play();
+            addMediaPlayerListeners();
+            play();
         });
     }
 
@@ -212,30 +222,19 @@ public class PlayerController implements Initializable {
         return () -> mediaPlayer.statusProperty().get();
     }
 
-    private void addMediaPlayerListeners(MediaPlayer mediaPlayer) {
-        mediaPlayer.currentTimeProperty().addListener(ov -> updateValues());
-
-        mediaPlayer.setOnPlaying(() -> {
-            if (stopRequested) {
-                log.info("Pause requested");
-                mediaPlayer.pause();
-                stopRequested = false;
-            } else {
-                log.info("Play");
-            }
-        });
-
-        mediaPlayer.setOnPaused(() -> log.info("Paused"));
+    private void addMediaPlayerListeners() {
+        mediaPlayer.currentTimeProperty().addListener(updateValueListener());
 
         mediaPlayer.setOnReady(() -> {
             duration = mediaPlayer.getMedia().getDuration();
             updateValues();
         });
 
-        mediaPlayer.setOnEndOfMedia(() -> {
-            log.info("Reached end of media");
-            playlistUtil.goToNextTrack();
-        });
+        mediaPlayer.setOnEndOfMedia(() -> playlistUtil.goToNextTrack());
+    }
+
+    private InvalidationListener updateValueListener() {
+        return ov -> updateValues();
     }
 
     private void updateValues() {
@@ -308,7 +307,7 @@ public class PlayerController implements Initializable {
 
     private void enableTimeSliderUpdate() {
         timeSliderUpdateDisabled = false;
-        mediaPlayer.currentTimeProperty().addListener(ov -> updateValues());
+        mediaPlayer.currentTimeProperty().addListener(updateValueListener());
     }
 
     private void seek(boolean shouldConsiderValueChanging) {
@@ -316,8 +315,12 @@ public class PlayerController implements Initializable {
             return;
         }
         if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
-            mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
+            createSeekTimeLine(seek()).play();
         }
+    }
+
+    private EventHandler<ActionEvent> seek() {
+        return t -> mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
     }
 
     public void playPause() {
@@ -330,11 +333,29 @@ public class PlayerController implements Initializable {
                 return;
             }
             if (status == PAUSED || status == READY || status == STOPPED) {
-                mediaPlayer.play();
+                play();
             } else {
-                mediaPlayer.pause();
+                pause();
             }
         }
+    }
+
+    private void play() {
+        Timeline timeLine = createPlayPauseVolumeTimeLine(1, ANIMATION_DURATION);
+        mediaPlayer.play();
+        timeLine.play();
+    }
+
+    private void pause() {
+        Timeline volumeTimeLine = createPlayPauseVolumeTimeLine(0, SHORT_ANIMATION_DURATION);
+        volumeTimeLine.setOnFinished(e -> mediaPlayer.pause());
+        volumeTimeLine.play();
+    }
+
+    private Timeline createPlayPauseVolumeTimeLine(double volume, int duration) {
+        return new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(mediaPlayer.volumeProperty(), mediaPlayer.getVolume())),
+                new KeyFrame(Duration.millis(duration), new KeyValue(mediaPlayer.volumeProperty(), volume)));
     }
 
     private void setCurrentlyPlayingAlbumArt() {
@@ -352,22 +373,26 @@ public class PlayerController implements Initializable {
     }
 
     public void rewind() {
-        log.info("Rewind");
         if (mediaPlayer == null) {
             return;
         }
-        mediaPlayer.setVolume(SEEK_VOLUME);
-        mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(-5)));
-        mediaPlayer.setVolume(1.0);
+        createSeekTimeLine(seek(-SEEK_SECONDS)).play();
     }
 
     public void fastForward() {
-        log.info("Fast forward");
         if (mediaPlayer == null) {
             return;
         }
-        mediaPlayer.setVolume(SEEK_VOLUME);
-        mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(5)));
-        mediaPlayer.setVolume(1.0);
+        createSeekTimeLine(seek(SEEK_SECONDS)).play();
+    }
+
+    private Timeline createSeekTimeLine(EventHandler<ActionEvent> seek) {
+        return new Timeline(
+                new KeyFrame(Duration.ZERO, seek, new KeyValue(mediaPlayer.volumeProperty(), 0)),
+                new KeyFrame(Duration.millis(ANIMATION_DURATION), new KeyValue(mediaPlayer.volumeProperty(), 1)));
+    }
+
+    private EventHandler<ActionEvent> seek(int s) {
+        return t -> mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(s)));
     }
 }
