@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
+import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.FlippableImage;
@@ -268,8 +269,8 @@ public class PlayerController implements Initializable {
     }
 
     private void setupAlbumAndTitleLabels() {
-        artist = new AnimatedLabel("currently-playing-artist-label");
-        title = new AnimatedLabel("currently-playing-title-label");
+        artist = new AnimatedLabel("currently-playing-artist-label", ChoicePlayerApplication.getColors().getForegroundBrightColor());
+        title = new AnimatedLabel("currently-playing-title-label", ChoicePlayerApplication.getColors().getForegroundColor());
         VBox.setMargin(artist, new Insets(6, 24, 6, 24));
         VBox.setMargin(title, new Insets(6, 24, 6, 24));
         currentlyPlayingBox.getChildren().add(1, artist);

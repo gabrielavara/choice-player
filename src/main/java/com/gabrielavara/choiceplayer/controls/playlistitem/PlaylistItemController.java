@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
-import com.gabrielavara.choiceplayer.settings.ColorConverter;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -42,25 +41,28 @@ public class PlaylistItemController implements Initializable {
     public Rectangle indicator;
 
     private boolean isAnimating;
-    private static final Color accentColor;
-    private static final Color foregroundBrightColor;
     private static double height;
     private List<Label> labels;
 
-    static {
-        accentColor = ColorConverter.convert(ChoicePlayerApplication.getSettings().getTheme().getAccentColor());
-        foregroundBrightColor = ColorConverter.convert(ChoicePlayerApplication.getSettings().getTheme().getStyle().getForegroundBrightColor());
-    }
+    private Color accentColor;
+    private Color foregroundColor;
+    private Color foregroundBrightColor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        root.hoverProperty().addListener((ov, oldValue, newValue) -> albumArt.hover(newValue));
+        accentColor = ChoicePlayerApplication.getColors().getAccentColor();
+        foregroundColor = ChoicePlayerApplication.getColors().getForegroundColor();
+        foregroundBrightColor = ChoicePlayerApplication.getColors().getForegroundBrightColor();
+
         indicator.setFill(accentColor);
+
         labels = asList(indexLabel, artistLabel, titleLabel, lengthLabel);
-        labels.forEach(l -> {
-            l.getStyleClass().remove("label");
-            l.setTextFill(foregroundBrightColor);
-        });
+        indexLabel.setTextFill(foregroundColor);
+        artistLabel.setTextFill(foregroundBrightColor);
+        titleLabel.setTextFill(foregroundColor);
+        lengthLabel.setTextFill(foregroundBrightColor);
+
+        root.hoverProperty().addListener((ov, oldValue, newValue) -> albumArt.hover(newValue));
     }
 
     public void animateToState(PlaylistItemState state) {
@@ -97,7 +99,8 @@ public class PlaylistItemController implements Initializable {
 
     private Transition createColorTransition(PlaylistItemState state, Label label) {
         Color from = (Color) label.getTextFill();
-        Color to = state == SELECTED ? accentColor : foregroundBrightColor;
+        Color color = label.equals(titleLabel) ? foregroundColor : foregroundBrightColor;
+        Color to = state == SELECTED ? accentColor : color;
         return new ColorTransition(label, from, to);
     }
 
@@ -120,7 +123,7 @@ public class PlaylistItemController implements Initializable {
     public void setState(boolean currentlyPlaying) {
         if (currentlyPlaying && !isAnimating) {
             indicator.setHeight(height);
-            for (Label label : asList(indexLabel, artistLabel, titleLabel, lengthLabel)) {
+            for (Label label : labels) {
                 label.setTextFill(accentColor);
             }
         }

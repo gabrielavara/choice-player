@@ -1,9 +1,9 @@
 .root {
     accent-color: rgb(29, 185, 84);
-    background-bright-color: rgb(60, 60, 60);
-    background-color: rgb(40, 40, 40);
-    foreground-bright-color: rgb(225, 225, 225);
-    foreground-color: rgb(139, 139, 139);
+    background-bright-color: rgb(30, 30, 30);
+    background-color: rgb(20, 20, 20);
+    foreground-bright-color: rgb(230, 230, 230);
+    foreground-color: rgb(160, 160, 160);
 
     -fx-background: background-bright-color;
     -fx-text-fill: foreground-color;
@@ -14,32 +14,31 @@
 }
 
 .label {
-    -fx-text-fill: foreground-bright-color;
-    -fx-font-size: 14;
+    -fx-font: 14 "Arial Rounded MT Bold";
 }
 
 .currently-playing-artist-label {
-    -fx-font-size: 22;
+    -fx-font: 22 "Arial Rounded MT Bold";
 }
 
 .currently-playing-title-label {
-    -fx-font-size: 18;
+    -fx-font: 18 "Arial Rounded MT Bold";
 }
 
 .index-label {
-    -fx-font-size: 22;
+    -fx-font: 22 "Arial Rounded MT Bold";
 }
 
 .artist-label {
-    -fx-font-size: 16;
+    -fx-font: 16 "Arial Rounded MT Bold";
 }
 
 .title-label {
-    -fx-font-size: 14;
+    -fx-font: 14 "Arial Rounded MT Bold";
 }
 
-.duration-label {
-    -fx-font-size: 16;
+.length-label {
+    -fx-font: 14 "Arial Rounded MT Bold";
 }
 
 .button {

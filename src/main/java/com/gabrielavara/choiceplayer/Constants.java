@@ -31,6 +31,8 @@ public class Constants {
 
     public static final int SEEK_SECONDS = 5;
 
+    public static final String DEFAULT_ALBUM_ART = "src/main/resources/images/default-album-art.jpg";
+
     private Constants() {
     }
 }

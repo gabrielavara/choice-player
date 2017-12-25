@@ -1,12 +1,22 @@
 package com.gabrielavara.choiceplayer.util;
 
+import static org.jnativehook.NativeInputEvent.ALT_MASK;
+import static org.jnativehook.NativeInputEvent.CTRL_MASK;
+import static org.jnativehook.NativeInputEvent.SHIFT_MASK;
+import static org.jnativehook.keyboard.NativeKeyEvent.VC_D;
+import static org.jnativehook.keyboard.NativeKeyEvent.VC_LEFT;
+import static org.jnativehook.keyboard.NativeKeyEvent.VC_M;
+import static org.jnativehook.keyboard.NativeKeyEvent.VC_PAGE_DOWN;
+import static org.jnativehook.keyboard.NativeKeyEvent.VC_PAGE_UP;
+import static org.jnativehook.keyboard.NativeKeyEvent.VC_RIGHT;
+import static org.jnativehook.keyboard.NativeKeyEvent.VC_SLASH;
+
 import java.util.logging.Level;
 
+import com.gabrielavara.choiceplayer.controllers.PlayerController;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
-
-import com.gabrielavara.choiceplayer.controllers.PlayerController;
 
 public class GlobalKeyListener implements NativeKeyListener {
     private final PlayerController playerController;
@@ -25,22 +35,23 @@ public class GlobalKeyListener implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        boolean isAltPressed = (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0;
-        boolean isCtrlPressed = (e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0;
+        boolean isAltPressed = (e.getModifiers() & ALT_MASK) != 0;
+        boolean isShiftPressed = (e.getModifiers() & SHIFT_MASK) != 0;
+        boolean isCtrlPressed = (e.getModifiers() & CTRL_MASK) != 0;
 
-        if (e.getKeyCode() == NativeKeyEvent.VC_M && isAltPressed) {
+        if (e.getKeyCode() == VC_M && isAltPressed && !isCtrlPressed && !isShiftPressed) {
             playerController.getGoodFolderFileMover().moveFile();
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_D && isAltPressed) {
+        } else if (e.getKeyCode() == VC_D && isAltPressed && !isCtrlPressed && !isShiftPressed) {
             playerController.getRecycleBinFileMover().moveFile();
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_UP && isAltPressed && isCtrlPressed) {
+        } else if (e.getKeyCode() == VC_PAGE_UP && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.getPlaylistUtil().goToPreviousTrack();
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_PAGE_DOWN && isAltPressed && isCtrlPressed) {
+        } else if (e.getKeyCode() == VC_PAGE_DOWN && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.getPlaylistUtil().goToNextTrack();
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_LEFT && isAltPressed && isCtrlPressed) {
+        } else if (e.getKeyCode() == VC_LEFT && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.rewind();
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_RIGHT && isAltPressed && isCtrlPressed) {
+        } else if (e.getKeyCode() == VC_RIGHT && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.fastForward();
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_SLASH && isAltPressed) {
+        } else if (e.getKeyCode() == VC_SLASH && isAltPressed && !isCtrlPressed && !isShiftPressed) {
             playerController.playPause();
         }
     }

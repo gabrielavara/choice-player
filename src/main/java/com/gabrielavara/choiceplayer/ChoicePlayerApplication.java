@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.gabrielavara.choiceplayer.settings.Colors;
 import com.gabrielavara.choiceplayer.settings.Settings;
 import com.gabrielavara.choiceplayer.views.ChoicePlayerSplashScreen;
 import com.gabrielavara.choiceplayer.views.PlayerView;
@@ -24,9 +25,12 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
 
     @Getter
     private static Settings settings;
+    @Getter
+    private static Colors colors;
 
     public static void main(String[] args) {
         settings = loadSettings();
+        colors = new Colors(settings);
         launchApp(ChoicePlayerApplication.class, PlayerView.class, new ChoicePlayerSplashScreen(), args);
     }
 

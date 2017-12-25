@@ -9,23 +9,26 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class AnimatedLabel extends StackPane {
     private Label first;
     private Label second;
 
-    public AnimatedLabel(String styleClass) {
+    public AnimatedLabel(String styleClass, Color color) {
         first = new Label();
         second = new Label();
 
         first.setOpacity(0);
         first.setTranslateX(TRANSLATE_X);
         first.getStyleClass().add(styleClass);
+        first.setTextFill(color);
 
         second.setOpacity(0);
         second.setTranslateX(TRANSLATE_X);
         second.getStyleClass().add(styleClass);
+        second.setTextFill(color);
 
         getChildren().addAll(second, first);
 
