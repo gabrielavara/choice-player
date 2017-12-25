@@ -8,8 +8,11 @@ public class Constants {
     public static final int SHORT_DELAY = 50;
     public static final int WAIT_TILL_ANIMATING_ITEMS = 800;
 
-    public static final int TRANSLATE_X = 20;
-    public static final int TRANSLATE_Y = 50;
+    public static final int ALBUM_ART_TRANSLATE_X = 20;
+    public static final int LABEL_TRANSLATE_X = 20;
+    public static final int INITIAL_ANIMATION_TRANSLATE_Y = 50;
+    public static final int BIG_ALBUM_ART_TRANSLATE_X = 200;
+    public static final int BIG_ALBUM_ART_TRANSLATE_Y = 50;
 
     public static final double SEEK_VOLUME = 0.1;
 
@@ -32,6 +35,7 @@ public class Constants {
     public static final int SEEK_SECONDS = 5;
 
     public static final String DEFAULT_ALBUM_ART = "src/main/resources/images/default-album-art.jpg";
+    public static final double ALBUM_ART_SCALE = 0.5;
 
     private Constants() {
     }

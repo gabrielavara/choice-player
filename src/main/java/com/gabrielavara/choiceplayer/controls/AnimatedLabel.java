@@ -1,7 +1,7 @@
 package com.gabrielavara.choiceplayer.controls;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_X;
+import static com.gabrielavara.choiceplayer.Constants.LABEL_TRANSLATE_X;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -21,12 +21,12 @@ public class AnimatedLabel extends StackPane {
         second = new Label();
 
         first.setOpacity(0);
-        first.setTranslateX(TRANSLATE_X);
+        first.setTranslateX(LABEL_TRANSLATE_X);
         first.getStyleClass().add(styleClass);
         first.setTextFill(color);
 
         second.setOpacity(0);
-        second.setTranslateX(TRANSLATE_X);
+        second.setTranslateX(LABEL_TRANSLATE_X);
         second.getStyleClass().add(styleClass);
         second.setTextFill(color);
 
@@ -36,12 +36,12 @@ public class AnimatedLabel extends StackPane {
     }
 
     private void animateIn(Label label) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), label);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION * 2), label);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), label);
-        translateTransition.setByX(-TRANSLATE_X);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION * 2), label);
+        translateTransition.setByX(-LABEL_TRANSLATE_X);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
@@ -50,18 +50,18 @@ public class AnimatedLabel extends StackPane {
             Label temp = first;
             first = second;
             second = temp;
-            second.setTranslateX(TRANSLATE_X);
+            second.setTranslateX(LABEL_TRANSLATE_X);
         });
         parallelTransition.play();
     }
 
     private void animateOut(Label label) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), label);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION * 2), label);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), label);
-        translateTransition.setByX(-TRANSLATE_X);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION * 2), label);
+        translateTransition.setByX(-LABEL_TRANSLATE_X);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);

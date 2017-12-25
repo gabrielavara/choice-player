@@ -7,42 +7,44 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
-<HBox fx:id="root" prefWidth="500.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.121"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemController">
-    <StackPane>
-        <Rectangle fx:id="indicator" strokeType="INSIDE" strokeWidth="0.0" width="6.0"
-                   StackPane.alignment="TOP_CENTER"/>
-    </StackPane>
-    <StackPane prefWidth="64.0">
-        <Label fx:id="indexLabel" styleClass="index-label">
-            <StackPane.margin>
-                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
-            </StackPane.margin>
-        </Label>
-    </StackPane>
-    <AlbumArt fx:id="albumArt">
-        <HBox.margin>
-            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
-        </HBox.margin>
-    </AlbumArt>
-    <VBox HBox.hgrow="ALWAYS">
-        <Label fx:id="artistLabel" styleClass="artist-label">
-            <VBox.margin>
-                <Insets bottom="6.0" left="12.0" right="12.0" top="12.0"/>
-            </VBox.margin>
-        </Label>
-        <Label fx:id="titleLabel" styleClass="title-label">
-            <VBox.margin>
-                <Insets bottom="12.0" left="12.0" right="12.0" top="6.0"/>
-            </VBox.margin>
-        </Label>
-    </VBox>
-    <StackPane>
-        <Label fx:id="lengthLabel" styleClass="length-label">
-            <StackPane.margin>
-                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
-            </StackPane.margin>
-        </Label>
-    </StackPane>
-</HBox>
+<StackPane fx:id="root" prefWidth="500.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.121"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemController">
+    <HBox fx:id="hBox" HBox.hgrow="ALWAYS">
+        <StackPane>
+            <Rectangle fx:id="indicator" strokeType="INSIDE" strokeWidth="0.0" width="6.0"
+                       StackPane.alignment="TOP_CENTER"/>
+        </StackPane>
+        <StackPane maxWidth="64.0" minWidth="64.0" prefWidth="64.0">
+            <Label fx:id="indexLabel" styleClass="index-label">
+                <StackPane.margin>
+                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                </StackPane.margin>
+            </Label>
+        </StackPane>
+        <AlbumArt fx:id="albumArt">
+            <HBox.margin>
+                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
+            </HBox.margin>
+        </AlbumArt>
+        <VBox HBox.hgrow="ALWAYS">
+            <Label fx:id="artistLabel" styleClass="artist-label">
+                <VBox.margin>
+                    <Insets bottom="6.0" left="12.0" right="12.0" top="12.0"/>
+                </VBox.margin>
+            </Label>
+            <Label fx:id="titleLabel" styleClass="title-label">
+                <VBox.margin>
+                    <Insets bottom="12.0" left="12.0" right="12.0" top="6.0"/>
+                </VBox.margin>
+            </Label>
+        </VBox>
+        <StackPane>
+            <Label fx:id="lengthLabel" styleClass="length-label">
+                <StackPane.margin>
+                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                </StackPane.margin>
+            </Label>
+        </StackPane>
+    </HBox>
+</StackPane>

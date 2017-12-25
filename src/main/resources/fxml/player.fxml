@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton?>
+<?import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
@@ -16,10 +17,12 @@
       prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController">
     <VBox fx:id="currentlyPlayingBox">
-        <StackPane fx:id="albumArtStackPane">
+        <StackPane>
             <VBox.margin>
                 <Insets bottom="24.0" left="24.0" right="24.0" top="64.0"/>
             </VBox.margin>
+            <BigAlbumArt fx:id="albumArt" maxHeight="350.0" maxWidth="350.0" prefHeight="350.0" prefWidth="350.0"
+                         StackPane.alignment="CENTER"/>
         </StackPane>
         <JFXSlider fx:id="timeSlider">
             <VBox.margin>

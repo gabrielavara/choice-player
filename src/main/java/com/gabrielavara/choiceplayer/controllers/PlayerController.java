@@ -5,6 +5,10 @@ import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_S;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.controls.bigalbumart.AnimationDirection.IN;
+import static com.gabrielavara.choiceplayer.controls.bigalbumart.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.BACKWARD;
+import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -26,14 +30,14 @@ import java.util.concurrent.Callable;
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
-import com.gabrielavara.choiceplayer.controls.FlippableImage;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
+import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
+import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.util.FileMover;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.util.GoodFolderFileMover;
-import com.gabrielavara.choiceplayer.util.ImageUtil;
 import com.gabrielavara.choiceplayer.util.MediaUrl;
 import com.gabrielavara.choiceplayer.util.Messenger;
 import com.gabrielavara.choiceplayer.util.PlaylistInitializer;
@@ -88,9 +92,9 @@ public class PlayerController implements Initializable {
     @FXML
     public StackPane playlistStackPane;
     @FXML
-    private HBox rootContainer;
+    public BigAlbumArt albumArt;
     @FXML
-    private StackPane albumArtStackPane;
+    private HBox rootContainer;
     @FXML
     private JFXListView<PlaylistItemView> playlist;
     @FXML
@@ -114,7 +118,6 @@ public class PlayerController implements Initializable {
 
     private MediaPlayer mediaPlayer;
 
-    private FlippableImage flippableAlbumArt = new FlippableImage();
     private AnimatedLabel artist;
     private AnimatedLabel title;
     @Getter
@@ -134,7 +137,6 @@ public class PlayerController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         playPauseButton.setController(this);
-        addAlbumArt();
         setupAlbumAndTitleLabels();
         timeSlider.setLabelFormatter(timeSliderConverter);
         setButtonListeners();
@@ -157,10 +159,21 @@ public class PlayerController implements Initializable {
         artist.setText(newValue.getArtist());
         title.setText(newValue.getTitle());
         timeSliderConverter.setLength(newValue.getLength());
-        setCurrentlyPlayingAlbumArt();
         play(newValue);
         playPauseButton.play();
         setPlaylistItemStates(message);
+        setCurrentlyPlayingAlbumArt(getDirection(message, newValue));
+    }
+
+    private Direction getDirection(SelectionChangedMessage message, Mp3 newValue) {
+        int newIndex = playlistUtil.getPlaylistIndex(newValue).orElse(-1);
+        int oldIndex = getOldIndex(message);
+        return newIndex > oldIndex ? FORWARD : BACKWARD;
+    }
+
+    private int getOldIndex(SelectionChangedMessage message) {
+        Optional<Mp3> oldValue = message.getOldValue();
+        return oldValue.map(v -> playlistUtil.getPlaylistIndex(v).orElse(-1)).orElse(-1);
     }
 
     private void setPlaylistItemStates(SelectionChangedMessage message) {
@@ -206,7 +219,7 @@ public class PlayerController implements Initializable {
         mediaUrl.ifPresent(url -> {
             mediaPlayer = new MediaPlayer(new Media(url));
             addMediaPlayerListeners();
-            play();
+            play(false);
         });
     }
 
@@ -263,11 +276,6 @@ public class PlayerController implements Initializable {
         }
     }
 
-    private void addAlbumArt() {
-        flippableAlbumArt = new FlippableImage();
-        albumArtStackPane.getChildren().add(flippableAlbumArt);
-    }
-
     private void setupAlbumAndTitleLabels() {
         artist = new AnimatedLabel("currently-playing-artist-label", ChoicePlayerApplication.getColors().getForegroundBrightColor());
         title = new AnimatedLabel("currently-playing-title-label", ChoicePlayerApplication.getColors().getForegroundColor());
@@ -279,9 +287,9 @@ public class PlayerController implements Initializable {
 
     private void animateItems() {
         Animator animator = new Animator(Animator.Direction.IN);
-        animator.setup(albumArtStackPane, artist, title, timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
+        animator.setup(albumArt, artist, title, timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
                 playPauseButton, nextTrackButton, likeButton);
-        animator.add(albumArtStackPane).add(artist).add(title).add(timeSlider).add(elapsedLabel, remainingLabel)
+        animator.add(albumArt).add(artist).add(title).add(timeSlider).add(elapsedLabel, remainingLabel)
                 .add(dislikeButton)
                 .add(previousTrackButton)
                 .add(playPauseButton)
@@ -316,7 +324,10 @@ public class PlayerController implements Initializable {
             return;
         }
         if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
-            createSeekTimeLine(seek()).play();
+            disableTimeSliderUpdate();
+            Timeline seekTimeLine = createSeekTimeLine(seek());
+            seekTimeLine.setOnFinished(e -> enableTimeSliderUpdate());
+            seekTimeLine.play();
         }
     }
 
@@ -334,23 +345,27 @@ public class PlayerController implements Initializable {
                 return;
             }
             if (status == PAUSED || status == READY || status == STOPPED) {
-                play();
+                play(true);
             } else {
                 pause();
             }
         }
     }
 
-    private void play() {
+    private void play(boolean animatePlayPause) {
         Timeline timeLine = createPlayPauseVolumeTimeLine(1, ANIMATION_DURATION);
         mediaPlayer.play();
         timeLine.play();
+        if (animatePlayPause) {
+            albumArt.animatePlayPause(IN);
+        }
     }
 
     private void pause() {
         Timeline volumeTimeLine = createPlayPauseVolumeTimeLine(0, SHORT_ANIMATION_DURATION);
         volumeTimeLine.setOnFinished(e -> mediaPlayer.pause());
         volumeTimeLine.play();
+        albumArt.animatePlayPause(OUT);
     }
 
     private Timeline createPlayPauseVolumeTimeLine(double volume, int duration) {
@@ -359,9 +374,9 @@ public class PlayerController implements Initializable {
                 new KeyFrame(Duration.millis(duration), new KeyValue(mediaPlayer.volumeProperty(), volume)));
     }
 
-    private void setCurrentlyPlayingAlbumArt() {
+    private void setCurrentlyPlayingAlbumArt(Direction direction) {
         Optional<byte[]> albumArtData = playlistUtil.getCurrentlyPlayingAlbumArt();
-        flippableAlbumArt.setImage(ImageUtil.getAlbumArt(albumArtData));
+        albumArt.setImage(albumArtData, direction);
     }
 
     private void registerGlobalKeyListener() {

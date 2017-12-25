@@ -1,7 +1,6 @@
 package com.gabrielavara.choiceplayer.controls.albumart;
 
 import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 
 import java.net.URL;
@@ -33,11 +32,14 @@ public class AlbumArtController implements Initializable {
     @FXML
     public AnchorPane pane;
 
+    private FadeTransition fadeTransition;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         playButton.setOpacity(0);
         playButton.setTranslateX(-TRANSLATE_X);
         albumArt.setCache(true);
+        playButton.setMouseTransparent(true);
     }
 
     public void setImage(Image image) {
@@ -47,12 +49,12 @@ public class AlbumArtController implements Initializable {
     }
 
     private void animate() {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), albumArt);
+        fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), albumArt);
         fadeTransition.setFromValue(ALMOST_TOTALLY_HIDDEN);
         fadeTransition.setToValue(1);
         fadeTransition.setOnFinished(e -> {
-            Color absoluteColor = ChoicePlayerApplication.getColors().getAbsoluteColor();
-            pane.setBackground(new Background(new BackgroundFill(absoluteColor, CornerRadii.EMPTY, Insets.EMPTY)));
+            setBackground();
+            fadeTransition = null;
         });
         fadeTransition.play();
     }
@@ -73,5 +75,18 @@ public class AlbumArtController implements Initializable {
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(buttonFadeTransition, buttonTranslateTransition, albumArtFadeTransition);
         parallelTransition.play();
+        stopFadeTransition();
+    }
+
+    private void stopFadeTransition() {
+        if (fadeTransition != null) {
+            fadeTransition.stop();
+            fadeTransition = null;
+        }
+    }
+
+    private void setBackground() {
+        Color absoluteColor = ChoicePlayerApplication.getColors().getAbsoluteColor();
+        pane.setBackground(new Background(new BackgroundFill(absoluteColor, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 }

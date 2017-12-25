@@ -1,8 +1,8 @@
 package com.gabrielavara.choiceplayer.views;
 
 import static com.gabrielavara.choiceplayer.Constants.DELAY;
+import static com.gabrielavara.choiceplayer.Constants.INITIAL_ANIMATION_TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.views.Animator.Direction.IN;
 
 import javafx.animation.FadeTransition;
@@ -28,7 +28,7 @@ public class Animator {
     public void setup(Node... nodes) {
         for (Node node : nodes) {
             node.setOpacity(0);
-            node.setTranslateY(direction == IN ? TRANSLATE_Y : -TRANSLATE_Y);
+            node.setTranslateY(direction == IN ? INITIAL_ANIMATION_TRANSLATE_Y : -INITIAL_ANIMATION_TRANSLATE_Y);
         }
     }
 
@@ -41,7 +41,7 @@ public class Animator {
             fadeTransition.setDelay(Duration.millis(step * DELAY));
 
             TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
-            translateTransition.setByY(direction == IN ? -TRANSLATE_Y : TRANSLATE_Y);
+            translateTransition.setByY(direction == IN ? -INITIAL_ANIMATION_TRANSLATE_Y : INITIAL_ANIMATION_TRANSLATE_Y);
             translateTransition.setDelay(Duration.millis(step * DELAY));
 
             parallelTransition.getChildren().addAll(fadeTransition, translateTransition);

@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
+import com.jfoenix.controls.JFXRippler;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -18,12 +19,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import lombok.Getter;
 
 public class PlaylistItemController implements Initializable {
+    @FXML
+    public StackPane root;
+    @FXML
+    public HBox hBox;
     @FXML
     public Label indexLabel;
     @FXML
@@ -36,8 +43,6 @@ public class PlaylistItemController implements Initializable {
     @FXML
     public Label lengthLabel;
     @FXML
-    public HBox root;
-    @FXML
     public Rectangle indicator;
 
     private boolean isAnimating;
@@ -47,62 +52,6 @@ public class PlaylistItemController implements Initializable {
     private Color accentColor;
     private Color foregroundColor;
     private Color foregroundBrightColor;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        accentColor = ChoicePlayerApplication.getColors().getAccentColor();
-        foregroundColor = ChoicePlayerApplication.getColors().getForegroundColor();
-        foregroundBrightColor = ChoicePlayerApplication.getColors().getForegroundBrightColor();
-
-        indicator.setFill(accentColor);
-
-        labels = asList(indexLabel, artistLabel, titleLabel, lengthLabel);
-        indexLabel.setTextFill(foregroundColor);
-        artistLabel.setTextFill(foregroundBrightColor);
-        titleLabel.setTextFill(foregroundColor);
-        lengthLabel.setTextFill(foregroundBrightColor);
-
-        root.hoverProperty().addListener((ov, oldValue, newValue) -> albumArt.hover(newValue));
-    }
-
-    public void animateToState(PlaylistItemState state) {
-        isAnimating = true;
-        setHeight(root);
-        animateLabels(state);
-        animateIndicator(state);
-    }
-
-    private void animateLabels(PlaylistItemState state) {
-        for (Label label : labels) {
-            Transition transition = createColorTransition(state, label);
-            transition.play();
-        }
-    }
-
-    private void animateIndicator(PlaylistItemState state) {
-        Timeline indicatorTimeLine = createIndicatorTimeLine(state);
-        indicatorTimeLine.setOnFinished(e -> isAnimating = false);
-        indicatorTimeLine.play();
-    }
-
-    private static void setHeight(HBox root) {
-        if (height < 1) {
-            height = root.getHeight();
-        }
-    }
-
-    private Timeline createIndicatorTimeLine(PlaylistItemState state) {
-        return new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(indicator.heightProperty(), state == SELECTED ? 0d : height)),
-                new KeyFrame(Duration.millis(ANIMATION_DURATION), new KeyValue(indicator.heightProperty(), state == SELECTED ? height : 0d)));
-    }
-
-    private Transition createColorTransition(PlaylistItemState state, Label label) {
-        Color from = (Color) label.getTextFill();
-        Color color = label.equals(titleLabel) ? foregroundColor : foregroundBrightColor;
-        Color to = state == SELECTED ? accentColor : color;
-        return new ColorTransition(label, from, to);
-    }
 
     public void setIndex(String index) {
         indexLabel.setText(index);
@@ -127,5 +76,65 @@ public class PlaylistItemController implements Initializable {
                 label.setTextFill(accentColor);
             }
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        accentColor = ChoicePlayerApplication.getColors().getAccentColor();
+        foregroundColor = ChoicePlayerApplication.getColors().getForegroundColor();
+        foregroundBrightColor = ChoicePlayerApplication.getColors().getForegroundBrightColor();
+
+        indicator.setFill(accentColor);
+
+        labels = asList(indexLabel, artistLabel, titleLabel, lengthLabel);
+        indexLabel.setTextFill(foregroundColor);
+        artistLabel.setTextFill(foregroundBrightColor);
+        titleLabel.setTextFill(foregroundColor);
+        lengthLabel.setTextFill(foregroundBrightColor);
+
+        JFXRippler rippler = new JFXRippler(hBox);
+        rippler.setRipplerFill(accentColor);
+        root.getChildren().add(rippler);
+
+        root.hoverProperty().addListener((ov, oldValue, newValue) -> albumArt.hover(newValue));
+    }
+
+    public void animateToState(PlaylistItemState state) {
+        isAnimating = true;
+        setHeight(root);
+        animateLabels(state);
+        animateIndicator(state);
+    }
+
+    private static void setHeight(Pane root) {
+        if (height < 1) {
+            height = root.getHeight();
+        }
+    }
+
+    private void animateLabels(PlaylistItemState state) {
+        for (Label label : labels) {
+            Transition transition = createColorTransition(state, label);
+            transition.play();
+        }
+    }
+
+    private Transition createColorTransition(PlaylistItemState state, Label label) {
+        Color from = (Color) label.getTextFill();
+        Color color = label.equals(titleLabel) ? foregroundColor : foregroundBrightColor;
+        Color to = state == SELECTED ? accentColor : color;
+        return new ColorTransition(label, from, to);
+    }
+
+    private void animateIndicator(PlaylistItemState state) {
+        Timeline indicatorTimeLine = createIndicatorTimeLine(state);
+        indicatorTimeLine.setOnFinished(e -> isAnimating = false);
+        indicatorTimeLine.play();
+    }
+
+    private Timeline createIndicatorTimeLine(PlaylistItemState state) {
+        return new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(indicator.heightProperty(), state == SELECTED ? 0d : height)),
+                new KeyFrame(Duration.millis(ANIMATION_DURATION), new KeyValue(indicator.heightProperty(), state == SELECTED ? height : 0d)));
     }
 }

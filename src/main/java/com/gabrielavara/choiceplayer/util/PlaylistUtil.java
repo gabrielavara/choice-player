@@ -45,6 +45,10 @@ public class PlaylistUtil {
         return playlistItems.stream().filter(s -> mp3.equals(s.getMp3())).findFirst();
     }
 
+    public OptionalInt getPlaylistIndex(Mp3 mp3) {
+        return IntStream.range(0, playlistItems.size()).filter(i -> playlistItems.get(i).getMp3().equals(mp3)).findFirst();
+    }
+
     public void goToNextTrack() {
         getNextPlaylistItemView().ifPresent(this::select);
     }

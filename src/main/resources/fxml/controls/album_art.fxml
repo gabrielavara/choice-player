@@ -4,9 +4,9 @@
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane fx:id="pane" prefHeight="72.0" prefWidth="72.0" xmlns="http://javafx.com/javafx/8.0.121"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gabrielavara.choiceplayer.controls.albumart.AlbumArtController">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gabrielavara.choiceplayer.controls.albumart.AlbumArtController"
+            fx:id="pane" prefHeight="72.0" prefWidth="72.0">
     <ImageView fx:id="albumArt" fitHeight="72.0" fitWidth="72.0" opacity="0"/>
     <JFXButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" AnchorPane.bottomAnchor="0.0"
                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
