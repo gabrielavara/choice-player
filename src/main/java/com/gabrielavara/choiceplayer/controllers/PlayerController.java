@@ -160,14 +160,14 @@ public class PlayerController implements Initializable {
             Optional<PlaylistItemView> oldPlaylistItem = playlistUtil.getPlaylistItemView(ov);
             oldPlaylistItem.ifPresent(i -> {
                 Optional<PlaylistCell> cell = playlistInitializer.getCell(i);
-                cell.ifPresent(c -> c.getPlaylistItem().setState(DESELECTED));
+                cell.ifPresent(c -> c.getPlaylistItem().animateToState(DESELECTED));
             });
         });
 
         Optional<PlaylistItemView> newPlaylistItem = playlistUtil.getCurrentlyPlayingPlaylistItemView();
         newPlaylistItem.ifPresent(i -> {
             Optional<PlaylistCell> cell = playlistInitializer.getCell(i);
-            cell.ifPresent(c -> c.getPlaylistItem().setState(SELECTED));
+            cell.ifPresent(c -> c.getPlaylistItem().animateToState(SELECTED));
         });
     }
 

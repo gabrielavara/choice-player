@@ -34,6 +34,7 @@ public class PlaylistCell extends ListCell<PlaylistItemView> {
         } else {
             playlistItem = createPlaylistItem(item);
             setGraphic(playlistItem);
+            playlistItem.setState(playlistItemView.getMp3().isCurrentlyPlaying());
             loadAlbumArt(item);
         }
     }

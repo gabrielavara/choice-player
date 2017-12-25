@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.settings.ColorConverter;
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -51,7 +52,7 @@ public class AlbumArtController implements Initializable {
         fadeTransition.setFromValue(ALMOST_TOTALLY_HIDDEN);
         fadeTransition.setToValue(1);
         fadeTransition.setOnFinished(e -> {
-            Color color = ChoicePlayerApplication.getSettings().getTheme().getStyle().getAbsoluteColor();
+            Color color = ColorConverter.convert(ChoicePlayerApplication.getSettings().getTheme().getStyle().getAbsoluteColor());
             pane.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
         });
         fadeTransition.play();

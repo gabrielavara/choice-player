@@ -52,7 +52,11 @@ public class PlaylistItem extends HBox {
         return controller.getAlbumArt();
     }
 
-    public void setState(PlaylistItemState state) {
-        controller.setState(state);
+    public void animateToState(PlaylistItemState state) {
+        controller.animateToState(state);
+    }
+
+    public void setState(boolean currentlyPlaying) {
+        controller.setState(currentlyPlaying);
     }
 }
