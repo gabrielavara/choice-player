@@ -1,16 +1,21 @@
 package com.gabrielavara.choiceplayer.util;
 
+import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_DELETE_FILE;
+import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.RECYCLE_BIN;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static javafx.animation.Interpolator.EASE_OUT;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import com.jfoenix.controls.JFXSnackbar;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -23,14 +28,18 @@ import org.slf4j.LoggerFactory;
 public abstract class FileMover {
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");
 
-    private PlaylistUtil playlistUtil;
-    private ObservableList<PlaylistItemView> playlistItemViews;
-    private PlaylistInitializer playlistInitializer;
+    private final PlaylistUtil playlistUtil;
+    private final ObservableList<PlaylistItemView> playlistItemViews;
+    private final PlaylistInitializer playlistInitializer;
+    private final JFXSnackbar snackBar;
+    private final ResourceBundle resourceBundle;
 
-    FileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> playlistItemViews, PlaylistInitializer playlistInitializer) {
+    FileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> playlistItemViews, PlaylistInitializer playlistInitializer, JFXSnackbar snackBar) {
         this.playlistUtil = playlistUtil;
         this.playlistItemViews = playlistItemViews;
         this.playlistInitializer = playlistInitializer;
+        this.snackBar = snackBar;
+        resourceBundle = ResourceBundle.getBundle("language.player");
     }
 
     public void moveFile() {
@@ -60,7 +69,13 @@ public abstract class FileMover {
             log.info("Successfully moved to {}", getTarget());
             animateRemove(item);
         });
-        task.setOnFailed(e -> log.error("Could not move to {}: {}", getTarget(), item.getMp3()));
+        task.setOnFailed(e -> {
+            log.error("Could not move to {}: {}", getTarget(), item.getMp3());
+            String message = RECYCLE_BIN.equals(getTarget())
+                    ? resourceBundle.getString(COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN)
+                    : resourceBundle.getString(COULD_NOT_DELETE_FILE);
+            snackBar.enqueue(new JFXSnackbar.SnackbarEvent(message));
+        });
         return task;
     }
 

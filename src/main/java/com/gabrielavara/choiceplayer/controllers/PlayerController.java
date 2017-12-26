@@ -1,7 +1,7 @@
 package com.gabrielavara.choiceplayer.controllers;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_S;
+import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
@@ -12,7 +12,6 @@ import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWA
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
 import static javafx.scene.media.MediaPlayer.Status.HALTED;
 import static javafx.scene.media.MediaPlayer.Status.PAUSED;
@@ -37,7 +36,7 @@ import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.util.FileMover;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
-import com.gabrielavara.choiceplayer.util.GoodFolderFileMover;
+import com.gabrielavara.choiceplayer.util.LikedFolderFileMover;
 import com.gabrielavara.choiceplayer.util.MediaUrl;
 import com.gabrielavara.choiceplayer.util.Messenger;
 import com.gabrielavara.choiceplayer.util.PlaylistInitializer;
@@ -51,6 +50,7 @@ import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSpinner;
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.KeyFrame;
@@ -130,7 +130,7 @@ public class PlayerController implements Initializable {
     private AnimatedLabel title;
 
     @Getter
-    private FileMover goodFolderFileMover;
+    private FileMover likedFolderFileMover;
     @Getter
     private FileMover recycleBinFileMover;
 
@@ -147,8 +147,9 @@ public class PlayerController implements Initializable {
         Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
         playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
         playlistInitializer.loadPlaylist();
-        goodFolderFileMover = new GoodFolderFileMover(playlistUtil, playlistItems, playlistInitializer);
-        recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlistInitializer);
+        JFXSnackbar snackBar = new JFXSnackbar(rootContainer);
+        likedFolderFileMover = new LikedFolderFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
+        recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
     }
 
     private void selectPlaylistItem(PlaylistItemSelectedMessage message) {
@@ -228,8 +229,8 @@ public class PlayerController implements Initializable {
 
     private void waitForDispose() {
         try {
-            Awaitility.with().pollInterval(DISPOSE_WAIT_MS, MILLISECONDS).await().atMost(DISPOSE_MAX_WAIT_S, SECONDS).until(getStatus(),
-                    equalTo(DISPOSED));
+            Awaitility.with().pollInterval(DISPOSE_WAIT_MS, MILLISECONDS).await()
+                    .atMost(DISPOSE_MAX_WAIT_MS, MILLISECONDS).until(getStatus(), equalTo(DISPOSED));
         } catch (ConditionTimeoutException e) {
             log.debug("Media player not disposed :( {}");
         }
@@ -312,7 +313,7 @@ public class PlayerController implements Initializable {
         timeSlider.setOnMouseReleased(e -> enableTimeSliderUpdate());
         timeSlider.setOnMouseClicked(e -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
-        likeButton.setOnMouseClicked(e -> goodFolderFileMover.moveFile());
+        likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
     }
 

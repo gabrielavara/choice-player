@@ -41,7 +41,7 @@ public class GlobalKeyListener implements NativeKeyListener {
         boolean isCtrlPressed = (e.getModifiers() & CTRL_MASK) != 0;
 
         if (e.getKeyCode() == VC_M && isAltPressed && !isCtrlPressed && !isShiftPressed) {
-            playerController.getGoodFolderFileMover().moveFile();
+            playerController.getLikedFolderFileMover().moveFile();
         } else if (e.getKeyCode() == VC_D && isAltPressed && !isCtrlPressed && !isShiftPressed) {
             playerController.getRecycleBinFileMover().moveFile();
         } else if (e.getKeyCode() == VC_PAGE_UP && isAltPressed && isCtrlPressed && !isShiftPressed) {

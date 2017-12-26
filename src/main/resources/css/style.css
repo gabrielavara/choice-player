@@ -9,6 +9,15 @@
     -fx-text-fill: foreground-color;
 }
 
+.jfx-snackbar-content {
+    -fx-background-color: accent-color;
+}
+
+.jfx-snackbar-toast {
+    -fx-font: 22 "Arial Rounded MT Bold";
+    -fx-text-fill: white;
+}
+
 .playlistStackPane {
     -fx-background: background-color;
 }

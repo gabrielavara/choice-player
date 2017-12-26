@@ -6,5 +6,5 @@ import lombok.Data;
 public class Settings {
     private ThemeSettings theme = new ThemeSettings();
     private String folder = "F:\\Google Drive\\Music\\Downloaded";
-    private String folderToMove = "F:\\Music\\0 New";
+    private String likedFolder = "F:\\Music\\0 New";
 }

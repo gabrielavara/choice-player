@@ -27,15 +27,19 @@ public class Constants {
     public static final String ESCAPED_PLUS = "%20";
     public static final String FILE = "file:/";
 
-    public static final int FILE_MOVER_WAIT_MS = 500;
-    public static final int FILE_MOVER_MAX_WAIT_S = 5;
-    public static final int DISPOSE_WAIT_MS = 50;
-    public static final int DISPOSE_MAX_WAIT_S = 1;
+    public static final int FILE_MOVER_WAIT_MS = 250;
+    public static final int FILE_MOVER_MAX_WAIT_MS = 500;
+    public static final int DISPOSE_WAIT_MS = 100;
+    public static final int DISPOSE_MAX_WAIT_MS = 500;
 
     public static final int SEEK_SECONDS = 10;
 
     public static final String DEFAULT_ALBUM_ART = "src/main/resources/images/default-album-art.jpg";
     public static final double ALBUM_ART_SCALE = 0.5;
+
+    public static final String RECYCLE_BIN = "Recycle bin";
+    public static final String COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN = "couldNotMoveFileToRecycleBin";
+    public static final String COULD_NOT_DELETE_FILE = "couldNotDeleteFile";
 
     private Constants() {
     }
