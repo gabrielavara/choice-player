@@ -39,4 +39,8 @@ public class AnimatedButton extends AnchorPane {
     public void play() {
         controller.play();
     }
+
+    public void animate() {
+        controller.animate();
+    }
 }

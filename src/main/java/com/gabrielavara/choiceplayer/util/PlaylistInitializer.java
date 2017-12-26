@@ -4,12 +4,12 @@ import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
+import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
@@ -60,7 +60,7 @@ public class PlaylistInitializer {
             @Override
             protected List<PlaylistItemView> call() {
                 List<Mp3> files = new PlaylistLoader().load(Paths.get(ChoicePlayerApplication.getSettings().getFolder()));
-                return IntStream.range(0, files.size()).mapToObj(index -> new PlaylistItemView(index + 1, files.get(index))).collect(Collectors.toList());
+                return IntStream.range(0, files.size()).mapToObj(index -> new PlaylistItemView(index + 1, files.get(index))).collect(toList());
             }
         };
 
@@ -139,5 +139,9 @@ public class PlaylistInitializer {
 
     public Optional<PlaylistCell> getCell(PlaylistItemView playlistItemView) {
         return cells.stream().filter(c -> playlistItemView.equals(c.getPlaylistItemView())).findFirst();
+    }
+
+    public List<PlaylistCell> getCellsAfter(PlaylistItemView playlistItemView) {
+        return cells.stream().filter(c -> c.getPlaylistItemView() != null && playlistItemView.getIndex() < c.getPlaylistItemView().getIndex()).collect(toList());
     }
 }

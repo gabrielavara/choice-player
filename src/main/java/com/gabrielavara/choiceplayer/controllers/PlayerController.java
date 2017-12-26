@@ -82,7 +82,6 @@ import org.jnativehook.NativeHookException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Getter
 @FXMLController
 public class PlayerController implements Initializable {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlayerController");
@@ -127,12 +126,16 @@ public class PlayerController implements Initializable {
 
     private Duration duration;
 
+    @Getter
     private PlaylistUtil playlistUtil = new PlaylistUtil(playlistItems);
 
-    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, playlistItems);
-    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems);
-    private boolean timeSliderUpdateDisabled;
+    @Getter
+    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, playlistItems, this.playlistInitializer);
+    @Getter
+    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, this.playlistInitializer);
+
     private PlaylistInitializer playlistInitializer;
+    private InvalidationListener currentTimePropertyListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -146,6 +149,8 @@ public class PlayerController implements Initializable {
         Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
         playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
         playlistInitializer.loadPlaylist();
+        goodFolderFileMover = new GoodFolderFileMover(playlistUtil, playlistItems, playlistInitializer);
+        recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlistInitializer);
     }
 
     private void selectPlaylistItem(PlaylistItemSelectedMessage message) {
@@ -199,16 +204,6 @@ public class PlayerController implements Initializable {
         loadMediaPlayer(mp3);
     }
 
-    private void disposeMediaPlayer() {
-        if (mediaPlayer != null) {
-            mediaPlayer.setOnReady(null);
-            mediaPlayer.setOnEndOfMedia(null);
-            mediaPlayer.currentTimeProperty().removeListener(updateValueListener());
-            mediaPlayer.dispose();
-            waitForDispose();
-        }
-    }
-
     private void loadBeep() {
         Optional<String> mediaUrl = MediaUrl.create(Paths.get("src/main/resources/mp3/beep.mp3"));
         mediaUrl.ifPresent(s -> mediaPlayer = new MediaPlayer(new Media(s)));
@@ -219,8 +214,18 @@ public class PlayerController implements Initializable {
         mediaUrl.ifPresent(url -> {
             mediaPlayer = new MediaPlayer(new Media(url));
             addMediaPlayerListeners();
-            play(false);
+            play(false, false);
         });
+    }
+
+    private void disposeMediaPlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.setOnReady(null);
+            mediaPlayer.setOnEndOfMedia(null);
+            mediaPlayer.currentTimeProperty().removeListener(getCurrentTimePropertyListener());
+            mediaPlayer.dispose();
+            waitForDispose();
+        }
     }
 
     private void waitForDispose() {
@@ -237,7 +242,7 @@ public class PlayerController implements Initializable {
     }
 
     private void addMediaPlayerListeners() {
-        mediaPlayer.currentTimeProperty().addListener(updateValueListener());
+        mediaPlayer.currentTimeProperty().addListener(getCurrentTimePropertyListener());
 
         mediaPlayer.setOnReady(() -> {
             duration = mediaPlayer.getMedia().getDuration();
@@ -247,14 +252,14 @@ public class PlayerController implements Initializable {
         mediaPlayer.setOnEndOfMedia(() -> playlistUtil.goToNextTrack());
     }
 
-    private InvalidationListener updateValueListener() {
-        return ov -> updateValues();
+    private InvalidationListener getCurrentTimePropertyListener() {
+        if (currentTimePropertyListener == null) {
+            currentTimePropertyListener = ov -> updateValues();
+        }
+        return currentTimePropertyListener;
     }
 
     private void updateValues() {
-        if (timeSliderUpdateDisabled) {
-            return;
-        }
         Platform.runLater(() -> {
             Duration currentTime = updateElapsedRemainingLabels();
             updateTimeSlider(currentTime);
@@ -262,6 +267,9 @@ public class PlayerController implements Initializable {
     }
 
     private Duration updateElapsedRemainingLabels() {
+        if (duration == null) {
+            return Duration.ZERO;
+        }
         Duration currentTime = mediaPlayer.getCurrentTime();
         TimeFormatter.Times formattedTimes = TimeFormatter.getFormattedTimes(currentTime, duration);
         elapsedLabel.setText(formattedTimes.getElapsed());
@@ -270,9 +278,9 @@ public class PlayerController implements Initializable {
     }
 
     private void updateTimeSlider(Duration currentTime) {
-        timeSlider.setDisable(duration.isUnknown());
-        if (!timeSlider.isDisabled() && duration.greaterThan(Duration.ZERO) && !timeSlider.isValueChanging()) {
-            timeSlider.setValue(currentTime.divide(duration.toMillis()).toMillis() * 100.0);
+        if (!timeSlider.isValueChanging()) {
+            double value = currentTime.divide(duration.toMillis()).toMillis() * 100.0;
+            timeSlider.setValue(value);
         }
     }
 
@@ -311,12 +319,11 @@ public class PlayerController implements Initializable {
     }
 
     private void disableTimeSliderUpdate() {
-        timeSliderUpdateDisabled = true;
+        mediaPlayer.currentTimeProperty().removeListener(getCurrentTimePropertyListener());
     }
 
     private void enableTimeSliderUpdate() {
-        timeSliderUpdateDisabled = false;
-        mediaPlayer.currentTimeProperty().addListener(updateValueListener());
+        mediaPlayer.currentTimeProperty().addListener(getCurrentTimePropertyListener());
     }
 
     private void seek(boolean shouldConsiderValueChanging) {
@@ -324,9 +331,9 @@ public class PlayerController implements Initializable {
             return;
         }
         if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
-            disableTimeSliderUpdate();
+            mediaPlayer.currentTimeProperty().removeListener(getCurrentTimePropertyListener());
             Timeline seekTimeLine = createSeekTimeLine(seek());
-            seekTimeLine.setOnFinished(e -> enableTimeSliderUpdate());
+            seekTimeLine.setOnFinished(e -> mediaPlayer.currentTimeProperty().addListener(getCurrentTimePropertyListener()));
             seekTimeLine.play();
         }
     }
@@ -335,7 +342,7 @@ public class PlayerController implements Initializable {
         return t -> mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
     }
 
-    public void playPause() {
+    public void playPause(boolean animatePlayPauseButton) {
         if (mediaPlayer == null) {
             playlistUtil.select(playlistItems.get(0));
         }
@@ -345,26 +352,32 @@ public class PlayerController implements Initializable {
                 return;
             }
             if (status == PAUSED || status == READY || status == STOPPED) {
-                play(true);
+                play(true, animatePlayPauseButton);
             } else {
-                pause();
+                pause(animatePlayPauseButton);
             }
         }
     }
 
-    private void play(boolean animatePlayPause) {
+    private void play(boolean animateAlbumArt, boolean animatePlayPauseButton) {
         Timeline timeLine = createPlayPauseVolumeTimeLine(1, ANIMATION_DURATION);
         mediaPlayer.play();
         timeLine.play();
-        if (animatePlayPause) {
+        if (animatePlayPauseButton) {
+            playPauseButton.animate();
+        }
+        if (animateAlbumArt) {
             albumArt.animatePlayPause(IN);
         }
     }
 
-    private void pause() {
+    private void pause(boolean animatePlayPauseButton) {
         Timeline volumeTimeLine = createPlayPauseVolumeTimeLine(0, SHORT_ANIMATION_DURATION);
         volumeTimeLine.setOnFinished(e -> mediaPlayer.pause());
         volumeTimeLine.play();
+        if (animatePlayPauseButton) {
+            playPauseButton.animate();
+        }
         albumArt.animatePlayPause(OUT);
     }
 

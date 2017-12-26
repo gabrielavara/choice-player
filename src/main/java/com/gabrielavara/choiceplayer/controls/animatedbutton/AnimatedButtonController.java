@@ -51,7 +51,11 @@ public class AnimatedButtonController implements Initializable {
     }
 
     private void buttonClicked(MouseEvent e) {
-        controller.playPause();
+        controller.playPause(false);
+        animate();
+    }
+
+    public void animate() {
         animate(playButton, playShowed ? OUT : IN);
         animate(pauseButton, playShowed ? IN : OUT);
         playShowed = !playShowed;

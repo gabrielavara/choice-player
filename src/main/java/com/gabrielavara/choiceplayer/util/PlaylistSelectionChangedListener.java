@@ -20,7 +20,7 @@ public class PlaylistSelectionChangedListener implements ChangeListener<Playlist
         if (newValue == null) {
             return;
         }
-        log.info("Playlist selection changed from: {}, to {}", oldValue, newValue);
+        log.info("Playlist selection changed to: {}", oldValue, newValue);
         newValue.setCurrentlyPlaying(true);
         if (oldValue != null) {
             oldValue.setCurrentlyPlaying(false);

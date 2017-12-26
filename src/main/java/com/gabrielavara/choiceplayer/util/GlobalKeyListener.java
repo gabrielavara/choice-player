@@ -1,7 +1,7 @@
 package com.gabrielavara.choiceplayer.util;
 
+import static java.awt.event.ActionEvent.CTRL_MASK;
 import static org.jnativehook.NativeInputEvent.ALT_MASK;
-import static org.jnativehook.NativeInputEvent.CTRL_MASK;
 import static org.jnativehook.NativeInputEvent.SHIFT_MASK;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_D;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_LEFT;
@@ -9,7 +9,6 @@ import static org.jnativehook.keyboard.NativeKeyEvent.VC_M;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_PAGE_DOWN;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_PAGE_UP;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_RIGHT;
-import static org.jnativehook.keyboard.NativeKeyEvent.VC_SLASH;
 
 import java.util.logging.Level;
 
@@ -19,6 +18,8 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
 public class GlobalKeyListener implements NativeKeyListener {
+    private static final int LONG_I = 0;
+
     private final PlayerController playerController;
 
     public GlobalKeyListener(PlayerController playerController) {
@@ -51,8 +52,8 @@ public class GlobalKeyListener implements NativeKeyListener {
             playerController.rewind();
         } else if (e.getKeyCode() == VC_RIGHT && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.fastForward();
-        } else if (e.getKeyCode() == VC_SLASH && isAltPressed && !isCtrlPressed && !isShiftPressed) {
-            playerController.playPause();
+        } else if (e.getKeyCode() == LONG_I && isAltPressed && !isCtrlPressed && !isShiftPressed) {
+            playerController.playPause(true);
         }
     }
 

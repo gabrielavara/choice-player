@@ -9,8 +9,8 @@ import javafx.collections.ObservableList;
 
 public class RecycleBinFileMover extends FileMover {
 
-    public RecycleBinFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files) {
-        super(playlistUtil, mp3Files);
+    public RecycleBinFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, PlaylistInitializer playlistInitializer) {
+        super(playlistUtil, mp3Files, playlistInitializer);
     }
 
     @Override

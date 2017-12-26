@@ -75,6 +75,9 @@ public class PlaylistItemController implements Initializable {
             for (Label label : labels) {
                 label.setTextFill(accentColor);
             }
+        } else {
+            indicator.setHeight(0);
+            setLabelColors();
         }
     }
 
@@ -87,16 +90,20 @@ public class PlaylistItemController implements Initializable {
         indicator.setFill(accentColor);
 
         labels = asList(indexLabel, artistLabel, titleLabel, lengthLabel);
-        indexLabel.setTextFill(foregroundColor);
-        artistLabel.setTextFill(foregroundBrightColor);
-        titleLabel.setTextFill(foregroundColor);
-        lengthLabel.setTextFill(foregroundBrightColor);
+        setLabelColors();
 
         JFXRippler rippler = new JFXRippler(hBox);
         rippler.setRipplerFill(accentColor);
         root.getChildren().add(rippler);
 
         root.hoverProperty().addListener((ov, oldValue, newValue) -> albumArt.hover(newValue));
+    }
+
+    private void setLabelColors() {
+        indexLabel.setTextFill(foregroundColor);
+        artistLabel.setTextFill(foregroundBrightColor);
+        titleLabel.setTextFill(foregroundColor);
+        lengthLabel.setTextFill(foregroundBrightColor);
     }
 
     public void animateToState(PlaylistItemState state) {

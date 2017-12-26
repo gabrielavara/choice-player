@@ -6,7 +6,9 @@ import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @EqualsAndHashCode
 public class PlaylistItemView {
     @Getter

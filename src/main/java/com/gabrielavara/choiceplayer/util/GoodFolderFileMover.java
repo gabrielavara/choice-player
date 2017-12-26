@@ -20,8 +20,8 @@ import org.awaitility.core.ConditionTimeoutException;
 
 public class GoodFolderFileMover extends FileMover {
 
-    public GoodFolderFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files) {
-        super(playlistUtil, mp3Files);
+    public GoodFolderFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, PlaylistInitializer playlistInitializer) {
+        super(playlistUtil, mp3Files, playlistInitializer);
     }
 
     @Override
@@ -35,8 +35,7 @@ public class GoodFolderFileMover extends FileMover {
         String folderToMove = getTarget();
         String fileName = from.getFileName().toString();
         Path to = Paths.get(folderToMove, fileName);
-        Files.copy(from, to, REPLACE_EXISTING);
-        delete(from.toString());
+        Files.move(from, to, REPLACE_EXISTING);
     }
 
     void delete(final String url) {

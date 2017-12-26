@@ -7,8 +7,12 @@ import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItem;
 import javafx.scene.control.ListCell;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlaylistCell extends ListCell<PlaylistItemView> {
+    protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.views.PlaylistCell");
+
     private static final ExecutorService executorService = Executors.newFixedThreadPool(10, r -> {
         Thread t = new Thread(r);
         t.setDaemon(true);
@@ -23,6 +27,9 @@ public class PlaylistCell extends ListCell<PlaylistItemView> {
     @Override
     protected void updateItem(PlaylistItemView item, boolean empty) {
         super.updateItem(item, empty);
+        if (playlistItemView.equals(item)) {
+            return;
+        }
         playlistItemView = item;
         setText(null);
         if (empty) {
