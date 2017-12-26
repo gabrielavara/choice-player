@@ -115,27 +115,25 @@ public class PlayerController implements Initializable {
     @FXML
     private Label remainingLabel;
 
+    @Getter
+    private ObservableList<PlaylistItemView> playlistItems = FXCollections.observableArrayList();
+    @Getter
+    private PlaylistUtil playlistUtil = new PlaylistUtil(playlistItems);
+    private PlaylistInitializer playlistInitializer;
+
     private MediaPlayer mediaPlayer;
+    private Duration duration;
+    private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
+    private InvalidationListener currentTimePropertyListener;
 
     private AnimatedLabel artist;
     private AnimatedLabel title;
-    @Getter
-    private ObservableList<PlaylistItemView> playlistItems = FXCollections.observableArrayList();
-
-    private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
-
-    private Duration duration;
 
     @Getter
-    private PlaylistUtil playlistUtil = new PlaylistUtil(playlistItems);
-
+    private FileMover goodFolderFileMover;
     @Getter
-    private FileMover goodFolderFileMover = new GoodFolderFileMover(playlistUtil, playlistItems, this.playlistInitializer);
-    @Getter
-    private FileMover recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, this.playlistInitializer);
+    private FileMover recycleBinFileMover;
 
-    private PlaylistInitializer playlistInitializer;
-    private InvalidationListener currentTimePropertyListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

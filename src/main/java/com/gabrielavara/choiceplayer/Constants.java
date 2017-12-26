@@ -32,7 +32,7 @@ public class Constants {
     public static final int DISPOSE_WAIT_MS = 50;
     public static final int DISPOSE_MAX_WAIT_S = 1;
 
-    public static final int SEEK_SECONDS = 5;
+    public static final int SEEK_SECONDS = 10;
 
     public static final String DEFAULT_ALBUM_ART = "src/main/resources/images/default-album-art.jpg";
     public static final double ALBUM_ART_SCALE = 0.5;

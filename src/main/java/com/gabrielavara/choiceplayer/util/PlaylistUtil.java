@@ -88,7 +88,6 @@ public class PlaylistUtil {
     }
 
     public Optional<byte[]> getCurrentlyPlayingAlbumArt() {
-        log.info("getCurrentlyPlayingAlbumArt called");
         Optional<Mp3> currentlyPlaying = getCurrentlyPlaying();
         return currentlyPlaying.flatMap(PlaylistUtil::getAlbumArt);
     }
