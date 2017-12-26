@@ -27,11 +27,10 @@ public class PlaylistCell extends ListCell<PlaylistItemView> {
     @Override
     protected void updateItem(PlaylistItemView item, boolean empty) {
         super.updateItem(item, empty);
-        if (playlistItemView.equals(item)) {
+        if (playlistItemView != null && playlistItemView.equals(item)) {
             return;
         }
         playlistItemView = item;
-        setText(null);
         if (empty) {
             setGraphic(null);
         } else {
