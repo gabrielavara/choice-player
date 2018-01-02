@@ -3,20 +3,22 @@ package com.gabrielavara.choiceplayer;
 import java.io.File;
 import java.io.IOException;
 
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.gabrielavara.choiceplayer.settings.Colors;
 import com.gabrielavara.choiceplayer.settings.Settings;
 import com.gabrielavara.choiceplayer.views.ChoicePlayerSplashScreen;
 import com.gabrielavara.choiceplayer.views.PlayerView;
+
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import javafx.application.Platform;
 import lombok.Getter;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
@@ -57,6 +59,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
 
     @Override
     public void stop() throws Exception {
+        log.info("Stop application");
         unregisterNativeHook();
         super.stop();
         Platform.exit();
