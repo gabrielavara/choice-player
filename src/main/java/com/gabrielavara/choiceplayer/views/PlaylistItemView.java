@@ -2,14 +2,18 @@ package com.gabrielavara.choiceplayer.views;
 
 import static java.text.MessageFormat.format;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor
 public class PlaylistItemView {
     @Getter
     private String indexAsString;
@@ -26,10 +30,12 @@ public class PlaylistItemView {
         length = TimeFormatter.getFormattedLength((int) mp3.getLength() / 1000);
     }
 
+    @JsonIgnore
     public String getArtist() {
         return mp3.getArtist();
     }
 
+    @JsonIgnore
     public String getTitle() {
         return mp3.getTitle();
     }

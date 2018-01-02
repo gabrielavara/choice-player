@@ -6,49 +6,39 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
-public class CacheTest {
-
+public class PlaylistCacheTest {
     private static final String OLDER_MP3 = "src/test/resources/mp3/testOlder.mp3";
     private static final String PLAYLIST_CACHE = "playlistCache.json";
-
-    private Cache cache = new Cache();
-
-    @Test
-    public void testPutAndGet() throws InvalidDataException, IOException, UnsupportedTagException {
-        // given
-        cache.put(OLDER_MP3, new Mp3(new Mp3File(Paths.get(OLDER_MP3))));
-
-        // when
-        Mp3 mp3 = cache.get(OLDER_MP3);
-
-        // then
-        Mp3 expected = new Mp3(new Mp3File(Paths.get(OLDER_MP3)));
-        assertEquals(expected, mp3);
-    }
 
     @Test
     public void testSaveAndLoad() throws InvalidDataException, IOException, UnsupportedTagException {
         // given
-        cache.put(OLDER_MP3, new Mp3(new Mp3File(Paths.get(OLDER_MP3))));
-        cache.save();
-        cache.load();
+        PlaylistCache.save(createPlaylist());
 
         // when
-        Mp3 mp3 = cache.get(OLDER_MP3);
+        List<PlaylistItemView> playlist = PlaylistCache.load();
 
         // then
-        Mp3 expected = new Mp3(new Mp3File(Paths.get(OLDER_MP3)));
-        assertEquals(expected, mp3);
+        assertEquals(createPlaylist(), playlist);
 
         // tear down
         deleteCacheFile();
+    }
+
+    private List<PlaylistItemView> createPlaylist() throws IOException, UnsupportedTagException, InvalidDataException {
+        List<PlaylistItemView> playlist = new ArrayList<>();
+        playlist.add(new PlaylistItemView(1, new Mp3(new Mp3File(Paths.get(OLDER_MP3)))));
+        return playlist;
     }
 
     private void deleteCacheFile() throws IOException {
