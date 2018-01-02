@@ -1,5 +1,6 @@
 .root {
     accent-color: rgb(29, 185, 84);
+    accent-bright-color: rgb(40, 255, 120);
     background-bright-color: rgb(30, 30, 30);
     background-color: rgb(20, 20, 20);
     foreground-bright-color: rgb(230, 230, 230);
@@ -7,15 +8,6 @@
 
     -fx-background: background-bright-color;
     -fx-text-fill: foreground-color;
-}
-
-.jfx-snackbar-content {
-    -fx-background-color: accent-color;
-}
-
-.jfx-snackbar-toast {
-    -fx-font: 22 "Arial Rounded MT Bold";
-    -fx-text-fill: white;
 }
 
 .playlistStackPane {
@@ -50,6 +42,15 @@
     -fx-font: 14 "Arial Rounded MT Bold";
 }
 
+.jfx-snackbar-content {
+    -fx-background-color: accent-color;
+}
+
+.jfx-snackbar-toast {
+    -fx-font: 22 "Arial Rounded MT Bold";
+    -fx-text-fill: white;
+}
+
 .button {
     -fx-text-fill: foreground-bright-color;
 }
@@ -60,6 +61,12 @@
 
 .button .jfx-rippler {
     -jfx-rippler-fill: accent-color;
+}
+
+.button-accent-color {
+    -fx-background-radius: 30;
+    -fx-background-color: accent-color;
+    -jfx-rippler-fill: accent-bright-color;
 }
 
 .jfx-slider .track,

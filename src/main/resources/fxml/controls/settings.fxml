@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXColorPicker?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+    <StackPane prefHeight="50.0" prefWidth="200.0">
+        <Label text="SETTINGS"/>
+    </StackPane>
+    <VBox VBox.vgrow="ALWAYS">
+        <StackPane alignment="TOP_LEFT">
+            <VBox.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            </VBox.margin>
+            <Label text="General"/>
+        </StackPane>
+        <HBox>
+            <VBox.margin>
+                <Insets left="12.0" right="12.0"/>
+            </VBox.margin>
+            <VBox HBox.hgrow="ALWAYS">
+                <HBox.margin>
+                    <Insets/>
+                </HBox.margin>
+                <Label text="Folder to load:"/>
+                <Label text="C:\">
+                    <VBox.margin>
+                        <Insets bottom="6.0" top="6.0"/>
+                    </VBox.margin>
+                </Label>
+            </VBox>
+            <StackPane>
+                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="Browse"/>
+            </StackPane>
+        </HBox>
+        <HBox>
+            <VBox.margin>
+                <Insets left="12.0" right="12.0"/>
+            </VBox.margin>
+            <VBox HBox.hgrow="ALWAYS">
+                <HBox.margin>
+                    <Insets/>
+                </HBox.margin>
+                <Label text="Folder to move liked music"/>
+                <Label text="C:\">
+                    <VBox.margin>
+                        <Insets bottom="6.0" top="6.0"/>
+                    </VBox.margin>
+                </Label>
+            </VBox>
+            <StackPane>
+                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="Browse"/>
+            </StackPane>
+        </HBox>
+        <StackPane alignment="TOP_LEFT">
+            <VBox.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            </VBox.margin>
+            <Label text="Theme"/>
+        </StackPane>
+        <HBox>
+            <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <Label text="Style"/>
+            </StackPane>
+            <JFXComboBox prefWidth="150.0"/>
+            <VBox.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            </VBox.margin>
+
+        </HBox>
+        <HBox>
+            <VBox.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            </VBox.margin>
+            <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <Label text="Accent color" StackPane.alignment="CENTER_LEFT"/>
+            </StackPane>
+            <JFXColorPicker/>
+        </HBox>
+    </VBox>
+</VBox>

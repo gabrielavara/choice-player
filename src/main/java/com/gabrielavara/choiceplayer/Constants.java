@@ -39,7 +39,7 @@ public class Constants {
 
     public static final String RECYCLE_BIN = "Recycle bin";
     public static final String COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN = "couldNotMoveFileToRecycleBin";
-    public static final String COULD_NOT_DELETE_FILE = "couldNotDeleteFile";
+    public static final String COULD_NOT_DELETE_ORIGINAL_FILE = "couldNotDeleteOriginalFile";
 
     private Constants() {
     }

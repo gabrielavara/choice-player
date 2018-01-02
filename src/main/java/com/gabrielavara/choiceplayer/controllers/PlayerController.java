@@ -53,10 +53,12 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSpinner;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
@@ -73,6 +75,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.Getter;
 import org.awaitility.Awaitility;
@@ -92,6 +95,12 @@ public class PlayerController implements Initializable {
     public StackPane playlistStackPane;
     @FXML
     public BigAlbumArt albumArt;
+    @FXML
+    public HBox buttonHbox;
+    @FXML
+    public JFXButton refreshButton;
+    @FXML
+    public JFXButton settingsButton;
     @FXML
     private HBox rootContainer;
     @FXML
@@ -124,7 +133,7 @@ public class PlayerController implements Initializable {
     private MediaPlayer mediaPlayer;
     private Duration duration;
     private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
-    private InvalidationListener currentTimePropertyListener;
+    private InvalidationListener currentTimePropertyListener = ov -> updateValues();
 
     private AnimatedLabel artist;
     private AnimatedLabel title;
@@ -150,6 +159,34 @@ public class PlayerController implements Initializable {
         JFXSnackbar snackBar = new JFXSnackbar(rootContainer);
         likedFolderFileMover = new LikedFolderFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
         recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
+        initializeButtonHBox();
+    }
+
+    private void initializeButtonHBox() {
+        buttonHbox.setOpacity(0);
+        buttonHbox.setTranslateY(buttonHbox.getHeight());
+
+        playlist.setOnMouseEntered(e -> getButtonTransition(true).play());
+        playlist.setOnMouseExited(e -> {
+            if (e.getY() >= playlist.getHeight() || e.getY() <= 0 || e.getX() >= playlist.getWidth() || e.getX() <= 0) {
+                getButtonTransition(false).play();
+            }
+        });
+    }
+
+
+    private ParallelTransition getButtonTransition(boolean in) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHbox);
+        fadeTransition.setFromValue(buttonHbox.getOpacity());
+        fadeTransition.setToValue(in ? 1 : 0);
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHbox);
+        translateTransition.setFromY(buttonHbox.getTranslateY());
+        translateTransition.setToY(in ? 0 : buttonHbox.getHeight());
+
+        ParallelTransition parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
+        return parallelTransition;
     }
 
     private void selectPlaylistItem(PlaylistItemSelectedMessage message) {
@@ -221,7 +258,7 @@ public class PlayerController implements Initializable {
         if (mediaPlayer != null) {
             mediaPlayer.setOnReady(null);
             mediaPlayer.setOnEndOfMedia(null);
-            mediaPlayer.currentTimeProperty().removeListener(getCurrentTimePropertyListener());
+            mediaPlayer.currentTimeProperty().removeListener(currentTimePropertyListener);
             mediaPlayer.dispose();
             waitForDispose();
         }
@@ -241,7 +278,7 @@ public class PlayerController implements Initializable {
     }
 
     private void addMediaPlayerListeners() {
-        mediaPlayer.currentTimeProperty().addListener(getCurrentTimePropertyListener());
+        mediaPlayer.currentTimeProperty().addListener(currentTimePropertyListener);
 
         mediaPlayer.setOnReady(() -> {
             duration = mediaPlayer.getMedia().getDuration();
@@ -249,13 +286,6 @@ public class PlayerController implements Initializable {
         });
 
         mediaPlayer.setOnEndOfMedia(() -> playlistUtil.goToNextTrack());
-    }
-
-    private InvalidationListener getCurrentTimePropertyListener() {
-        if (currentTimePropertyListener == null) {
-            currentTimePropertyListener = ov -> updateValues();
-        }
-        return currentTimePropertyListener;
     }
 
     private void updateValues() {
@@ -315,14 +345,25 @@ public class PlayerController implements Initializable {
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
+
+        Color color = ChoicePlayerApplication.getColors().getAccentColor().brighter().brighter().brighter();
+        refreshButton.setRipplerFill(color);
+        refreshButton.setOnMouseClicked(e -> {
+            playlistInitializer.animateItems(false);
+            playlistInitializer.loadPlaylist();
+        });
+        settingsButton.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor().brighter());
+        settingsButton.setOnMouseClicked(e -> {
+            // TODO
+        });
     }
 
     private void disableTimeSliderUpdate() {
-        mediaPlayer.currentTimeProperty().removeListener(getCurrentTimePropertyListener());
+        mediaPlayer.currentTimeProperty().removeListener(currentTimePropertyListener);
     }
 
     private void enableTimeSliderUpdate() {
-        mediaPlayer.currentTimeProperty().addListener(getCurrentTimePropertyListener());
+        mediaPlayer.currentTimeProperty().addListener(currentTimePropertyListener);
     }
 
     private void seek(boolean shouldConsiderValueChanging) {
@@ -330,9 +371,9 @@ public class PlayerController implements Initializable {
             return;
         }
         if (!shouldConsiderValueChanging || timeSlider.isValueChanging()) {
-            mediaPlayer.currentTimeProperty().removeListener(getCurrentTimePropertyListener());
+            mediaPlayer.currentTimeProperty().removeListener(currentTimePropertyListener);
             Timeline seekTimeLine = createSeekTimeLine(seek());
-            seekTimeLine.setOnFinished(e -> mediaPlayer.currentTimeProperty().addListener(getCurrentTimePropertyListener()));
+            seekTimeLine.setOnFinished(e -> mediaPlayer.currentTimeProperty().addListener(currentTimePropertyListener));
             seekTimeLine.play();
         }
     }

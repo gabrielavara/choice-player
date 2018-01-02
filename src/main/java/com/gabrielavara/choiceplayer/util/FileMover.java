@@ -1,6 +1,6 @@
 package com.gabrielavara.choiceplayer.util;
 
-import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_DELETE_FILE;
+import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_DELETE_ORIGINAL_FILE;
 import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.RECYCLE_BIN;
@@ -73,7 +73,7 @@ public abstract class FileMover {
             log.error("Could not move to {}: {}", getTarget(), item.getMp3());
             String message = RECYCLE_BIN.equals(getTarget())
                     ? resourceBundle.getString(COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN)
-                    : resourceBundle.getString(COULD_NOT_DELETE_FILE);
+                    : resourceBundle.getString(COULD_NOT_DELETE_ORIGINAL_FILE);
             snackBar.enqueue(new JFXSnackbar.SnackbarEvent(message));
         });
         return task;

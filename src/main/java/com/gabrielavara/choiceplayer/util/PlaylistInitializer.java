@@ -33,7 +33,6 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class PlaylistInitializer {
-    private JFXListView<PlaylistItemView> playlist;
     private ObservableList<PlaylistItemView> playlistItemViews;
     private JFXSpinner spinner;
     private StackPane playlistStackPane;
@@ -42,20 +41,15 @@ public class PlaylistInitializer {
 
     public PlaylistInitializer(JFXListView<PlaylistItemView> playlist, ObservableList<PlaylistItemView> playlistItemViews, JFXSpinner spinner,
                                StackPane playlistStackPane) {
-        this.playlist = playlist;
         this.playlistItemViews = playlistItemViews;
         this.spinner = spinner;
         this.playlistStackPane = playlistStackPane;
-    }
-
-    public void loadPlaylist() {
         playlist.setItems(playlistItemViews);
         playlist.setCellFactory(this::playListCellFactory);
-        loadPlaylistItems();
         playlist.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener());
     }
 
-    private void loadPlaylistItems() {
+    public void loadPlaylist() {
         Task<List<PlaylistItemView>> playListLoaderTask = new Task<List<PlaylistItemView>>() {
             @Override
             protected List<PlaylistItemView> call() {
@@ -69,57 +63,71 @@ public class PlaylistInitializer {
             playlistItemViews.addAll(items);
 
             PauseTransition wait = new PauseTransition(Duration.millis(50));
-            wait.setOnFinished(ev -> {
-                animateOutSpinner();
-                animateListItems();
-            });
+            wait.setOnFinished(ev -> animateItems(true));
             wait.play();
         });
 
         new Thread(playListLoaderTask).start();
     }
 
-    private void animateOutSpinner() {
-        ParallelTransition parallelTransition = getSpinnerOutAnimation();
-        parallelTransition.setOnFinished(e -> playlistStackPane.getChildren().remove(spinner));
+    public void animateItems(boolean in) {
+        animateSpinner(!in);
+        animateListItems(in);
+    }
+
+    private void animateSpinner(boolean in) {
+        ParallelTransition parallelTransition = getSpinnerAnimation(in);
+        if (in) {
+            if (!playlistStackPane.getChildren().contains(spinner)) {
+                playlistStackPane.getChildren().add(spinner);
+            }
+            parallelTransition.setDelay(Duration.millis(ANIMATION_DURATION));
+        }
+        if (!in) {
+            parallelTransition.setOnFinished(e -> playlistStackPane.getChildren().remove(spinner));
+        }
         parallelTransition.play();
     }
 
-    private void animateListItems() {
+    private void animateListItems(boolean in) {
         int[] delay = new int[1];
         delay[0] = 0;
         cells.forEach((PlaylistCell row) -> {
-            animateItem(row, delay[0]);
-            delay[0] += SHORT_DELAY;
+            animateItem(row, in, delay[0]);
+            if (in) {
+                delay[0] += SHORT_DELAY;
+            }
         });
     }
 
-    private void animateItem(PlaylistCell item, int delay) {
-        Transition transition = getItemTransition(item, delay);
-        transition.setOnFinished(e -> {
-            item.setOpacity(1);
-            if (cells.indexOf(item) == cells.size() - 1) {
-                beforeAnimate = false;
-            }
-        });
+    private void animateItem(PlaylistCell item, boolean in, int delay) {
+        Transition transition = getItemTransition(item, in, delay);
+        if (in) {
+            transition.setOnFinished(e -> {
+                item.setOpacity(1);
+                if (cells.indexOf(item) == cells.size() - 1) {
+                    beforeAnimate = false;
+                }
+            });
+        }
         transition.play();
     }
 
-    private Transition getItemTransition(Node item, int delay) {
+    private Transition getItemTransition(Node item, boolean in, int delay) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), item);
-        fadeTransition.setFromValue(ALMOST_TOTALLY_HIDDEN);
-        fadeTransition.setToValue(1);
+        fadeTransition.setFromValue(in ? ALMOST_TOTALLY_HIDDEN : 1);
+        fadeTransition.setToValue(in ? 1 : ALMOST_TOTALLY_HIDDEN);
         fadeTransition.setDelay(Duration.millis(delay));
         return fadeTransition;
     }
 
-    private ParallelTransition getSpinnerOutAnimation() {
+    private ParallelTransition getSpinnerAnimation(boolean in) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), spinner);
-        fadeTransition.setFromValue(1);
-        fadeTransition.setToValue(0);
+        fadeTransition.setFromValue(in ? 0 : 1);
+        fadeTransition.setToValue(in ? 1 : 0);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), spinner);
-        translateTransition.setByY(350);
+        translateTransition.setByY(in ? -350 : 350);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
