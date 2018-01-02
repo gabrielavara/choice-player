@@ -5,26 +5,29 @@ import java.util.Optional;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor
 public class Mp3 {
     private static final String EMPTY = "";
     public static final String DEFAULT_TRACK = "1";
-    private final String artist;
-    private final String title;
-    private final String year;
-    private final String album;
-    private final String track;
-    private final int trackAsInt;
-    private final long length;
-    private final String filename;
-    @Setter
+    private String artist;
+    private String title;
+    private String year;
+    private String album;
+    private String track;
+    private int trackAsInt;
+    private long length;
+    private String filename;
     private boolean currentlyPlaying;
 
     Mp3(Mp3File mp3) {
