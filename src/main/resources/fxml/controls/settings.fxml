@@ -9,16 +9,17 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-      prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.gabrielavara.choiceplayer.controls.settings.SettingsController">
     <StackPane prefHeight="50.0" prefWidth="200.0">
-        <Label text="SETTINGS"/>
+        <Label text="%settings"/>
     </StackPane>
     <VBox VBox.vgrow="ALWAYS">
         <StackPane alignment="TOP_LEFT">
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
-            <Label text="General"/>
+            <Label text="%generalSettings"/>
         </StackPane>
         <HBox>
             <VBox.margin>
@@ -28,15 +29,15 @@
                 <HBox.margin>
                     <Insets/>
                 </HBox.margin>
-                <Label text="Folder to load:"/>
-                <Label text="C:\">
+                <Label text="%settingsFolderToLoad"/>
+                <Label text="C:\" fx:id="folderToLoadLabel">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
                     </VBox.margin>
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="Browse"/>
+                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="%settingsBrowse" onMouseClicked="#folderToLoadBrowseButtonClicked"/>
             </StackPane>
         </HBox>
         <HBox>
@@ -47,41 +48,40 @@
                 <HBox.margin>
                     <Insets/>
                 </HBox.margin>
-                <Label text="Folder to move liked music"/>
-                <Label text="C:\">
+                <Label text="%settingsFolderToMoveLikedMusic"/>
+                <Label text="C:\" fx:id="folderToMoveLikedMusicLabel">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
                     </VBox.margin>
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="Browse"/>
+                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="%settingsBrowse" onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked"/>
             </StackPane>
         </HBox>
         <StackPane alignment="TOP_LEFT">
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
-            <Label text="Theme"/>
+            <Label text="%themeSettings"/>
         </StackPane>
         <HBox>
             <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <Label text="Style"/>
+                <Label text="%settingsStyle"/>
             </StackPane>
-            <JFXComboBox prefWidth="150.0"/>
+            <JFXComboBox prefWidth="150.0" fx:id="styleComboBox"/>
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
-
         </HBox>
         <HBox>
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
             <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <Label text="Accent color" StackPane.alignment="CENTER_LEFT"/>
+                <Label text="%settingsAccentColor" StackPane.alignment="CENTER_LEFT"/>
             </StackPane>
-            <JFXColorPicker/>
+            <JFXColorPicker fx:id="accentColorPicker" onAction="#accentColorPickerChanged"/>
         </HBox>
     </VBox>
 </VBox>

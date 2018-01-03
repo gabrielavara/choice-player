@@ -13,4 +13,8 @@ public class ColorConverter {
     public static Color convert(AccentColor c) {
         return new Color(((double) c.getRed()) / 255, ((double) c.getGreen()) / 255, ((double) c.getBlue()) / 255, 1.0);
     }
+
+    public static AccentColor convert(Color c) {
+        return new AccentColor(((int) c.getRed()) * 255, ((int) c.getGreen()) * 255, ((int) c.getBlue()) * 255);
+    }
 }
