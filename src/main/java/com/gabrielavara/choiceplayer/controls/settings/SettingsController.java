@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.settings.ColorConverter;
+import com.gabrielavara.choiceplayer.util.Messenger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXComboBox;
@@ -23,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 
 public class SettingsController implements Initializable {
@@ -40,6 +43,12 @@ public class SettingsController implements Initializable {
     public JFXButton folderToLoadBrowseButton;
     @FXML
     public JFXButton folderToMoveLikedMusicBrowseButton;
+    @FXML
+    public AnchorPane titleContainer;
+    @FXML
+    public Label titleLabel;
+    @FXML
+    public JFXButton closeButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,6 +59,9 @@ public class SettingsController implements Initializable {
         ObservableList<String> styles = FXCollections
                         .observableList(asList(resourceBundle.getString("settingsStyleLight"), resourceBundle.getString("settingsStyleDark")));
         styleComboBox.setItems(styles);
+        titleLabel.translateXProperty().bind(titleContainer.widthProperty().subtract(titleLabel.widthProperty()).divide(2));
+        titleLabel.translateYProperty().bind(titleContainer.heightProperty().subtract(titleLabel.heightProperty()).divide(2));
+        closeButton.setOnMouseClicked(e -> Messenger.send(new SettingsClosedMessage()));
     }
 
     @FXML

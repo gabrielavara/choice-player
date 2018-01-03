@@ -39,8 +39,10 @@ import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
+import com.gabrielavara.choiceplayer.controls.settings.Settings;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
+import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.util.FileMover;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.util.LikedFolderFileMover;
@@ -51,9 +53,10 @@ import com.gabrielavara.choiceplayer.util.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.util.TimeSliderConverter;
-import com.gabrielavara.choiceplayer.views.Animator;
+import com.gabrielavara.choiceplayer.views.InitialAnimator;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import com.gabrielavara.choiceplayer.views.SettingsAnimator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
@@ -104,7 +107,9 @@ public class PlayerController implements Initializable {
     @FXML
     public JFXButton settingsButton;
     @FXML
-    private HBox rootContainer;
+    public StackPane rootContainer;
+    @FXML
+    private HBox mainContainer;
     @FXML
     private JFXListView<PlaylistItemView> playlist;
     @FXML
@@ -145,6 +150,7 @@ public class PlayerController implements Initializable {
     @Getter
     private FileMover recycleBinFileMover;
 
+    private SettingsAnimator settingsAnimator;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -156,13 +162,25 @@ public class PlayerController implements Initializable {
         registerGlobalKeyListener();
         Messenger.register(PlaylistItemSelectedMessage.class, this::selectPlaylistItem);
         Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
+        Messenger.register(SettingsClosedMessage.class, this::settingsClosed);
         playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
         playlistInitializer.loadPlaylist();
-        JFXSnackbar snackBar = new JFXSnackbar(rootContainer);
+        JFXSnackbar snackBar = new JFXSnackbar(mainContainer);
         likedFolderFileMover = new LikedFolderFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
         recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
         initializeButtonHBox();
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
+        addSettings();
+    }
+
+    private void settingsClosed(SettingsClosedMessage m) {
+        settingsAnimator.animate(OUT);
+    }
+
+    private void addSettings() {
+        Settings settings = new Settings();
+        rootContainer.getChildren().add(settings);
+        settingsAnimator = new SettingsAnimator(mainContainer, settings);
     }
 
     private void initializeButtonHBox() {
@@ -176,7 +194,6 @@ public class PlayerController implements Initializable {
             }
         });
     }
-
 
     private ParallelTransition getButtonTransition(boolean in) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHbox);
@@ -328,7 +345,7 @@ public class PlayerController implements Initializable {
     }
 
     private void animateItems() {
-        Animator animator = new Animator(Animator.Direction.IN);
+        InitialAnimator animator = new InitialAnimator();
         animator.setup(albumArt, artist, title, timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
                 playPauseButton, nextTrackButton, likeButton);
         animator.add(albumArt).add(artist).add(title).add(timeSlider).add(elapsedLabel, remainingLabel)
@@ -358,9 +375,7 @@ public class PlayerController implements Initializable {
             playlistInitializer.loadPlaylist();
         });
         settingsButton.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor().brighter());
-        settingsButton.setOnMouseClicked(e -> {
-            // TODO
-        });
+        settingsButton.setOnMouseClicked(e -> settingsAnimator.animate(IN));
     }
 
     private void disableTimeSliderUpdate() {

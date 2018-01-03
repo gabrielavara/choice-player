@@ -31,8 +31,8 @@ public class PlaylistCache {
             return loadFile(path);
         } else {
             log.info("Could not find playlist cache file");
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
     }
 
     private static List<PlaylistItemView> loadFile(Path path) {

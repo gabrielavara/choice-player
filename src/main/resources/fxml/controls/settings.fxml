@@ -3,17 +3,23 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXColorPicker?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-      prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.choiceplayer.controls.settings.SettingsController">
-    <StackPane prefHeight="50.0" prefWidth="200.0">
-        <Label text="%settings"/>
-    </StackPane>
+    <AnchorPane prefHeight="50.0" fx:id="titleContainer">
+        <Label text="%settings" fx:id="titleLabel"/>
+        <JFXButton fx:id="closeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
+            <graphic>
+                <MaterialDesignIconView glyphName="CLOSE" size="32" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+            </graphic>
+        </JFXButton>
+    </AnchorPane>
     <VBox VBox.vgrow="ALWAYS">
         <StackPane alignment="TOP_LEFT">
             <VBox.margin>
@@ -30,14 +36,14 @@
                     <Insets/>
                 </HBox.margin>
                 <Label text="%settingsFolderToLoad"/>
-                <Label text="C:\" fx:id="folderToLoadLabel">
+                <Label fx:id="folderToLoadLabel" text="C:\">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
                     </VBox.margin>
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="%settingsBrowse" onMouseClicked="#folderToLoadBrowseButtonClicked"/>
+                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#folderToLoadBrowseButtonClicked" text="%settingsBrowse"/>
             </StackPane>
         </HBox>
         <HBox>
@@ -49,14 +55,14 @@
                     <Insets/>
                 </HBox.margin>
                 <Label text="%settingsFolderToMoveLikedMusic"/>
-                <Label text="C:\" fx:id="folderToMoveLikedMusicLabel">
+                <Label fx:id="folderToMoveLikedMusicLabel" text="C:\">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
                     </VBox.margin>
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" text="%settingsBrowse" onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked"/>
+                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked" text="%settingsBrowse"/>
             </StackPane>
         </HBox>
         <StackPane alignment="TOP_LEFT">
@@ -69,7 +75,7 @@
             <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                 <Label text="%settingsStyle"/>
             </StackPane>
-            <JFXComboBox prefWidth="150.0" fx:id="styleComboBox"/>
+            <JFXComboBox fx:id="styleComboBox" prefWidth="150.0"/>
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>

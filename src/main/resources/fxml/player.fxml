@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <?import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton?>
 <?import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt?>
 <?import com.jfoenix.controls.JFXButton?>
@@ -13,112 +14,103 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<HBox fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController">
-    <VBox fx:id="currentlyPlayingBox" maxWidth="500.0" prefWidth="500.0">
-        <StackPane>
-            <VBox.margin>
-                <Insets bottom="24.0" left="24.0" right="24.0" top="64.0"/>
-            </VBox.margin>
-            <BigAlbumArt fx:id="albumArt" maxHeight="350.0" maxWidth="350.0" prefHeight="350.0" prefWidth="350.0"
-                         StackPane.alignment="CENTER"/>
+<StackPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController" fx:id="rootContainer"
+           prefHeight="800.0" prefWidth="1200.0">
+    <HBox fx:id="mainContainer">
+        <VBox fx:id="currentlyPlayingBox" maxWidth="500.0" prefWidth="500.0">
+            <StackPane>
+                <VBox.margin>
+                    <Insets bottom="24.0" left="24.0" right="24.0" top="64.0"/>
+                </VBox.margin>
+                <BigAlbumArt fx:id="albumArt" maxHeight="350.0" maxWidth="350.0" prefHeight="350.0" prefWidth="350.0" StackPane.alignment="CENTER"/>
+            </StackPane>
+            <JFXSlider fx:id="timeSlider">
+                <VBox.margin>
+                    <Insets bottom="12.0" left="72.0" right="72.0" top="24.0"/>
+                </VBox.margin>
+            </JFXSlider>
+            <HBox prefHeight="20.0" prefWidth="200.0">
+                <VBox.margin>
+                    <Insets left="72.0" right="72.0"/>
+                </VBox.margin>
+                <Label fx:id="elapsedLabel"/>
+                <Pane prefHeight="200.0" HBox.hgrow="ALWAYS"/>
+                <Label fx:id="remainingLabel"/>
+            </HBox>
+            <HBox alignment="CENTER" prefWidth="500.0">
+                <JFXButton fx:id="dislikeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="THUMB_DOWN" size="36" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                    </graphic>
+                    <HBox.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                    </HBox.margin>
+                </JFXButton>
+                <JFXButton fx:id="previousTrackButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" styleClass="roundButton">
+                    <HBox.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                    </HBox.margin>
+                    <graphic>
+                        <MaterialDesignIconView glyphName="SKIP_PREVIOUS" size="32" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                    </graphic>
+                </JFXButton>
+                <AnimatedButton fx:id="playPauseButton">
+                    <HBox.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                    </HBox.margin>
+                </AnimatedButton>
+                <JFXButton fx:id="nextTrackButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="35.0" layoutY="10.0" mnemonicParsing="false">
+                    <HBox.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                    </HBox.margin>
+                    <graphic>
+                        <MaterialDesignIconView glyphName="SKIP_NEXT" size="32" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                    </graphic>
+                </JFXButton>
+                <JFXButton fx:id="likeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                    <HBox.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                    </HBox.margin>
+                    <graphic>
+                        <MaterialDesignIconView glyphName="THUMB_UP" size="36" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                    </graphic>
+                </JFXButton>
+            </HBox>
+        </VBox>
+        <StackPane fx:id="playlistStackPane" styleClass="playlistStackPane" HBox.hgrow="ALWAYS">
+            <JFXListView fx:id="playlist" maxWidth="1.7976931348623157E308" prefWidth="500.0" HBox.hgrow="ALWAYS">
+                <placeholder>
+                    <Label text=""/>
+                </placeholder>
+            </JFXListView>
+            <JFXSpinner fx:id="spinner">
+                <StackPane.margin>
+                    <Insets bottom="320.0" left="320.0" right="320.0" top="320.0"/>
+                </StackPane.margin>
+            </JFXSpinner>
+            <HBox fx:id="buttonHbox" alignment="BOTTOM_RIGHT" fillHeight="false" maxHeight="56.0" maxWidth="128.0" prefHeight="44.0" prefWidth="128.0"
+                  StackPane.alignment="BOTTOM_RIGHT">
+                <StackPane.margin>
+                    <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
+                </StackPane.margin>
+                <JFXButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" styleClass="button-accent-color">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="REFRESH" size="36" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                    </graphic>
+                    <HBox.margin>
+                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
+                    </HBox.margin>
+                </JFXButton>
+                <JFXButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" styleClass="button-accent-color">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="SETTINGS" size="36" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                    </graphic>
+                    <HBox.margin>
+                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
+                    </HBox.margin>
+                </JFXButton>
+            </HBox>
         </StackPane>
-        <JFXSlider fx:id="timeSlider">
-            <VBox.margin>
-                <Insets bottom="12.0" left="72.0" right="72.0" top="24.0"/>
-            </VBox.margin>
-        </JFXSlider>
-        <HBox prefHeight="20.0" prefWidth="200.0">
-            <VBox.margin>
-                <Insets left="72.0" right="72.0"/>
-            </VBox.margin>
-            <Label fx:id="elapsedLabel"/>
-            <Pane prefHeight="200.0" HBox.hgrow="ALWAYS"/>
-            <Label fx:id="remainingLabel"/>
-        </HBox>
-        <HBox alignment="CENTER" prefWidth="500.0">
-            <JFXButton fx:id="dislikeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
-                <graphic>
-                    <MaterialDesignIconView glyphName="THUMB_DOWN" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
-                                            styleClass="icon"/>
-                </graphic>
-                <HBox.margin>
-                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
-                </HBox.margin>
-            </JFXButton>
-            <JFXButton fx:id="previousTrackButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
-                       styleClass="roundButton">
-                <HBox.margin>
-                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
-                </HBox.margin>
-                <graphic>
-                    <MaterialDesignIconView glyphName="SKIP_PREVIOUS" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
-                                            styleClass="icon"/>
-                </graphic>
-            </JFXButton>
-            <AnimatedButton fx:id="playPauseButton">
-                <HBox.margin>
-                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
-                </HBox.margin>
-            </AnimatedButton>
-            <JFXButton fx:id="nextTrackButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="35.0"
-                       layoutY="10.0" mnemonicParsing="false">
-                <HBox.margin>
-                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
-                </HBox.margin>
-                <graphic>
-                    <MaterialDesignIconView glyphName="SKIP_NEXT" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
-                                            styleClass="icon"/>
-                </graphic>
-            </JFXButton>
-            <JFXButton fx:id="likeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
-                <HBox.margin>
-                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
-                </HBox.margin>
-                <graphic>
-                    <MaterialDesignIconView glyphName="THUMB_UP" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
-                                            styleClass="icon"/>
-                </graphic>
-            </JFXButton>
-        </HBox>
-    </VBox>
-    <StackPane fx:id="playlistStackPane" styleClass="playlistStackPane" HBox.hgrow="ALWAYS">
-        <JFXListView fx:id="playlist" maxWidth="1.7976931348623157E308" prefWidth="500.0" HBox.hgrow="ALWAYS">
-            <placeholder>
-                <Label text=""/>
-            </placeholder>
-        </JFXListView>
-        <JFXSpinner fx:id="spinner">
-            <StackPane.margin>
-                <Insets bottom="320.0" left="320.0" right="320.0" top="320.0"/>
-            </StackPane.margin>
-        </JFXSpinner>
-        <HBox alignment="BOTTOM_RIGHT" fillHeight="false" maxHeight="56.0" maxWidth="128.0" prefHeight="44.0"
-              prefWidth="128.0" StackPane.alignment="BOTTOM_RIGHT" fx:id="buttonHbox">
-            <StackPane.margin>
-                <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
-            </StackPane.margin>
-            <JFXButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY"
-                       styleClass="button-accent-color">
-                <graphic>
-                    <MaterialDesignIconView glyphName="REFRESH" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
-                                            styleClass="icon"/>
-                </graphic>
-                <HBox.margin>
-                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
-                </HBox.margin>
-            </JFXButton>
-            <JFXButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY"
-                       styleClass="button-accent-color">
-                <graphic>
-                    <MaterialDesignIconView glyphName="SETTINGS" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
-                                            styleClass="icon"/>
-                </graphic>
-                <HBox.margin>
-                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
-                </HBox.margin>
-            </JFXButton>
-        </HBox>
-    </StackPane>
-</HBox>
+    </HBox>
+</StackPane>
