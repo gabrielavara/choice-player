@@ -75,7 +75,7 @@
             <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                 <Label text="%settingsStyle"/>
             </StackPane>
-            <JFXComboBox fx:id="styleComboBox" prefWidth="150.0"/>
+            <JFXComboBox fx:id="styleComboBox" prefWidth="150.0" onAction="#styleComboBoxChanged"/>
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>

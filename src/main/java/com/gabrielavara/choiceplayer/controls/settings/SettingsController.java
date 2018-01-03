@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.settings.ColorConverter;
+import com.gabrielavara.choiceplayer.settings.ThemeStyle;
 import com.gabrielavara.choiceplayer.util.Messenger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXColorPicker;
@@ -59,6 +60,7 @@ public class SettingsController implements Initializable {
         ObservableList<String> styles = FXCollections
                         .observableList(asList(resourceBundle.getString("settingsStyleLight"), resourceBundle.getString("settingsStyleDark")));
         styleComboBox.setItems(styles);
+        styleComboBox.getSelectionModel().select(ChoicePlayerApplication.getSettings().getTheme().getStyle().ordinal());
         titleLabel.translateXProperty().bind(titleContainer.widthProperty().subtract(titleLabel.widthProperty()).divide(2));
         titleLabel.translateYProperty().bind(titleContainer.heightProperty().subtract(titleLabel.heightProperty()).divide(2));
         closeButton.setOnMouseClicked(e -> Messenger.send(new SettingsClosedMessage()));
@@ -89,6 +91,12 @@ public class SettingsController implements Initializable {
     @FXML
     public void accentColorPickerChanged(ActionEvent actionEvent) {
         ChoicePlayerApplication.getSettings().getTheme().setAccentColor(ColorConverter.convert(accentColorPicker.getValue()));
+    }
+
+    @FXML
+    public void styleComboBoxChanged(ActionEvent actionEvent) {
+        int selectedIndex = styleComboBox.getSelectionModel().getSelectedIndex();
+        ChoicePlayerApplication.getSettings().getTheme().setStyle(ThemeStyle.values()[selectedIndex]);
     }
 
     private interface SettingsSetter {
