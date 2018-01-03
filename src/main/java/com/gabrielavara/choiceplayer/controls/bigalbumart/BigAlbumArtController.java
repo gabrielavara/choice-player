@@ -4,8 +4,8 @@ import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_X;
 import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_Y;
-import static com.gabrielavara.choiceplayer.controls.bigalbumart.AnimationDirection.IN;
-import static com.gabrielavara.choiceplayer.controls.bigalbumart.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
 import static javafx.animation.Interpolator.EASE_IN;
 import static javafx.animation.Interpolator.EASE_OUT;
@@ -14,7 +14,9 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import com.gabrielavara.choiceplayer.controls.AnimationDirection;
 import com.gabrielavara.choiceplayer.util.ImageUtil;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;

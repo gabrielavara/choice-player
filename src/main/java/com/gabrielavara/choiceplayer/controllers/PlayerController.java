@@ -5,8 +5,8 @@ import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.controls.bigalbumart.AnimationDirection.IN;
-import static com.gabrielavara.choiceplayer.controls.bigalbumart.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.BACKWARD;
 import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
@@ -203,8 +203,10 @@ public class PlayerController implements Initializable {
         artist.setText(newValue.getArtist());
         title.setText(newValue.getTitle());
         timeSliderConverter.setLength(newValue.getLength());
-        play(newValue);
-        playPauseButton.play();
+        if (message.isPlay()) {
+            play(newValue);
+            playPauseButton.play();
+        }
         setPlaylistItemStates(message);
         setCurrentlyPlayingAlbumArt(getDirection(message, newValue));
     }
@@ -352,7 +354,7 @@ public class PlayerController implements Initializable {
         Color color = ChoicePlayerApplication.getColors().getAccentColor().brighter().brighter().brighter();
         refreshButton.setRipplerFill(color);
         refreshButton.setOnMouseClicked(e -> {
-            playlistInitializer.animateItems(false);
+            playlistInitializer.animateItems(OUT);
             playlistInitializer.loadPlaylist();
         });
         settingsButton.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor().brighter());

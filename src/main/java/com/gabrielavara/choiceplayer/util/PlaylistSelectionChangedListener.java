@@ -1,12 +1,14 @@
 package com.gabrielavara.choiceplayer.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PlaylistSelectionChangedListener implements ChangeListener<PlaylistItemView> {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.util.PlaylistSelectionChangedListener");
@@ -26,6 +28,6 @@ public class PlaylistSelectionChangedListener implements ChangeListener<Playlist
             oldValue.setCurrentlyPlaying(false);
         }
 
-        Messenger.send(new SelectionChangedMessage(newValue, oldValue));
+        Messenger.send(new SelectionChangedMessage(newValue, oldValue, true));
     }
 }

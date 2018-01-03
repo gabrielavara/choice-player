@@ -4,6 +4,8 @@ import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Paths;
@@ -16,6 +18,8 @@ import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
+import com.gabrielavara.choiceplayer.controls.AnimationDirection;
+import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
@@ -88,48 +92,53 @@ public class PlaylistInitializer {
 
     private void showItems() {
         PauseTransition wait = new PauseTransition(Duration.millis(50));
-        wait.setOnFinished(ev -> animateItems(true));
+        wait.setOnFinished(ev -> {
+            animateItems(IN);
+            if (playlistItemViews.size() > 0) {
+                Messenger.send(new SelectionChangedMessage(playlistItemViews.get(0).getMp3(), null, false));
+            }
+        });
         wait.play();
     }
 
     private void animateOutItems(EventHandler<ActionEvent> finishedEventHandler) {
-        animateSpinner(true);
-        animateListItems(false, finishedEventHandler);
+        animateSpinner(IN);
+        animateListItems(OUT, finishedEventHandler);
     }
 
-    public void animateItems(boolean in) {
-        animateSpinner(!in);
-        animateListItems(in, null);
+    public void animateItems(AnimationDirection direction) {
+        animateSpinner(direction.getInverse());
+        animateListItems(direction, null);
     }
 
-    private void animateSpinner(boolean in) {
-        ParallelTransition parallelTransition = getSpinnerAnimation(in);
-        if (in) {
+    private void animateSpinner(AnimationDirection direction) {
+        ParallelTransition parallelTransition = getSpinnerAnimation(direction);
+        if (direction == IN) {
             if (!playlistStackPane.getChildren().contains(spinner)) {
                 playlistStackPane.getChildren().add(spinner);
             }
             parallelTransition.setDelay(Duration.millis(ANIMATION_DURATION));
         }
-        if (!in) {
+        if (direction == OUT) {
             parallelTransition.setOnFinished(e -> playlistStackPane.getChildren().remove(spinner));
         }
         parallelTransition.play();
     }
 
-    private void animateListItems(boolean in, EventHandler<ActionEvent> finishedEventHandler) {
+    private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler) {
         int[] delay = new int[1];
         delay[0] = 0;
         cells.forEach((PlaylistCell row) -> {
-            animateItem(row, in, delay[0], finishedEventHandler);
-            if (in) {
+            animateItem(row, direction, delay[0], finishedEventHandler);
+            if (direction == IN) {
                 delay[0] += SHORT_DELAY;
             }
         });
     }
 
-    private void animateItem(PlaylistCell item, boolean in, int delay, EventHandler<ActionEvent> finishedEventHandler) {
-        Transition transition = getItemTransition(item, in, delay);
-        if (in) {
+    private void animateItem(PlaylistCell item, AnimationDirection direction, int delay, EventHandler<ActionEvent> finishedEventHandler) {
+        Transition transition = getItemTransition(item, direction, delay);
+        if (direction == IN) {
             transition.setOnFinished(e -> {
                 item.setOpacity(1);
                 if (cells.indexOf(item) == cells.size() - 1) {
@@ -141,21 +150,21 @@ public class PlaylistInitializer {
         transition.play();
     }
 
-    private Transition getItemTransition(Node item, boolean in, int delay) {
+    private Transition getItemTransition(Node item, AnimationDirection direction, int delay) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), item);
-        fadeTransition.setFromValue(in ? ALMOST_TOTALLY_HIDDEN : 1);
-        fadeTransition.setToValue(in ? 1 : ALMOST_TOTALLY_HIDDEN);
+        fadeTransition.setFromValue(direction == IN ? ALMOST_TOTALLY_HIDDEN : 1);
+        fadeTransition.setToValue(direction == IN ? 1 : ALMOST_TOTALLY_HIDDEN);
         fadeTransition.setDelay(Duration.millis(delay));
         return fadeTransition;
     }
 
-    private ParallelTransition getSpinnerAnimation(boolean in) {
+    private ParallelTransition getSpinnerAnimation(AnimationDirection direction) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), spinner);
-        fadeTransition.setFromValue(in ? 0 : 1);
-        fadeTransition.setToValue(in ? 1 : 0);
+        fadeTransition.setFromValue(direction == IN ? 0 : 1);
+        fadeTransition.setToValue(direction == IN ? 1 : 0);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), spinner);
-        translateTransition.setByY(in ? -350 : 350);
+        translateTransition.setByY(direction == IN ? -350 : 350);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
