@@ -2,6 +2,9 @@
 /build/
 !gradle/wrapper/gradle-wrapper.jar
 
+playlistCache.json
+settings.json
+
 ### STS ###
 .apt_generated
 .classpath
@@ -15,10 +18,11 @@
 *.iws
 *.iml
 *.ipr
+compiled/
+out/
 
 ### NetBeans ###
 nbproject/private/
-build/
 nbbuild/
 dist/
 nbdist/
