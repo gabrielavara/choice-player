@@ -25,6 +25,7 @@ public class PlaylistCache {
     }
 
     public static List<PlaylistItemView> load() {
+        log.info("Load playlist cache file");
         Path path = Paths.get(PLAYLIST_CACHE_JSON);
         if (path.toFile().exists()) {
             return loadFile(path);
@@ -41,12 +42,13 @@ public class PlaylistCache {
             return objectMapper.readValue(content, new TypeReference<List<PlaylistItemView>>() {
             });
         } catch (IOException e) {
-            log.info("Could not load playlist cache", e);
+            log.error("Could not load playlist cache", e);
             return new ArrayList<>();
         }
     }
 
     public static void save(List<PlaylistItemView> playlist) {
+        log.info("Save playlist cache file");
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String content = objectMapper.writeValueAsString(playlist);

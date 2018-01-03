@@ -11,13 +11,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
 import com.gabrielavara.choiceplayer.settings.Colors;
 import com.gabrielavara.choiceplayer.settings.Settings;
 import com.gabrielavara.choiceplayer.views.ChoicePlayerSplashScreen;
 import com.gabrielavara.choiceplayer.views.PlayerView;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import lombok.Getter;
 
 @SpringBootApplication
@@ -29,6 +32,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
     private static Settings settings;
     @Getter
     private static Colors colors;
+    private static ObservableList<PlaylistItemView> playlistItems;
 
     public static void main(String[] args) {
         settings = loadSettings();
@@ -60,6 +64,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
     @Override
     public void stop() throws Exception {
         log.info("Stop application");
+        PlaylistCache.save(playlistItems);
         unregisterNativeHook();
         super.stop();
         Platform.exit();
@@ -71,5 +76,9 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
         } catch (NativeHookException e) {
             log.error("Could not unregister native hook!", e.getMessage());
         }
+    }
+
+    public static void setPlaylistItems(ObservableList<PlaylistItemView> playlistItems) {
+        ChoicePlayerApplication.playlistItems = playlistItems;
     }
 }

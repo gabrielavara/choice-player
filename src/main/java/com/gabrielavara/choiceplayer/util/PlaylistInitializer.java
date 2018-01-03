@@ -14,11 +14,13 @@ import java.util.stream.IntStream;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSpinner;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
@@ -26,6 +28,8 @@ import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -50,6 +54,12 @@ public class PlaylistInitializer {
     }
 
     public void loadPlaylist() {
+        List<PlaylistItemView> cachedItems = PlaylistCache.load();
+        if (!cachedItems.isEmpty()) {
+            playlistItemViews.addAll(cachedItems);
+            showItems();
+        }
+
         Task<List<PlaylistItemView>> playListLoaderTask = new Task<List<PlaylistItemView>>() {
             @Override
             protected List<PlaylistItemView> call() {
@@ -60,19 +70,36 @@ public class PlaylistInitializer {
 
         playListLoaderTask.setOnSucceeded(e -> {
             List<PlaylistItemView> items = playListLoaderTask.getValue();
-            playlistItemViews.addAll(items);
-
-            PauseTransition wait = new PauseTransition(Duration.millis(50));
-            wait.setOnFinished(ev -> animateItems(true));
-            wait.play();
+            if (!playlistItemViews.equals(items)) {
+                if (playlistItemViews.isEmpty()) {
+                    playlistItemViews.addAll(items);
+                    showItems();
+                } else {
+                    animateOutItems(ev -> {
+                        playlistItemViews.addAll(items);
+                        showItems();
+                    });
+                }
+            }
         });
 
         new Thread(playListLoaderTask).start();
     }
 
+    private void showItems() {
+        PauseTransition wait = new PauseTransition(Duration.millis(50));
+        wait.setOnFinished(ev -> animateItems(true));
+        wait.play();
+    }
+
+    private void animateOutItems(EventHandler<ActionEvent> finishedEventHandler) {
+        animateSpinner(true);
+        animateListItems(false, finishedEventHandler);
+    }
+
     public void animateItems(boolean in) {
         animateSpinner(!in);
-        animateListItems(in);
+        animateListItems(in, null);
     }
 
     private void animateSpinner(boolean in) {
@@ -89,24 +116,25 @@ public class PlaylistInitializer {
         parallelTransition.play();
     }
 
-    private void animateListItems(boolean in) {
+    private void animateListItems(boolean in, EventHandler<ActionEvent> finishedEventHandler) {
         int[] delay = new int[1];
         delay[0] = 0;
         cells.forEach((PlaylistCell row) -> {
-            animateItem(row, in, delay[0]);
+            animateItem(row, in, delay[0], finishedEventHandler);
             if (in) {
                 delay[0] += SHORT_DELAY;
             }
         });
     }
 
-    private void animateItem(PlaylistCell item, boolean in, int delay) {
+    private void animateItem(PlaylistCell item, boolean in, int delay, EventHandler<ActionEvent> finishedEventHandler) {
         Transition transition = getItemTransition(item, in, delay);
         if (in) {
             transition.setOnFinished(e -> {
                 item.setOpacity(1);
                 if (cells.indexOf(item) == cells.size() - 1) {
                     beforeAnimate = false;
+                    transition.setOnFinished(finishedEventHandler);
                 }
             });
         }
