@@ -52,6 +52,8 @@ public class BigAlbumArtController implements Initializable {
 
     public void animatePlayPause(AnimationDirection animationDirection) {
         pane.getChildren().add(0, animationDirection == OUT ? grayScaleAlbumArt : albumArt);
+        grayScaleAlbumArt.setTranslateY(0);
+        albumArt.setTranslateY(0);
         FadeTransition fadeTransition = getFadeTransition(animationDirection, albumArt);
         FadeTransition grayScaleFadeTransition = getFadeTransition(animationDirection.getInverse(), grayScaleAlbumArt);
         ParallelTransition parallelTransition = new ParallelTransition();

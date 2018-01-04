@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
@@ -40,6 +43,8 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class PlaylistInitializer {
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.util.PlaylistInitializer");
+
     private ObservableList<PlaylistItemView> playlistItemViews;
     private JFXSpinner spinner;
     private StackPane playlistStackPane;
@@ -73,7 +78,8 @@ public class PlaylistInitializer {
 
         playListLoaderTask.setOnSucceeded(e -> {
             List<PlaylistItemView> items = playListLoaderTask.getValue();
-            if (!playlistItemViews.equals(items)) {
+            if (!cachedItems.equals(items)) {
+                log.info("Loaded playlist not equals cached playlist");
                 if (playlistItemViews.isEmpty()) {
                     playlistItemViews.addAll(items);
                     showItems();
@@ -128,8 +134,9 @@ public class PlaylistInitializer {
     private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler) {
         int[] delay = new int[1];
         delay[0] = 0;
-        cells.forEach((PlaylistCell row) -> {
-            animateItem(row, direction, delay[0], finishedEventHandler);
+        beforeAnimate = direction == OUT;
+        cells.forEach((PlaylistCell item) -> {
+            animateItem(item, direction, delay[0], finishedEventHandler);
             if (direction == IN) {
                 delay[0] += SHORT_DELAY;
             }
@@ -139,12 +146,10 @@ public class PlaylistInitializer {
     private void animateItem(PlaylistCell item, AnimationDirection direction, int delay, EventHandler<ActionEvent> finishedEventHandler) {
         Transition transition = getItemTransition(item, direction, delay);
         if (direction == IN) {
-            transition.setOnFinished(e -> {
-                item.setOpacity(1);
-                if (cells.indexOf(item) == cells.size() - 1) {
-                    beforeAnimate = false;
-                }
-            });
+            transition.setOnFinished(e -> item.setOpacity(1));
+        }
+        if (direction == OUT && cells.indexOf(item) == cells.size() - 1) {
+            transition.setOnFinished(finishedEventHandler);
         }
         transition.play();
     }
