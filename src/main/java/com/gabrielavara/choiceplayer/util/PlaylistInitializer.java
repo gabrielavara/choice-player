@@ -80,6 +80,7 @@ public class PlaylistInitializer {
                     showItems();
                 } else {
                     animateOutItems(ev -> {
+                        playlistItemViews.clear();
                         playlistItemViews.addAll(items);
                         showItems();
                     });

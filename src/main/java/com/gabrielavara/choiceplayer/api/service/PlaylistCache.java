@@ -1,6 +1,9 @@
 package com.gabrielavara.choiceplayer.api.service;
 
 import static java.nio.file.Files.readAllLines;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,7 +56,9 @@ public class PlaylistCache {
         try {
             String content = objectMapper.writeValueAsString(playlist);
             Path path = Paths.get(PLAYLIST_CACHE_JSON);
-            Files.write(path, content.getBytes());
+            if (content != null) {
+                Files.write(path, content.getBytes(), WRITE, CREATE, TRUNCATE_EXISTING);
+            }
         } catch (IOException e) {
             log.error("Could not save playlist cache");
         }

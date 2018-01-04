@@ -13,7 +13,7 @@ public class Constants {
     public static final int INITIAL_ANIMATION_TRANSLATE_Y = 50;
     public static final int BIG_ALBUM_ART_TRANSLATE_X = 200;
     public static final int BIG_ALBUM_ART_TRANSLATE_Y = 50;
-    public static final int SETTINGS_TRANSLATE_Y = 700;
+    public static final int SETTINGS_TRANSLATE_Y = 800;
 
     public static final double SEEK_VOLUME = 0.1;
 

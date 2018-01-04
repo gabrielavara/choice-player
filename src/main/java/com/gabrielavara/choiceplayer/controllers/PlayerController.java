@@ -157,6 +157,7 @@ public class PlayerController implements Initializable {
         playPauseButton.setController(this);
         setupAlbumAndTitleLabels();
         timeSlider.setLabelFormatter(timeSliderConverter);
+        timeSlider.setValue(0);
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
