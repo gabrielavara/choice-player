@@ -21,7 +21,6 @@ import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
-import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
@@ -84,7 +83,7 @@ public class PlaylistInitializer {
                     playlistItemViews.addAll(items);
                     showItems();
                 } else {
-                    animateOutItems(ev -> {
+                    animateItems(OUT, ev -> {
                         playlistItemViews.clear();
                         playlistItemViews.addAll(items);
                         showItems();
@@ -98,23 +97,17 @@ public class PlaylistInitializer {
 
     private void showItems() {
         PauseTransition wait = new PauseTransition(Duration.millis(50));
-        wait.setOnFinished(ev -> {
-            animateItems(IN);
-            if (playlistItemViews.size() > 0) {
-                Messenger.send(new SelectionChangedMessage(playlistItemViews.get(0).getMp3(), null, false));
-            }
-        });
+        wait.setOnFinished(ev -> animateItems(IN));
         wait.play();
     }
 
-    private void animateOutItems(EventHandler<ActionEvent> finishedEventHandler) {
-        animateSpinner(IN);
-        animateListItems(OUT, finishedEventHandler);
+    private void animateItems(AnimationDirection direction) {
+        animateItems(direction, null);
     }
 
-    public void animateItems(AnimationDirection direction) {
+    public void animateItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler) {
         animateSpinner(direction.getInverse());
-        animateListItems(direction, null);
+        animateListItems(direction, finishedEventHandler);
     }
 
     private void animateSpinner(AnimationDirection direction) {

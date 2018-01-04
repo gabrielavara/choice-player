@@ -16,7 +16,8 @@
         <Label fx:id="titleLabel" styleClass="settings-title" text="%settings"/>
         <JFXButton fx:id="closeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
             <graphic>
-                <MaterialDesignIconView glyphName="CLOSE" size="32" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                <MaterialDesignIconView glyphName="CLOSE" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
+                                        styleClass="icon"/>
             </graphic>
         </JFXButton>
         <VBox.margin>
@@ -46,7 +47,13 @@
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#folderToLoadBrowseButtonClicked" text="%settingsBrowse"/>
+                <JFXButton mnemonicParsing="false" contentDisplay="GRAPHIC_ONLY"
+                           onMouseClicked="#folderToLoadBrowseButtonClicked">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
+                                                styleClass="icon"/>
+                    </graphic>
+                </JFXButton>
             </StackPane>
         </HBox>
         <HBox>
@@ -65,7 +72,13 @@
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked" text="%settingsBrowse"/>
+                <JFXButton mnemonicParsing="false" contentDisplay="GRAPHIC_ONLY"
+                           onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
+                                                styleClass="icon"/>
+                    </graphic>
+                </JFXButton>
             </StackPane>
         </HBox>
         <StackPane alignment="TOP_LEFT">

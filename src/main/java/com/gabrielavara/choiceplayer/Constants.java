@@ -40,6 +40,8 @@ public class Constants {
     public static final String COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN = "couldNotMoveFileToRecycleBin";
     public static final String COULD_NOT_DELETE_ORIGINAL_FILE = "couldNotDeleteOriginalFile";
 
+    public static final String STYLE_CSS = "style.css";
+
     private Constants() {
     }
 }

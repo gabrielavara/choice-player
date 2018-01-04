@@ -59,12 +59,13 @@
 }
 
 .jfx-snackbar-toast {
-    -fx-font: 22 "Arial Rounded MT Bold";
+    -fx-font: 18 "Arial Rounded MT Bold";
     -fx-text-fill: white;
 }
 
 .button {
     -fx-text-fill: foreground-bright-color;
+    -fx-font: 14 "Arial Rounded MT Bold";
 }
 
 .button .icon {
@@ -78,6 +79,9 @@
 .button-accent-color {
     -fx-background-radius: 30;
     -fx-background-color: accent-color;
+}
+
+.button-accent-color .jfx-rippler {
     -jfx-rippler-fill: accent-bright-color;
 }
 

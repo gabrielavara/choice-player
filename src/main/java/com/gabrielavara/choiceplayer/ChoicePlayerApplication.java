@@ -22,6 +22,7 @@ import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import lombok.Getter;
+import lombok.Setter;
 
 @SpringBootApplication
 public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
@@ -31,6 +32,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
     @Getter
     private static Settings settings;
     @Getter
+    @Setter
     private static Colors colors;
     private static ObservableList<PlaylistItemView> playlistItems;
 

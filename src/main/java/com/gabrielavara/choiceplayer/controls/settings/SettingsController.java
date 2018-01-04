@@ -61,7 +61,7 @@ public class SettingsController implements Initializable {
         folderToMoveLikedMusicLabel.setText(ChoicePlayerApplication.getSettings().getLikedFolder());
         accentColorPicker.setValue(ChoicePlayerApplication.getColors().getAccentColor());
         ObservableList<String> styles = FXCollections
-                        .observableList(asList(resourceBundle.getString("settingsStyleLight"), resourceBundle.getString("settingsStyleDark")));
+                .observableList(asList(resourceBundle.getString("settingsStyleLight"), resourceBundle.getString("settingsStyleDark")));
         styleComboBox.setItems(styles);
         styleComboBox.getSelectionModel().select(ChoicePlayerApplication.getSettings().getTheme().getStyle().ordinal());
 
@@ -102,23 +102,27 @@ public class SettingsController implements Initializable {
     @FXML
     public void accentColorPickerChanged(ActionEvent actionEvent) {
         AccentColor accentColor = ColorConverter.convert(accentColorPicker.getValue());
-        log.info("Accent color changed to {}", accentColor);
-        ChoicePlayerApplication.getSettings().getTheme().setAccentColor(accentColor);
-        sendThemeChangedMessage();
+        if (!ChoicePlayerApplication.getSettings().getTheme().getAccentColor().equals(accentColor)) {
+            log.info("Accent color changed to {}", accentColor);
+            ChoicePlayerApplication.getSettings().getTheme().setAccentColor(accentColor);
+            sendThemeChangedMessage();
+        }
     }
 
     @FXML
     public void styleComboBoxChanged(ActionEvent actionEvent) {
         int selectedIndex = styleComboBox.getSelectionModel().getSelectedIndex();
         ThemeStyle style = ThemeStyle.values()[selectedIndex];
-        log.info("Style changed to {}", style);
-        ChoicePlayerApplication.getSettings().getTheme().setStyle(style);
-        sendThemeChangedMessage();
+        if (!ChoicePlayerApplication.getSettings().getTheme().getStyle().equals(style)) {
+            log.info("Style changed to {}", style);
+            ChoicePlayerApplication.getSettings().getTheme().setStyle(style);
+            sendThemeChangedMessage();
+        }
     }
 
     private void sendThemeChangedMessage() {
         Messenger.send(new ThemeChangedMessage(ChoicePlayerApplication.getSettings().getTheme().getStyle(),
-                        ChoicePlayerApplication.getSettings().getTheme().getAccentColor()));
+                ChoicePlayerApplication.getSettings().getTheme().getAccentColor()));
     }
 
     private interface SettingsSetter {

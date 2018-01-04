@@ -43,6 +43,8 @@ import com.gabrielavara.choiceplayer.controls.settings.Settings;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
+import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
+import com.gabrielavara.choiceplayer.util.CssModifier;
 import com.gabrielavara.choiceplayer.util.FileMover;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.util.LikedFolderFileMover;
@@ -86,7 +88,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.Getter;
 
@@ -157,13 +158,13 @@ public class PlayerController implements Initializable {
         playPauseButton.setController(this);
         setupAlbumAndTitleLabels();
         timeSlider.setLabelFormatter(timeSliderConverter);
-        timeSlider.setValue(0);
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
         Messenger.register(PlaylistItemSelectedMessage.class, this::selectPlaylistItem);
         Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
         Messenger.register(SettingsClosedMessage.class, this::settingsClosed);
+        Messenger.register(ThemeChangedMessage.class, this::accessColorChanged);
         playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
         playlistInitializer.loadPlaylist();
         JFXSnackbar snackBar = new JFXSnackbar(mainContainer);
@@ -172,6 +173,10 @@ public class PlayerController implements Initializable {
         initializeButtonHBox();
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
         addSettings();
+    }
+
+    private void accessColorChanged(ThemeChangedMessage m) {
+        CssModifier.modify(rootContainer, m.getStyle(), m.getAccentColor());
     }
 
     private void settingsClosed(SettingsClosedMessage m) {
@@ -368,14 +373,7 @@ public class PlayerController implements Initializable {
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
-
-        Color color = ChoicePlayerApplication.getColors().getAccentColor().brighter().brighter().brighter();
-        refreshButton.setRipplerFill(color);
-        refreshButton.setOnMouseClicked(e -> {
-            playlistInitializer.animateItems(OUT);
-            playlistInitializer.loadPlaylist();
-        });
-        settingsButton.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor().brighter());
+        refreshButton.setOnMouseClicked(e -> playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylist()));
         settingsButton.setOnMouseClicked(e -> settingsAnimator.animate(IN));
     }
 

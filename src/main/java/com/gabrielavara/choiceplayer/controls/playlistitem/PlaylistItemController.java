@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import com.jfoenix.controls.JFXRippler;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -48,10 +49,7 @@ public class PlaylistItemController implements Initializable {
     private boolean isAnimating;
     private static double height;
     private List<Label> labels;
-
-    private Color accentColor;
-    private Color foregroundColor;
-    private Color foregroundBrightColor;
+    private JFXRippler rippler;
 
     public void setIndex(String index) {
         indexLabel.setText(index);
@@ -70,10 +68,11 @@ public class PlaylistItemController implements Initializable {
     }
 
     public void setState(boolean currentlyPlaying) {
+        setIndicatorAndRipplerColorIfChanged();
         if (currentlyPlaying && !isAnimating) {
             indicator.setHeight(height);
             for (Label label : labels) {
-                label.setTextFill(accentColor);
+                label.setTextFill(ChoicePlayerApplication.getColors().getAccentColor());
             }
         } else {
             indicator.setHeight(0);
@@ -83,30 +82,27 @@ public class PlaylistItemController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        accentColor = ChoicePlayerApplication.getColors().getAccentColor();
-        foregroundColor = ChoicePlayerApplication.getColors().getForegroundColor();
-        foregroundBrightColor = ChoicePlayerApplication.getColors().getForegroundBrightColor();
-
-        indicator.setFill(accentColor);
+        indicator.setFill(ChoicePlayerApplication.getColors().getAccentColor());
 
         labels = asList(indexLabel, artistLabel, titleLabel, lengthLabel);
         setLabelColors();
 
-        JFXRippler rippler = new JFXRippler(hBox);
-        rippler.setRipplerFill(accentColor);
+        rippler = new JFXRippler(hBox);
+        rippler.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor());
         root.getChildren().add(rippler);
 
         root.hoverProperty().addListener((ov, oldValue, newValue) -> albumArt.hover(newValue));
     }
 
     private void setLabelColors() {
-        indexLabel.setTextFill(foregroundColor);
-        artistLabel.setTextFill(foregroundBrightColor);
-        titleLabel.setTextFill(foregroundColor);
-        lengthLabel.setTextFill(foregroundBrightColor);
+        indexLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+        artistLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundBrightColor());
+        titleLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+        lengthLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundBrightColor());
     }
 
     public void animateToState(PlaylistItemState state) {
+        setIndicatorAndRipplerColorIfChanged();
         isAnimating = true;
         setHeight(root);
         animateLabels(state);
@@ -128,8 +124,10 @@ public class PlaylistItemController implements Initializable {
 
     private Transition createColorTransition(PlaylistItemState state, Label label) {
         Color from = (Color) label.getTextFill();
-        Color color = label.equals(titleLabel) ? foregroundColor : foregroundBrightColor;
-        Color to = state == SELECTED ? accentColor : color;
+        Color color = label.equals(titleLabel)
+                ? ChoicePlayerApplication.getColors().getForegroundColor()
+                : ChoicePlayerApplication.getColors().getForegroundBrightColor();
+        Color to = state == SELECTED ? ChoicePlayerApplication.getColors().getAccentColor() : color;
         return new ColorTransition(label, from, to);
     }
 
@@ -143,5 +141,14 @@ public class PlaylistItemController implements Initializable {
         return new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(indicator.heightProperty(), state == SELECTED ? 0d : height)),
                 new KeyFrame(Duration.millis(ANIMATION_DURATION), new KeyValue(indicator.heightProperty(), state == SELECTED ? height : 0d)));
+    }
+
+    private void setIndicatorAndRipplerColorIfChanged() {
+        if (!indicator.getFill().equals(ChoicePlayerApplication.getColors().getAccentColor())) {
+            indicator.setFill(ChoicePlayerApplication.getColors().getAccentColor());
+        }
+        if (!rippler.getRipplerFill().equals(ChoicePlayerApplication.getColors().getAccentColor())) {
+            rippler.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor());
+        }
     }
 }
