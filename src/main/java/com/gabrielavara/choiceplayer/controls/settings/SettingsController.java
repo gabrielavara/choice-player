@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
+import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
+import com.gabrielavara.choiceplayer.settings.AccentColor;
 import com.gabrielavara.choiceplayer.settings.ColorConverter;
 import com.gabrielavara.choiceplayer.settings.ThemeStyle;
 import com.gabrielavara.choiceplayer.util.Messenger;
@@ -83,6 +85,7 @@ public class SettingsController implements Initializable {
         if (selectedDir == null) {
             log.info("No directory selected");
         } else {
+            log.info("Directory changed to {}", selectedDir.getAbsolutePath());
             label.setText(selectedDir.getAbsolutePath());
             settingsSetter.set(selectedDir.getAbsolutePath());
         }
@@ -90,13 +93,24 @@ public class SettingsController implements Initializable {
 
     @FXML
     public void accentColorPickerChanged(ActionEvent actionEvent) {
-        ChoicePlayerApplication.getSettings().getTheme().setAccentColor(ColorConverter.convert(accentColorPicker.getValue()));
+        AccentColor accentColor = ColorConverter.convert(accentColorPicker.getValue());
+        log.info("Accent color changed to {}", accentColor);
+        ChoicePlayerApplication.getSettings().getTheme().setAccentColor(accentColor);
+        sendThemeChangedMessage();
     }
 
     @FXML
     public void styleComboBoxChanged(ActionEvent actionEvent) {
         int selectedIndex = styleComboBox.getSelectionModel().getSelectedIndex();
-        ChoicePlayerApplication.getSettings().getTheme().setStyle(ThemeStyle.values()[selectedIndex]);
+        ThemeStyle style = ThemeStyle.values()[selectedIndex];
+        log.info("Style changed to {}", style);
+        ChoicePlayerApplication.getSettings().getTheme().setStyle(style);
+        sendThemeChangedMessage();
+    }
+
+    private void sendThemeChangedMessage() {
+        Messenger.send(new ThemeChangedMessage(ChoicePlayerApplication.getSettings().getTheme().getStyle(),
+                        ChoicePlayerApplication.getSettings().getTheme().getAccentColor()));
     }
 
     private interface SettingsSetter {

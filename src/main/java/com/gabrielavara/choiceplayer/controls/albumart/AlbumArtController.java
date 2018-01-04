@@ -1,6 +1,5 @@
 package com.gabrielavara.choiceplayer.controls.albumart;
 
-import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 
 import java.net.URL;
@@ -8,6 +7,7 @@ import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.jfoenix.controls.JFXButton;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -43,14 +43,14 @@ public class AlbumArtController implements Initializable {
     }
 
     public void setImage(Image image) {
-        albumArt.setOpacity(ALMOST_TOTALLY_HIDDEN);
+        albumArt.setOpacity(0);
         albumArt.setImage(image);
         animate();
     }
 
     private void animate() {
         fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), albumArt);
-        fadeTransition.setFromValue(ALMOST_TOTALLY_HIDDEN);
+        fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
         fadeTransition.setOnFinished(e -> {
             setBackground();

@@ -17,8 +17,6 @@ public class Constants {
 
     public static final double SEEK_VOLUME = 0.1;
 
-    public static final double ALMOST_TOTALLY_HIDDEN = 0.0001;
-
     public static final String ICON_SIZE = "56";
     public static final String ICON_STYLE_CLASS = "icon";
     public static final String UTF_8 = "UTF-8";

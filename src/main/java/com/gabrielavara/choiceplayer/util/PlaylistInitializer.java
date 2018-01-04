@@ -1,6 +1,5 @@
 package com.gabrielavara.choiceplayer.util;
 
-import static com.gabrielavara.choiceplayer.Constants.ALMOST_TOTALLY_HIDDEN;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
@@ -144,7 +143,6 @@ public class PlaylistInitializer {
                 item.setOpacity(1);
                 if (cells.indexOf(item) == cells.size() - 1) {
                     beforeAnimate = false;
-                    transition.setOnFinished(finishedEventHandler);
                 }
             });
         }
@@ -153,8 +151,8 @@ public class PlaylistInitializer {
 
     private Transition getItemTransition(Node item, AnimationDirection direction, int delay) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), item);
-        fadeTransition.setFromValue(direction == IN ? ALMOST_TOTALLY_HIDDEN : 1);
-        fadeTransition.setToValue(direction == IN ? 1 : ALMOST_TOTALLY_HIDDEN);
+        fadeTransition.setFromValue(direction == IN ? 0 : 1);
+        fadeTransition.setToValue(direction == IN ? 1 : 0);
         fadeTransition.setDelay(Duration.millis(delay));
         return fadeTransition;
     }
@@ -175,7 +173,7 @@ public class PlaylistInitializer {
     private ListCell<PlaylistItemView> playListCellFactory(ListView<PlaylistItemView> lv) {
         PlaylistCell cell = new PlaylistCell();
         if (beforeAnimate) {
-            cell.setOpacity(ALMOST_TOTALLY_HIDDEN);
+            cell.setOpacity(0);
         } else {
             cell.hoverProperty().addListener((o, oldValue, newValue) -> cell.getPlaylistItem().getAlbumArt().hover(newValue));
         }

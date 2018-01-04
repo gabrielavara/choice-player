@@ -30,8 +30,14 @@ public class SettingsAnimator {
 
     public void animate(AnimationDirection direction) {
         ParallelTransition mainContainerTransition = getMainContainerTransition(mainContainer, direction.getInverse());
-        mainContainerTransition.setOnFinished(e -> getSettingsTransition(settings, direction).play());
-        mainContainerTransition.play();
+        ParallelTransition settingsTransition = getSettingsTransition(settings, direction);
+        if (direction == IN) {
+            mainContainerTransition.setOnFinished(e -> settingsTransition.play());
+            mainContainerTransition.play();
+        } else {
+            settingsTransition.setOnFinished(e -> mainContainerTransition.play());
+            settingsTransition.play();
+        }
     }
 
     private ParallelTransition getMainContainerTransition(Node node, AnimationDirection animationDirection) {
