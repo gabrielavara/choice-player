@@ -4,6 +4,7 @@ import static java.text.MessageFormat.format;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,9 +46,12 @@ public class PlayerView extends AbstractFxmlView {
             Files.write(path, content.getBytes());
 
             log.info("Change css");
-            String css = getClass().getResource("css/style.css").toExternalForm();
-            ChoicePlayerApplication.getScene().getStylesheets().clear();
-            ChoicePlayerApplication.getScene().getStylesheets().add(css);
+            URL resource = getClass().getResource("src/main/resources/css/style.css");
+            if (resource != null) {
+                String css = resource.toExternalForm();
+                ChoicePlayerApplication.getScene().getStylesheets().clear();
+                ChoicePlayerApplication.getScene().getStylesheets().add(css);
+            }
         } catch (IOException e) {
             log.error("Could not modify style.css");
         }

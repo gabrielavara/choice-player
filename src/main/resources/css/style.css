@@ -42,6 +42,18 @@
     -fx-font: 14 "Arial Rounded MT Bold";
 }
 
+.settings-title {
+    -fx-font: 22 "Arial Rounded MT Bold";
+}
+
+.settings-subtitle {
+    -fx-font: 18 "Arial Rounded MT Bold";
+}
+
+.settings-item {
+    -fx-font: 16 "Arial Rounded MT Bold";
+}
+
 .jfx-snackbar-content {
     -fx-background-color: accent-color;
 }

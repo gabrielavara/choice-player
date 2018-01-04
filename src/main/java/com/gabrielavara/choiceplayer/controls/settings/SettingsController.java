@@ -33,6 +33,7 @@ import javafx.stage.DirectoryChooser;
 
 public class SettingsController implements Initializable {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.settings.SettingsController");
+    private static final int CLOSE_BUTTON_MARGIN = 12;
 
     @FXML
     public Label folderToLoadLabel;
@@ -63,8 +64,15 @@ public class SettingsController implements Initializable {
                         .observableList(asList(resourceBundle.getString("settingsStyleLight"), resourceBundle.getString("settingsStyleDark")));
         styleComboBox.setItems(styles);
         styleComboBox.getSelectionModel().select(ChoicePlayerApplication.getSettings().getTheme().getStyle().ordinal());
+
+        closeButton.translateXProperty().bind(titleContainer.widthProperty().subtract(closeButton.widthProperty()).subtract(CLOSE_BUTTON_MARGIN));
+        closeButton.setTranslateY(CLOSE_BUTTON_MARGIN);
         titleLabel.translateXProperty().bind(titleContainer.widthProperty().subtract(titleLabel.widthProperty()).divide(2));
         titleLabel.translateYProperty().bind(titleContainer.heightProperty().subtract(titleLabel.heightProperty()).divide(2));
+
+        folderToLoadLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+        folderToMoveLikedMusicLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+
         closeButton.setOnMouseClicked(e -> Messenger.send(new SettingsClosedMessage()));
     }
 

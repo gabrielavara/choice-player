@@ -12,30 +12,33 @@
 <?import javafx.scene.layout.VBox?>
 <VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.choiceplayer.controls.settings.SettingsController">
-    <AnchorPane prefHeight="50.0" fx:id="titleContainer">
-        <Label text="%settings" fx:id="titleLabel"/>
+    <AnchorPane fx:id="titleContainer" prefHeight="50.0">
+        <Label fx:id="titleLabel" styleClass="settings-title" text="%settings"/>
         <JFXButton fx:id="closeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
             <graphic>
                 <MaterialDesignIconView glyphName="CLOSE" size="32" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
             </graphic>
         </JFXButton>
+        <VBox.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+        </VBox.margin>
     </AnchorPane>
     <VBox VBox.vgrow="ALWAYS">
         <StackPane alignment="TOP_LEFT">
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
-            <Label text="%generalSettings"/>
+            <Label styleClass="settings-subtitle" text="%generalSettings"/>
         </StackPane>
         <HBox>
             <VBox.margin>
-                <Insets left="12.0" right="12.0"/>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
             <VBox HBox.hgrow="ALWAYS">
                 <HBox.margin>
                     <Insets/>
                 </HBox.margin>
-                <Label text="%settingsFolderToLoad"/>
+                <Label styleClass="settings-item" text="%settingsFolderToLoad"/>
                 <Label fx:id="folderToLoadLabel" text="C:\">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
@@ -48,13 +51,13 @@
         </HBox>
         <HBox>
             <VBox.margin>
-                <Insets left="12.0" right="12.0"/>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
             <VBox HBox.hgrow="ALWAYS">
                 <HBox.margin>
                     <Insets/>
                 </HBox.margin>
-                <Label text="%settingsFolderToMoveLikedMusic"/>
+                <Label styleClass="settings-item" text="%settingsFolderToMoveLikedMusic"/>
                 <Label fx:id="folderToMoveLikedMusicLabel" text="C:\">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
@@ -69,13 +72,13 @@
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
-            <Label text="%themeSettings"/>
+            <Label styleClass="settings-subtitle" text="%themeSettings"/>
         </StackPane>
         <HBox>
             <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <Label text="%settingsStyle"/>
+                <Label styleClass="settings-item" text="%settingsStyle" StackPane.alignment="CENTER_LEFT"/>
             </StackPane>
-            <JFXComboBox fx:id="styleComboBox" prefWidth="150.0" onAction="#styleComboBoxChanged"/>
+            <JFXComboBox fx:id="styleComboBox" onAction="#styleComboBoxChanged" prefWidth="150.0"/>
             <VBox.margin>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
@@ -85,9 +88,12 @@
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
             </VBox.margin>
             <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <Label text="%settingsAccentColor" StackPane.alignment="CENTER_LEFT"/>
+                <Label styleClass="settings-item" text="%settingsAccentColor" StackPane.alignment="CENTER_LEFT"/>
             </StackPane>
             <JFXColorPicker fx:id="accentColorPicker" onAction="#accentColorPickerChanged"/>
         </HBox>
+        <VBox.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+        </VBox.margin>
     </VBox>
 </VBox>
