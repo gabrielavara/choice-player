@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.controls.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
+import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
@@ -80,12 +80,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -110,11 +108,13 @@ public class PlayerController implements Initializable {
     @FXML
     public StackPane rootContainer;
     @FXML
+    public AnimatedLabel artistLabel;
+    @FXML
+    public AnimatedLabel titleLabel;
+    @FXML
     private HBox mainContainer;
     @FXML
     private JFXListView<PlaylistItemView> playlist;
-    @FXML
-    private VBox currentlyPlayingBox;
     @FXML
     private JFXButton likeButton;
     @FXML
@@ -143,9 +143,6 @@ public class PlayerController implements Initializable {
     private TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
     private InvalidationListener currentTimePropertyListener = ov -> updateValues();
 
-    private AnimatedLabel artist;
-    private AnimatedLabel title;
-
     @Getter
     private FileMover likedFolderFileMover;
     @Getter
@@ -162,10 +159,7 @@ public class PlayerController implements Initializable {
         setButtonListeners();
         animateItems();
         registerGlobalKeyListener();
-        Messenger.register(PlaylistItemSelectedMessage.class, this::selectPlaylistItem);
-        Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
-        Messenger.register(SettingsClosedMessage.class, this::settingsClosed);
-        Messenger.register(ThemeChangedMessage.class, this::accessColorChanged);
+        registerMessageHandlers();
         playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
         playlistInitializer.loadPlaylist();
         JFXSnackbar snackBar = new JFXSnackbar(mainContainer);
@@ -176,8 +170,16 @@ public class PlayerController implements Initializable {
         addSettings();
     }
 
+    private void registerMessageHandlers() {
+        Messenger.register(PlaylistItemSelectedMessage.class, this::selectPlaylistItem);
+        Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
+        Messenger.register(SettingsClosedMessage.class, this::settingsClosed);
+        Messenger.register(ThemeChangedMessage.class, this::accessColorChanged);
+    }
+
     private void accessColorChanged(ThemeChangedMessage m) {
         CssModifier.modify(rootContainer);
+        playlistInitializer.changeTheme();
     }
 
     private void settingsClosed(SettingsClosedMessage m) {
@@ -224,8 +226,8 @@ public class PlayerController implements Initializable {
 
     private void selectionChanged(SelectionChangedMessage message) {
         Mp3 newValue = message.getNewValue();
-        artist.setText(newValue.getArtist());
-        title.setText(newValue.getTitle());
+        artistLabel.setText(newValue.getArtist());
+        titleLabel.setText(newValue.getTitle());
         timeSliderConverter.setLength(newValue.getLength());
         if (message.isPlay()) {
             play(newValue);
@@ -343,19 +345,15 @@ public class PlayerController implements Initializable {
     }
 
     private void setupAlbumAndTitleLabels() {
-        artist = new AnimatedLabel("currently-playing-artist-label", ChoicePlayerApplication.getColors().getForegroundBrightColor());
-        title = new AnimatedLabel("currently-playing-title-label", ChoicePlayerApplication.getColors().getForegroundColor());
-        VBox.setMargin(artist, new Insets(6, 24, 6, 24));
-        VBox.setMargin(title, new Insets(6, 24, 6, 24));
-        currentlyPlayingBox.getChildren().add(1, artist);
-        currentlyPlayingBox.getChildren().add(2, title);
+        artistLabel.setStyleClass("currently-playing-artist-label");
+        titleLabel.setStyleClass("currently-playing-title-label");
     }
 
     private void animateItems() {
         InitialAnimator animator = new InitialAnimator();
-        animator.setup(albumArt, artist, title, timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
+        animator.setup(albumArt, artistLabel, titleLabel, timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
                 playPauseButton, nextTrackButton, likeButton);
-        animator.add(albumArt).add(artist).add(title).add(timeSlider).add(elapsedLabel, remainingLabel)
+        animator.add(albumArt).add(artistLabel).add(titleLabel).add(timeSlider).add(elapsedLabel, remainingLabel)
                 .add(dislikeButton)
                 .add(previousTrackButton)
                 .add(playPauseButton)

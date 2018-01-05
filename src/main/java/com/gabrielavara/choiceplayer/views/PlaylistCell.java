@@ -3,12 +3,14 @@ package com.gabrielavara.choiceplayer.views;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItem;
-import javafx.scene.control.ListCell;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItem;
+
+import javafx.scene.control.ListCell;
+import lombok.Getter;
 
 public class PlaylistCell extends ListCell<PlaylistItemView> {
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.views.PlaylistCell");
@@ -55,5 +57,9 @@ public class PlaylistCell extends ListCell<PlaylistItemView> {
         AlbumArtLoaderTask task = new AlbumArtLoaderTask(mp3);
         task.setOnSucceeded(e -> playlistItem.getAlbumArt().setImage(task.getValue()));
         executorService.submit(task);
+    }
+
+    public void changeTheme() {
+        playlistItem.changeTheme();
     }
 }

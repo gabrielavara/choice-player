@@ -20,10 +20,12 @@
 
 .currently-playing-artist-label {
     -fx-font: 22 "Arial Rounded MT Bold";
+    -fx-text-fill: foreground-bright-color;
 }
 
 .currently-playing-title-label {
     -fx-font: 18 "Arial Rounded MT Bold";
+    -fx-text-fill: foreground-color;
 }
 
 .index-label {

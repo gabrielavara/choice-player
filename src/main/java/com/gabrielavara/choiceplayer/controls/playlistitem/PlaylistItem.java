@@ -2,12 +2,14 @@ package com.gabrielavara.choiceplayer.controls.playlistitem;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PlaylistItem extends HBox {
     private static final String COULD_NOT_LOAD = "Could not load playlist item";
@@ -58,5 +60,9 @@ public class PlaylistItem extends HBox {
 
     public void setState(boolean currentlyPlaying) {
         controller.setState(currentlyPlaying);
+    }
+
+    public void changeTheme() {
+        controller.changeTheme();
     }
 }

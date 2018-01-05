@@ -186,4 +186,8 @@ public class PlaylistInitializer {
     public List<PlaylistCell> getCellsAfter(PlaylistItemView playlistItemView) {
         return cells.stream().filter(c -> c.getPlaylistItemView() != null && playlistItemView.getIndex() < c.getPlaylistItemView().getIndex()).collect(toList());
     }
+
+    public void changeTheme() {
+        cells.forEach(PlaylistCell::changeTheme);
+    }
 }

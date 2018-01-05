@@ -1,38 +1,45 @@
-package com.gabrielavara.choiceplayer.controls;
+package com.gabrielavara.choiceplayer.controls.animatedlabel;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.LABEL_TRANSLATE_X;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-public class AnimatedLabel extends StackPane {
-    private Label first;
-    private Label second;
+public class AnimatedLabelController implements Initializable {
+    @FXML
+    public Label first;
+    @FXML
+    public Label second;
 
-    public AnimatedLabel(String styleClass, Color color) {
-        first = new Label();
-        second = new Label();
-
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         first.setOpacity(0);
         first.setTranslateX(LABEL_TRANSLATE_X);
-        first.getStyleClass().add(styleClass);
-        first.setTextFill(color);
-
         second.setOpacity(0);
         second.setTranslateX(LABEL_TRANSLATE_X);
+    }
+
+    public void setStyleClass(String styleClass) {
+        first.getStyleClass().add(styleClass);
         second.getStyleClass().add(styleClass);
-        second.setTextFill(color);
+    }
 
-        getChildren().addAll(second, first);
-
-        setText("");
+    public void setText(String text) {
+        Platform.runLater(() -> {
+            second.setText(text);
+            animateOut(first);
+            animateIn(second);
+        });
     }
 
     private void animateIn(Label label) {
@@ -67,13 +74,5 @@ public class AnimatedLabel extends StackPane {
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
 
         parallelTransition.play();
-    }
-
-    public void setText(String text) {
-        Platform.runLater(() -> {
-            second.setText(text);
-            animateOut(first);
-            animateIn(second);
-        });
     }
 }

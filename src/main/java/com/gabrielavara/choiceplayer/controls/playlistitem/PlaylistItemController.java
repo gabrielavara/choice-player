@@ -68,7 +68,6 @@ public class PlaylistItemController implements Initializable {
     }
 
     public void setState(boolean currentlyPlaying) {
-        setIndicatorAndRipplerColorIfChanged();
         if (currentlyPlaying && !isAnimating) {
             indicator.setHeight(height);
             for (Label label : labels) {
@@ -102,7 +101,6 @@ public class PlaylistItemController implements Initializable {
     }
 
     public void animateToState(PlaylistItemState state) {
-        setIndicatorAndRipplerColorIfChanged();
         isAnimating = true;
         setHeight(root);
         animateLabels(state);
@@ -143,12 +141,9 @@ public class PlaylistItemController implements Initializable {
                 new KeyFrame(Duration.millis(ANIMATION_DURATION), new KeyValue(indicator.heightProperty(), state == SELECTED ? height : 0d)));
     }
 
-    private void setIndicatorAndRipplerColorIfChanged() {
-        if (!indicator.getFill().equals(ChoicePlayerApplication.getColors().getAccentColor())) {
-            indicator.setFill(ChoicePlayerApplication.getColors().getAccentColor());
-        }
-        if (!rippler.getRipplerFill().equals(ChoicePlayerApplication.getColors().getAccentColor())) {
-            rippler.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor());
-        }
+    public void changeTheme() {
+        indicator.setFill(ChoicePlayerApplication.getColors().getAccentColor());
+        rippler.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor());
+        setLabelColors();
     }
 }
