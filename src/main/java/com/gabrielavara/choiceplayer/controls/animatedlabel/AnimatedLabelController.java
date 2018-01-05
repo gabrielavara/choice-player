@@ -26,6 +26,8 @@ public class AnimatedLabelController implements Initializable {
     @FXML
     public StackPane root;
 
+    private String text;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         first.setOpacity(0);
@@ -40,6 +42,7 @@ public class AnimatedLabelController implements Initializable {
     }
 
     public void setText(String text) {
+        this.text = text;
         Platform.runLater(() -> {
             second.setText(text);
             animateOut(first);
@@ -82,7 +85,7 @@ public class AnimatedLabelController implements Initializable {
     }
 
     public String getText() {
-        return first.getText();
+        return text;
     }
 
     public void setTextFill(Color textFill) {

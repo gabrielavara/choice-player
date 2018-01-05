@@ -20,6 +20,7 @@ import static javafx.scene.media.MediaPlayer.Status.STOPPED;
 import static javafx.scene.media.MediaPlayer.Status.UNKNOWN;
 import static org.hamcrest.CoreMatchers.equalTo;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -190,6 +191,10 @@ public class PlayerController implements Initializable {
         Settings settings = new Settings();
         rootContainer.getChildren().add(settings);
         settingsAnimator = new SettingsAnimator(mainContainer, settings);
+        if (!new File(ChoicePlayerApplication.getSettings().getFolder()).exists()
+                        || !new File(ChoicePlayerApplication.getSettings().getLikedFolder()).exists()) {
+            settingsAnimator.animate(IN);
+        }
     }
 
     private void initializeButtonHBox() {

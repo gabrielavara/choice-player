@@ -1,6 +1,8 @@
 package com.gabrielavara.choiceplayer.controls.settings;
 
+import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static java.util.Arrays.asList;
+import static javafx.animation.Interpolator.EASE_BOTH;
 import static javafx.geometry.Pos.CENTER_LEFT;
 
 import java.io.File;
@@ -23,6 +25,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXComboBox;
 
+import javafx.animation.RotateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -32,6 +35,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
+import javafx.util.Duration;
 
 public class SettingsController implements Initializable {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.settings.SettingsController");
@@ -76,7 +80,20 @@ public class SettingsController implements Initializable {
         folderToLoadLabel.setStackPaneAlignment(CENTER_LEFT);
         folderToMoveLikedMusicLabel.setStackPaneAlignment(CENTER_LEFT);
 
-        closeButton.setOnMouseClicked(e -> Messenger.send(new SettingsClosedMessage()));
+        closeButton.setOnMouseClicked(e -> {
+            if (!new File(folderToLoadLabel.getText()).exists() || !new File(folderToMoveLikedMusicLabel.getText()).exists()) {
+                rotateCloseButton();
+            } else {
+                Messenger.send(new SettingsClosedMessage());
+            }
+        });
+    }
+
+    private void rotateCloseButton() {
+        RotateTransition rotateTransition = new RotateTransition(Duration.millis(LONG_ANIMATION_DURATION), closeButton);
+        rotateTransition.setByAngle(360 * 2);
+        rotateTransition.setInterpolator(EASE_BOTH);
+        rotateTransition.play();
     }
 
     @FXML
@@ -126,8 +143,16 @@ public class SettingsController implements Initializable {
     }
 
     private void setFolderLabelColors() {
-        folderToLoadLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
-        folderToMoveLikedMusicLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+        setFolderLabelColor(folderToLoadLabel);
+        setFolderLabelColor(folderToMoveLikedMusicLabel);
+    }
+
+    private void setFolderLabelColor(AnimatedLabel label) {
+        if (new File(label.getText()).exists()) {
+            label.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+        } else {
+            label.setTextFill(ChoicePlayerApplication.getColors().getErrorColor());
+        }
     }
 
     private void sendThemeChangedMessage() {
