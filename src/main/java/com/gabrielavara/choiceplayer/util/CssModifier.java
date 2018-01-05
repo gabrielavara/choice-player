@@ -17,9 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.Constants;
 import com.gabrielavara.choiceplayer.settings.AccentColor;
 import com.gabrielavara.choiceplayer.settings.Colors;
-import com.gabrielavara.choiceplayer.settings.ThemeStyle;
+import com.gabrielavara.choiceplayer.settings.Settings;
 
 import javafx.scene.layout.StackPane;
 
@@ -29,16 +30,17 @@ public class CssModifier {
     private CssModifier() {
     }
 
-    public static void modify(StackPane rootContainer, ThemeStyle style, AccentColor accentColor) {
-        Color backgroundColor = style.getBackgroundColor();
-        Color backgroundBrightColor = style.getBackgroundBrightColor();
-
+    public static void modify(StackPane rootContainer) {
         try {
+            Settings settings = ChoicePlayerApplication.getSettings();
             Path path = Paths.get("src/main/resources/css/style.css");
             String content = new String(Files.readAllBytes(path));
-            content = replaceAccentColor(content, accentColor);
-            content = replaceBackgroundBrightColor(content, backgroundBrightColor);
-            content = replaceBackgroundColor(content, backgroundColor);
+            content = replaceAccentColor(content, settings.getTheme().getAccentColor());
+            content = replaceAccentBrightColor(content, settings.getTheme().getAccentBrightColor());
+            content = replaceBackgroundBrightColor(content, settings.getTheme().getStyle().getBackgroundBrightColor());
+            content = replaceBackgroundColor(content, settings.getTheme().getStyle().getBackgroundColor());
+            content = replaceForegroundBrightColor(content, settings.getTheme().getStyle().getForegroundBrightColor());
+            content = replaceForegroundColor(content, settings.getTheme().getStyle().getForegroundColor());
 
             Files.write(Paths.get(STYLE_CSS), content.getBytes(), WRITE, CREATE, TRUNCATE_EXISTING);
 
@@ -53,22 +55,32 @@ public class CssModifier {
     }
 
     private static String replaceAccentColor(String content, AccentColor accentColor) {
-        return content.replaceAll("accent-color: rgb\\(29, 185, 84\\);",
-                format("accent-color: rgb({0}, {1}, {2});", accentColor.getRed(),
-                        accentColor.getGreen(), accentColor.getBlue()));
+        return content.replace("<accent-color-placeholder>",
+                        format(Constants.COLOR_PATTERN, accentColor.getRed(), accentColor.getGreen(), accentColor.getBlue()));
+    }
+
+    private static String replaceAccentBrightColor(String content, AccentColor accentBrightColor) {
+        return content.replace("<accent-bright-color-placeholder>",
+                        format(Constants.COLOR_PATTERN, accentBrightColor.getRed(), accentBrightColor.getGreen(), accentBrightColor.getBlue()));
     }
 
     private static String replaceBackgroundBrightColor(String content, Color backgroundBrightColor) {
-        return content.replaceAll("background-bright-color: rgb\\(30, 30, 30\\);",
-                format("background-bright-color: rgb({0}, {1}, {2});",
-                        backgroundBrightColor.getRed(), backgroundBrightColor.getGreen(),
-                        backgroundBrightColor.getBlue()));
+        return content.replace("<background-bright-color-placeholder>",
+                        format(Constants.COLOR_PATTERN, backgroundBrightColor.getRed(), backgroundBrightColor.getGreen(), backgroundBrightColor.getBlue()));
     }
 
     private static String replaceBackgroundColor(String content, Color backgroundColor) {
-        return content.replaceAll("background-color: rgb\\(20, 20, 20\\);",
-                format("background-color: rgb({0}, {1}, {2});",
-                        backgroundColor.getRed(), backgroundColor.getGreen(),
-                        backgroundColor.getBlue()));
+        return content.replaceAll("<background-color-placeholder>",
+                        format(Constants.COLOR_PATTERN, backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue()));
+    }
+
+    private static String replaceForegroundColor(String content, Color foregroundColor) {
+        return content.replaceAll("<foreground-color-placeholder>",
+                        format(Constants.COLOR_PATTERN, foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue()));
+    }
+
+    private static String replaceForegroundBrightColor(String content, Color foregroundBrightColor) {
+        return content.replaceAll("<foreground-bright-color-placeholder>",
+                        format(Constants.COLOR_PATTERN, foregroundBrightColor.getRed(), foregroundBrightColor.getGreen(), foregroundBrightColor.getBlue()));
     }
 }

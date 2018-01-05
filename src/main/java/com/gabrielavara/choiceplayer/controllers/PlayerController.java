@@ -155,6 +155,7 @@ public class PlayerController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        CssModifier.modify(rootContainer);
         playPauseButton.setController(this);
         setupAlbumAndTitleLabels();
         timeSlider.setLabelFormatter(timeSliderConverter);
@@ -176,7 +177,7 @@ public class PlayerController implements Initializable {
     }
 
     private void accessColorChanged(ThemeChangedMessage m) {
-        CssModifier.modify(rootContainer, m.getStyle(), m.getAccentColor());
+        CssModifier.modify(rootContainer);
     }
 
     private void settingsClosed(SettingsClosedMessage m) {

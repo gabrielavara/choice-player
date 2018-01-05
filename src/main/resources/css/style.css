@@ -1,10 +1,10 @@
 .root {
-    accent-color: rgb(29, 185, 84);
-    accent-bright-color: rgb(40, 255, 120);
-    background-bright-color: rgb(30, 30, 30);
-    background-color: rgb(20, 20, 20);
-    foreground-bright-color: rgb(230, 230, 230);
-    foreground-color: rgb(160, 160, 160);
+    accent-color: <accent-color-placeholder>;
+    accent-bright-color: <accent-bright-color-placeholder>;
+    background-bright-color: <background-bright-color-placeholder>;
+    background-color: <background-color-placeholder>;
+    foreground-bright-color: <foreground-bright-color-placeholder>;
+    foreground-color: <foreground-color-placeholder>;
 
     -fx-background: background-bright-color;
     -fx-text-fill: foreground-color;

@@ -16,12 +16,11 @@
         <Label fx:id="titleLabel" styleClass="settings-title" text="%settings"/>
         <JFXButton fx:id="closeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
             <graphic>
-                <MaterialDesignIconView glyphName="CLOSE" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
-                                        styleClass="icon"/>
+                <MaterialDesignIconView glyphName="CLOSE" size="32" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
             </graphic>
         </JFXButton>
         <VBox.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            <Insets bottom="12.0" left="24.0" right="24.0" top="24.0"/>
         </VBox.margin>
     </AnchorPane>
     <VBox VBox.vgrow="ALWAYS">
@@ -47,11 +46,9 @@
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton mnemonicParsing="false" contentDisplay="GRAPHIC_ONLY"
-                           onMouseClicked="#folderToLoadBrowseButtonClicked">
+                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#folderToLoadBrowseButtonClicked">
                     <graphic>
-                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
-                                                styleClass="icon"/>
+                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
                     </graphic>
                 </JFXButton>
             </StackPane>
@@ -72,11 +69,9 @@
                 </Label>
             </VBox>
             <StackPane>
-                <JFXButton mnemonicParsing="false" contentDisplay="GRAPHIC_ONLY"
-                           onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">
+                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">
                     <graphic>
-                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
-                                                styleClass="icon"/>
+                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
                     </graphic>
                 </JFXButton>
             </StackPane>
@@ -106,7 +101,7 @@
             <JFXColorPicker fx:id="accentColorPicker" onAction="#accentColorPickerChanged"/>
         </HBox>
         <VBox.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="12.0"/>
         </VBox.margin>
     </VBox>
 </VBox>

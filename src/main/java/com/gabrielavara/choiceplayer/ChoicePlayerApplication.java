@@ -55,6 +55,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
 
     private static void saveSettings(Settings settings) {
         try {
+            log.info("Save settings file: {}", settings);
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.writeValue(new File(SETTINGS_FILE), settings);
@@ -67,6 +68,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
     public void stop() throws Exception {
         log.info("Stop application");
         PlaylistCache.save(playlistItems);
+        saveSettings(settings);
         unregisterNativeHook();
         super.stop();
         Platform.exit();

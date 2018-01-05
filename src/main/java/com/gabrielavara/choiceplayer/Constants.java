@@ -41,6 +41,7 @@ public class Constants {
     public static final String COULD_NOT_DELETE_ORIGINAL_FILE = "couldNotDeleteOriginalFile";
 
     public static final String STYLE_CSS = "style.css";
+    public static final String COLOR_PATTERN = "rgb({0}, {1}, {2})";
 
     private Constants() {
     }

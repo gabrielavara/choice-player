@@ -121,8 +121,7 @@ public class SettingsController implements Initializable {
     }
 
     private void sendThemeChangedMessage() {
-        Messenger.send(new ThemeChangedMessage(ChoicePlayerApplication.getSettings().getTheme().getStyle(),
-                ChoicePlayerApplication.getSettings().getTheme().getAccentColor()));
+        Messenger.send(new ThemeChangedMessage());
     }
 
     private interface SettingsSetter {
