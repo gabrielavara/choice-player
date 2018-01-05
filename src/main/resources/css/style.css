@@ -159,3 +159,23 @@
 .list-cell {
     -fx-background-color: transparent;
 }
+
+.jfx-combo-box {
+    -jfx-unfocus-color: accent-color;
+    -jfx-focus-color: accent-color;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: foreground-bright-color;
+    -fx-font: 14 "Arial Rounded MT Bold";
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-text-fill: foreground-color;
+    -fx-font: 14 "Arial Rounded MT Bold";
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover {
+    -fx-text-fill: foreground-bright-color;
+    -fx-font: 14 "Arial Rounded MT Bold";
+}

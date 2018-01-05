@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum ThemeStyle {
-    LIGHT(new Color(200, 200, 200), new Color(230, 230, 230), new Color(30, 30, 30), new Color(0, 0, 0), new Color(255, 255, 255)),
+    LIGHT(new Color(220, 220, 220), new Color(230, 230, 230), new Color(80, 80, 80), new Color(0, 0, 0), new Color(255, 255, 255)),
     DARK(new Color(20, 20, 20), new Color(30, 30, 30), new Color(160, 160, 160), new Color(230, 230, 230), new Color(0, 0, 0));
 
     private Color backgroundColor;

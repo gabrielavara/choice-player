@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer.controls.settings;
 
 import static java.util.Arrays.asList;
+import static javafx.geometry.Pos.CENTER_LEFT;
 
 import java.io.File;
 import java.net.URL;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
 import com.gabrielavara.choiceplayer.settings.AccentColor;
@@ -36,9 +38,9 @@ public class SettingsController implements Initializable {
     private static final int CLOSE_BUTTON_MARGIN = 12;
 
     @FXML
-    public Label folderToLoadLabel;
+    public AnimatedLabel folderToLoadLabel;
     @FXML
-    public Label folderToMoveLikedMusicLabel;
+    public AnimatedLabel folderToMoveLikedMusicLabel;
     @FXML
     public JFXComboBox<String> styleComboBox;
     @FXML
@@ -70,8 +72,9 @@ public class SettingsController implements Initializable {
         titleLabel.translateXProperty().bind(titleContainer.widthProperty().subtract(titleLabel.widthProperty()).divide(2));
         titleLabel.translateYProperty().bind(titleContainer.heightProperty().subtract(titleLabel.heightProperty()).divide(2));
 
-        folderToLoadLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
-        folderToMoveLikedMusicLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+        setFolderLabelColors();
+        folderToLoadLabel.setStackPaneAlignment(CENTER_LEFT);
+        folderToMoveLikedMusicLabel.setStackPaneAlignment(CENTER_LEFT);
 
         closeButton.setOnMouseClicked(e -> Messenger.send(new SettingsClosedMessage()));
     }
@@ -86,7 +89,7 @@ public class SettingsController implements Initializable {
         showDirectoryChooser(folderToMoveLikedMusicLabel, value -> ChoicePlayerApplication.getSettings().setLikedFolder(value));
     }
 
-    private void showDirectoryChooser(Label label, SettingsSetter settingsSetter) {
+    private void showDirectoryChooser(AnimatedLabel label, SettingsSetter settingsSetter) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setInitialDirectory(Paths.get(label.getText()).toFile());
         File selectedDir = directoryChooser.showDialog(ChoicePlayerApplication.getStage());
@@ -106,6 +109,7 @@ public class SettingsController implements Initializable {
             log.info("Accent color changed to {}", accentColor);
             ChoicePlayerApplication.getSettings().getTheme().setAccentColor(accentColor);
             sendThemeChangedMessage();
+            setFolderLabelColors();
         }
     }
 
@@ -117,7 +121,13 @@ public class SettingsController implements Initializable {
             log.info("Style changed to {}", style);
             ChoicePlayerApplication.getSettings().getTheme().setStyle(style);
             sendThemeChangedMessage();
+            setFolderLabelColors();
         }
+    }
+
+    private void setFolderLabelColors() {
+        folderToLoadLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
+        folderToMoveLikedMusicLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
     }
 
     private void sendThemeChangedMessage() {

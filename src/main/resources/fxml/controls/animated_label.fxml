@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabelController">
-    <Label fx:id="first">
-        <StackPane.margin>
-            <Insets bottom="6.0" left="24.0" right="24.0" top="6.0"/>
-        </StackPane.margin>
-    </Label>
-    <Label fx:id="second">
-        <StackPane.margin>
-            <Insets bottom="6.0" left="24.0" right="24.0" top="6.0"/>
-        </StackPane.margin>
-    </Label>
+           fx:controller="com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabelController"
+           fx:id="root">
+    <Label fx:id="first"/>
+    <Label fx:id="second"/>
 </StackPane>

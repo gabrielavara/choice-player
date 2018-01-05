@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXColorPicker?>
 <?import com.jfoenix.controls.JFXComboBox?>
@@ -39,11 +40,11 @@
                     <Insets/>
                 </HBox.margin>
                 <Label styleClass="settings-item" text="%settingsFolderToLoad"/>
-                <Label fx:id="folderToLoadLabel" text="C:\">
+                <AnimatedLabel fx:id="folderToLoadLabel">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
                     </VBox.margin>
-                </Label>
+                </AnimatedLabel>
             </VBox>
             <StackPane>
                 <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#folderToLoadBrowseButtonClicked">
@@ -62,11 +63,11 @@
                     <Insets/>
                 </HBox.margin>
                 <Label styleClass="settings-item" text="%settingsFolderToMoveLikedMusic"/>
-                <Label fx:id="folderToMoveLikedMusicLabel" text="C:\">
+                <AnimatedLabel fx:id="folderToMoveLikedMusicLabel" alignment="CENTER_LEFT">
                     <VBox.margin>
                         <Insets bottom="6.0" top="6.0"/>
                     </VBox.margin>
-                </Label>
+                </AnimatedLabel>
             </VBox>
             <StackPane>
                 <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">

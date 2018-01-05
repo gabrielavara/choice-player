@@ -12,7 +12,10 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class AnimatedLabelController implements Initializable {
@@ -20,6 +23,8 @@ public class AnimatedLabelController implements Initializable {
     public Label first;
     @FXML
     public Label second;
+    @FXML
+    public StackPane root;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -74,5 +79,19 @@ public class AnimatedLabelController implements Initializable {
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
 
         parallelTransition.play();
+    }
+
+    public String getText() {
+        return first.getText();
+    }
+
+    public void setTextFill(Color textFill) {
+        first.setTextFill(textFill);
+        second.setTextFill(textFill);
+    }
+
+    public void setStackPaneAlignment(Pos pos) {
+        StackPane.setAlignment(first, pos);
+        StackPane.setAlignment(second, pos);
     }
 }
