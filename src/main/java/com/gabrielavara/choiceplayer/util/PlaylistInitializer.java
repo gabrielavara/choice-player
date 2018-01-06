@@ -48,7 +48,7 @@ public class PlaylistInitializer {
     private JFXSpinner spinner;
     private StackPane playlistStackPane;
     private List<PlaylistCell> cells = new ArrayList<>();
-    private boolean beforeAnimate = true;
+    private boolean beforeListAnimatedIn = true;
 
     public PlaylistInitializer(JFXListView<PlaylistItemView> playlist, ObservableList<PlaylistItemView> playlistItemViews, JFXSpinner spinner,
                                StackPane playlistStackPane) {
@@ -90,6 +90,9 @@ public class PlaylistInitializer {
                     });
                 }
             }
+            if (cachedItems.isEmpty() && items.isEmpty()) {
+                showItems();
+            }
         });
 
         new Thread(playListLoaderTask).start();
@@ -127,18 +130,26 @@ public class PlaylistInitializer {
     private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler) {
         int[] delay = new int[1];
         delay[0] = 0;
-        beforeAnimate = direction == OUT;
+        beforeListAnimatedIn = true;
         cells.forEach((PlaylistCell item) -> {
             animateItem(item, direction, delay[0], finishedEventHandler);
             if (direction == IN) {
                 delay[0] += SHORT_DELAY;
             }
         });
+        if (cells.isEmpty() && finishedEventHandler != null) {
+            finishedEventHandler.handle(null);
+        }
     }
 
     private void animateItem(PlaylistCell item, AnimationDirection direction, int delay, EventHandler<ActionEvent> finishedEventHandler) {
         Transition transition = getItemTransition(item, direction, delay);
-        if (direction == IN) {
+        if (direction == IN && cells.indexOf(item) == cells.size() - 1) {
+            transition.setOnFinished(e -> {
+                item.setOpacity(1);
+                beforeListAnimatedIn = false;
+            });
+        } else if (direction == IN) {
             transition.setOnFinished(e -> item.setOpacity(1));
         }
         if (direction == OUT && cells.indexOf(item) == cells.size() - 1) {
@@ -161,7 +172,8 @@ public class PlaylistInitializer {
         fadeTransition.setToValue(direction == IN ? 1 : 0);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), spinner);
-        translateTransition.setByY(direction == IN ? -350 : 350);
+        translateTransition.setFromY(direction == IN ? 350 : 0);
+        translateTransition.setToY(direction == IN ? 0 : 350);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
@@ -170,7 +182,7 @@ public class PlaylistInitializer {
 
     private ListCell<PlaylistItemView> playListCellFactory(ListView<PlaylistItemView> lv) {
         PlaylistCell cell = new PlaylistCell();
-        if (beforeAnimate) {
+        if (beforeListAnimatedIn) {
             cell.setOpacity(0);
         } else {
             cell.hoverProperty().addListener((o, oldValue, newValue) -> cell.getPlaylistItem().getAlbumArt().hover(newValue));

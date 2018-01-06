@@ -33,4 +33,8 @@ public class Settings extends StackPane {
             throw new IllegalStateException(COULD_NOT_LOAD, e);
         }
     }
+
+    public void resetFolderChanged() {
+        controller.resetFolderChanged();
+    }
 }

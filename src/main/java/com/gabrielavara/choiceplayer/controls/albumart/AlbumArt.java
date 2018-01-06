@@ -2,12 +2,13 @@ package com.gabrielavara.choiceplayer.controls.albumart;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AlbumArt extends AnchorPane {
     private static final String COULD_NOT_LOAD = "Could not load album art";
@@ -38,5 +39,9 @@ public class AlbumArt extends AnchorPane {
 
     public void hover(boolean hover) {
         controller.hover(hover);
+    }
+
+    public void setTheme() {
+        controller.setTheme();
     }
 }

@@ -101,7 +101,7 @@ public class PlayerController implements Initializable {
     @FXML
     public BigAlbumArt albumArt;
     @FXML
-    public HBox buttonHbox;
+    public HBox buttonHBox;
     @FXML
     public JFXButton refreshButton;
     @FXML
@@ -149,6 +149,7 @@ public class PlayerController implements Initializable {
     @Getter
     private FileMover recycleBinFileMover;
 
+    private Settings settings;
     private SettingsAnimator settingsAnimator;
 
     @Override
@@ -158,7 +159,6 @@ public class PlayerController implements Initializable {
         setupAlbumAndTitleLabels();
         timeSlider.setLabelFormatter(timeSliderConverter);
         setButtonListeners();
-        animateItems();
         registerGlobalKeyListener();
         registerMessageHandlers();
         playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
@@ -169,6 +169,7 @@ public class PlayerController implements Initializable {
         initializeButtonHBox();
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
         addSettings();
+        animateItems();
     }
 
     private void registerMessageHandlers() {
@@ -184,22 +185,23 @@ public class PlayerController implements Initializable {
     }
 
     private void settingsClosed(SettingsClosedMessage m) {
-        settingsAnimator.animate(OUT);
+        settingsAnimator.animate(OUT, () -> {
+            if (m.isFolderChanged()) {
+                playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylist());
+                settings.resetFolderChanged();
+            }
+        });
     }
 
     private void addSettings() {
-        Settings settings = new Settings();
+        settings = new Settings();
         rootContainer.getChildren().add(settings);
         settingsAnimator = new SettingsAnimator(mainContainer, settings);
-        if (!new File(ChoicePlayerApplication.getSettings().getFolder()).exists()
-                        || !new File(ChoicePlayerApplication.getSettings().getLikedFolder()).exists()) {
-            settingsAnimator.animate(IN);
-        }
     }
 
     private void initializeButtonHBox() {
-        buttonHbox.setOpacity(0);
-        buttonHbox.setTranslateY(buttonHbox.getHeight());
+        buttonHBox.setOpacity(0);
+        buttonHBox.setTranslateY(buttonHBox.getHeight());
 
         playlist.setOnMouseEntered(e -> getButtonTransition(true).play());
         playlist.setOnMouseExited(e -> {
@@ -210,13 +212,13 @@ public class PlayerController implements Initializable {
     }
 
     private ParallelTransition getButtonTransition(boolean in) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHbox);
-        fadeTransition.setFromValue(buttonHbox.getOpacity());
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHBox);
+        fadeTransition.setFromValue(buttonHBox.getOpacity());
         fadeTransition.setToValue(in ? 1 : 0);
 
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHbox);
-        translateTransition.setFromY(buttonHbox.getTranslateY());
-        translateTransition.setToY(in ? 0 : buttonHbox.getHeight());
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHBox);
+        translateTransition.setFromY(buttonHBox.getTranslateY());
+        translateTransition.setToY(in ? 0 : buttonHBox.getHeight());
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
@@ -365,6 +367,12 @@ public class PlayerController implements Initializable {
                 .add(nextTrackButton)
                 .add(likeButton);
         ParallelTransition transition = animator.build();
+        transition.setOnFinished(e -> {
+            if (!new File(ChoicePlayerApplication.getSettings().getFolder()).exists()
+                    || !new File(ChoicePlayerApplication.getSettings().getLikedFolder()).exists()) {
+                settingsAnimator.animate(IN);
+            }
+        });
         transition.play();
     }
 

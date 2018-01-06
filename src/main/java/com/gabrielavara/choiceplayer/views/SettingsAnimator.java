@@ -29,13 +29,27 @@ public class SettingsAnimator {
     }
 
     public void animate(AnimationDirection direction) {
+        animate(direction, null);
+    }
+
+    public void animate(AnimationDirection direction, SettingsAnimatorFinishedCallback callback) {
         ParallelTransition mainContainerTransition = getMainContainerTransition(mainContainer, direction.getInverse());
         ParallelTransition settingsTransition = getSettingsTransition(settings, direction);
         if (direction == IN) {
-            mainContainerTransition.setOnFinished(e -> settingsTransition.play());
+            mainContainerTransition.setOnFinished(e -> {
+                if (callback != null) {
+                    settingsTransition.setOnFinished(ev -> callback.finished());
+                }
+                settingsTransition.play();
+            });
             mainContainerTransition.play();
         } else {
-            settingsTransition.setOnFinished(e -> mainContainerTransition.play());
+            settingsTransition.setOnFinished(e -> {
+                if (callback != null) {
+                    mainContainerTransition.setOnFinished(ev -> callback.finished());
+                }
+                mainContainerTransition.play();
+            });
             settingsTransition.play();
         }
     }
@@ -87,5 +101,9 @@ public class SettingsAnimator {
         translateTransition.setToY(animationDirection == IN ? 0 : SETTINGS_TRANSLATE_Y);
         translateTransition.setInterpolator(animationDirection == IN ? EASE_OUT : EASE_IN);
         return translateTransition;
+    }
+
+    public interface SettingsAnimatorFinishedCallback {
+        void finished();
     }
 }

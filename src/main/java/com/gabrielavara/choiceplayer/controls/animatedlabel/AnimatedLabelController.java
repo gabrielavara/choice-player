@@ -9,7 +9,6 @@ import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -43,11 +42,9 @@ public class AnimatedLabelController implements Initializable {
 
     public void setText(String text) {
         this.text = text;
-        Platform.runLater(() -> {
-            second.setText(text);
-            animateOut(first);
-            animateIn(second);
-        });
+        second.setText(text);
+        animateOut(first);
+        animateIn(second);
     }
 
     private void animateIn(Label label) {

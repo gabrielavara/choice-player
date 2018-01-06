@@ -145,5 +145,6 @@ public class PlaylistItemController implements Initializable {
         indicator.setFill(ChoicePlayerApplication.getColors().getAccentColor());
         rippler.setRipplerFill(ChoicePlayerApplication.getColors().getAccentColor());
         setLabelColors();
+        albumArt.setTheme();
     }
 }

@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class Settings {
     private ThemeSettings theme = new ThemeSettings();
-    private String folder = "F:\\Google Drive\\Music\\Downloaded";
-    private String likedFolder = "F:\\Music\\0 New";
+    private String folder = "C:\\Music";
+    private String likedFolder = "C:\\Music\\Liked";
 }

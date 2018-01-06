@@ -89,4 +89,8 @@ public class AlbumArtController implements Initializable {
         Color absoluteColor = ChoicePlayerApplication.getColors().getAbsoluteColor();
         pane.setBackground(new Background(new BackgroundFill(absoluteColor, CornerRadii.EMPTY, Insets.EMPTY)));
     }
+
+    public void setTheme() {
+        setBackground();
+    }
 }

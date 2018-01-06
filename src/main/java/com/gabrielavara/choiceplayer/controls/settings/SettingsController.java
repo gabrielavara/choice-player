@@ -60,6 +60,8 @@ public class SettingsController implements Initializable {
     @FXML
     public JFXButton closeButton;
 
+    private boolean folderChanged;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("language.player");
@@ -84,7 +86,7 @@ public class SettingsController implements Initializable {
             if (!new File(folderToLoadLabel.getText()).exists() || !new File(folderToMoveLikedMusicLabel.getText()).exists()) {
                 rotateCloseButton();
             } else {
-                Messenger.send(new SettingsClosedMessage());
+                Messenger.send(new SettingsClosedMessage(folderChanged));
             }
         });
     }
@@ -98,7 +100,10 @@ public class SettingsController implements Initializable {
 
     @FXML
     public void folderToLoadBrowseButtonClicked(MouseEvent mouseEvent) {
-        showDirectoryChooser(folderToLoadLabel, value -> ChoicePlayerApplication.getSettings().setFolder(value));
+        showDirectoryChooser(folderToLoadLabel, value -> {
+            ChoicePlayerApplication.getSettings().setFolder(value);
+            folderChanged = true;
+        });
     }
 
     @FXML
@@ -108,7 +113,10 @@ public class SettingsController implements Initializable {
 
     private void showDirectoryChooser(AnimatedLabel label, SettingsSetter settingsSetter) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(Paths.get(label.getText()).toFile());
+        File file = Paths.get(label.getText()).toFile();
+        if (file.exists()) {
+            directoryChooser.setInitialDirectory(file);
+        }
         File selectedDir = directoryChooser.showDialog(ChoicePlayerApplication.getStage());
         if (selectedDir == null) {
             log.info("No directory selected");
@@ -116,6 +124,7 @@ public class SettingsController implements Initializable {
             log.info("Directory changed to {}", selectedDir.getAbsolutePath());
             label.setText(selectedDir.getAbsolutePath());
             settingsSetter.set(selectedDir.getAbsolutePath());
+            setFolderLabelColors();
         }
     }
 
@@ -126,7 +135,6 @@ public class SettingsController implements Initializable {
             log.info("Accent color changed to {}", accentColor);
             ChoicePlayerApplication.getSettings().getTheme().setAccentColor(accentColor);
             sendThemeChangedMessage();
-            setFolderLabelColors();
         }
     }
 
@@ -138,7 +146,6 @@ public class SettingsController implements Initializable {
             log.info("Style changed to {}", style);
             ChoicePlayerApplication.getSettings().getTheme().setStyle(style);
             sendThemeChangedMessage();
-            setFolderLabelColors();
         }
     }
 
@@ -157,6 +164,10 @@ public class SettingsController implements Initializable {
 
     private void sendThemeChangedMessage() {
         Messenger.send(new ThemeChangedMessage());
+    }
+
+    public void resetFolderChanged() {
+        folderChanged = false;
     }
 
     private interface SettingsSetter {
