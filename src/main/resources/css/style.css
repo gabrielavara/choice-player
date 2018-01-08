@@ -50,6 +50,7 @@
 
 .settings-subtitle {
     -fx-font: 18 "Arial Rounded MT Bold";
+    -fx-text-fill: accent-color;
 }
 
 .settings-item {
@@ -183,6 +184,6 @@
 .badge-label {
     -fx-background-radius: 30;
     -fx-background-color: accent-color;
-    -fx-font: 14 "Arial Rounded MT Bold";
+    -fx-font: 18 "Arial Rounded MT Bold";
     -fx-text-fill: foreground-bright-color;
 }

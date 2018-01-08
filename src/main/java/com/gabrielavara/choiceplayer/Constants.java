@@ -45,6 +45,8 @@ public class Constants {
 
     public static final double BADGE_MIN_SCALE = 0.1;
     public static final double BADGE_MAX_SCALE = 1.2;
+    public static final double BADGE_SIZE = 26;
+    public static final int BADGE_VISIBILITY_SECONDS = 3;
 
     private Constants() {
     }

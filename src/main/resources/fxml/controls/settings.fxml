@@ -13,11 +13,12 @@
 <?import javafx.scene.layout.VBox?>
 <VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.gabrielavara.choiceplayer.controls.settings.SettingsController">
-    <AnchorPane fx:id="titleContainer" prefHeight="50.0">
+    <AnchorPane fx:id="titleContainer">
         <Label fx:id="titleLabel" styleClass="settings-title" text="%settings"/>
-        <JFXButton fx:id="closeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
+        <JFXButton fx:id="backButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
             <graphic>
-                <MaterialDesignIconView glyphName="CLOSE" size="32" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                <MaterialDesignIconView glyphName="KEYBOARD_BACKSPACE" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
+                                        styleClass="icon"/>
             </graphic>
         </JFXButton>
         <VBox.margin>
@@ -47,9 +48,11 @@
                 </AnimatedLabel>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#folderToLoadBrowseButtonClicked">
+                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
+                           onMouseClicked="#folderToLoadBrowseButtonClicked">
                     <graphic>
-                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
+                                                styleClass="icon"/>
                     </graphic>
                 </JFXButton>
             </StackPane>
@@ -70,9 +73,11 @@
                 </AnimatedLabel>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">
+                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
+                           onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">
                     <graphic>
-                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
+                        <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
+                                                styleClass="icon"/>
                     </graphic>
                 </JFXButton>
             </StackPane>

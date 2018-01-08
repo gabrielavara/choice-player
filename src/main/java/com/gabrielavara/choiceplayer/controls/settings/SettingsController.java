@@ -39,7 +39,6 @@ import javafx.util.Duration;
 
 public class SettingsController implements Initializable {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.settings.SettingsController");
-    private static final int CLOSE_BUTTON_MARGIN = 12;
 
     @FXML
     public AnimatedLabel folderToLoadLabel;
@@ -58,7 +57,7 @@ public class SettingsController implements Initializable {
     @FXML
     public Label titleLabel;
     @FXML
-    public JFXButton closeButton;
+    public JFXButton backButton;
 
     private boolean folderChanged;
 
@@ -73,8 +72,7 @@ public class SettingsController implements Initializable {
         styleComboBox.setItems(styles);
         styleComboBox.getSelectionModel().select(ChoicePlayerApplication.getSettings().getTheme().getStyle().ordinal());
 
-        closeButton.translateXProperty().bind(titleContainer.widthProperty().subtract(closeButton.widthProperty()).subtract(CLOSE_BUTTON_MARGIN));
-        closeButton.setTranslateY(CLOSE_BUTTON_MARGIN);
+        titleLabel.translateYProperty().bind(titleContainer.heightProperty().subtract(backButton.heightProperty()).divide(2));
         titleLabel.translateXProperty().bind(titleContainer.widthProperty().subtract(titleLabel.widthProperty()).divide(2));
         titleLabel.translateYProperty().bind(titleContainer.heightProperty().subtract(titleLabel.heightProperty()).divide(2));
 
@@ -82,7 +80,7 @@ public class SettingsController implements Initializable {
         folderToLoadLabel.setStackPaneAlignment(CENTER_LEFT);
         folderToMoveLikedMusicLabel.setStackPaneAlignment(CENTER_LEFT);
 
-        closeButton.setOnMouseClicked(e -> {
+        backButton.setOnMouseClicked(e -> {
             if (!new File(folderToLoadLabel.getText()).exists() || !new File(folderToMoveLikedMusicLabel.getText()).exists()) {
                 rotateCloseButton();
             } else {
@@ -92,7 +90,7 @@ public class SettingsController implements Initializable {
     }
 
     private void rotateCloseButton() {
-        RotateTransition rotateTransition = new RotateTransition(Duration.millis(LONG_ANIMATION_DURATION), closeButton);
+        RotateTransition rotateTransition = new RotateTransition(Duration.millis(LONG_ANIMATION_DURATION), backButton);
         rotateTransition.setByAngle(360 * 2);
         rotateTransition.setInterpolator(EASE_BOTH);
         rotateTransition.play();

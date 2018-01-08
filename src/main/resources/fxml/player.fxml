@@ -106,13 +106,12 @@
                 </StackPane.margin>
             </JFXSpinner>
             <HBox fx:id="buttonHBox" alignment="BOTTOM_RIGHT" fillHeight="false" maxHeight="56.0" maxWidth="128.0"
-                  prefHeight="44.0" prefWidth="128.0"
-                  StackPane.alignment="BOTTOM_RIGHT">
+                  prefHeight="44.0" prefWidth="128.0" StackPane.alignment="BOTTOM_RIGHT">
                 <StackPane.margin>
                     <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
                 </StackPane.margin>
-                <JFXButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY"
-                           styleClass="button-accent-color">
+                <JFXButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
+                           minWidth="52.0" styleClass="button-accent-color">
                     <graphic>
                         <MaterialDesignIconView glyphName="REFRESH" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
@@ -121,8 +120,8 @@
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
                     </HBox.margin>
                 </JFXButton>
-                <JFXButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY"
-                           styleClass="button-accent-color">
+                <JFXButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
+                           minWidth="52.0" styleClass="button-accent-color">
                     <graphic>
                         <MaterialDesignIconView glyphName="SETTINGS" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>

@@ -5,7 +5,7 @@ import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_MOVE_FILE_TO_REC
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.RECYCLE_BIN;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
-import static javafx.animation.Interpolator.EASE_OUT;
+import static javafx.animation.Interpolator.EASE_BOTH;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +29,7 @@ import javafx.concurrent.Task;
 import javafx.util.Duration;
 
 public abstract class FileMover {
+    public static final int DELAY = 25;
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");
 
     private final PlaylistUtil playlistUtil;
@@ -119,14 +120,15 @@ public abstract class FileMover {
     }
 
     private void animateCellsAfter(List<PlaylistCell> cellsAfter, ParallelTransition parallelTransition) {
-        cellsAfter.forEach(c -> {
+        for (int i = 0; i < cellsAfter.size(); i++) {
+            PlaylistCell c = cellsAfter.get(i);
             TranslateTransition tt = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), c);
             tt.setFromY(c.getTranslateY());
             tt.setByY(-c.getHeight());
-            tt.setInterpolator(EASE_OUT);
-            tt.setDelay(Duration.millis(SHORT_ANIMATION_DURATION));
+            tt.setInterpolator(EASE_BOTH);
+            tt.setDelay(Duration.millis(SHORT_ANIMATION_DURATION + DELAY * i));
             parallelTransition.getChildren().add(tt);
-        });
+        }
     }
 
     private void resetCells(PlaylistCell cell, List<PlaylistCell> cellsAfter) {
