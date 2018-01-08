@@ -11,6 +11,7 @@ import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.BACKW
 import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
+import static com.gabrielavara.choiceplayer.util.Opinion.LIKE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
 import static javafx.scene.media.MediaPlayer.Status.HALTED;
@@ -36,11 +37,13 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.controls.animatedbadge.AnimatedBadge;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
+import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
@@ -152,6 +155,9 @@ public class PlayerController implements Initializable {
     private Settings settings;
     private SettingsAnimator settingsAnimator;
 
+    private AnimatedBadge likedAnimatedBadge;
+    private AnimatedBadge dislikedAnimatedBadge;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CssModifier.modify(rootContainer);
@@ -177,6 +183,15 @@ public class PlayerController implements Initializable {
         Messenger.register(SelectionChangedMessage.class, this::selectionChanged);
         Messenger.register(SettingsClosedMessage.class, this::settingsClosed);
         Messenger.register(ThemeChangedMessage.class, this::accessColorChanged);
+        Messenger.register(FileMovedMessage.class, this::fileMoved);
+    }
+
+    private void fileMoved(FileMovedMessage m) {
+        if (m.getOpinion().equals(LIKE)) {
+            likedAnimatedBadge.increaseCount();
+        } else {
+            dislikedAnimatedBadge.increaseCount();
+        }
     }
 
     private void accessColorChanged(ThemeChangedMessage m) {
@@ -372,6 +387,8 @@ public class PlayerController implements Initializable {
                     || !new File(ChoicePlayerApplication.getSettings().getLikedFolder()).exists()) {
                 settingsAnimator.animate(IN);
             }
+            likedAnimatedBadge = new AnimatedBadge(rootContainer, likeButton);
+            dislikedAnimatedBadge = new AnimatedBadge(rootContainer, dislikeButton);
         });
         transition.play();
     }

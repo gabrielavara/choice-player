@@ -43,6 +43,9 @@ public class Constants {
     public static final String STYLE_CSS = "style.css";
     public static final String COLOR_PATTERN = "rgb({0}, {1}, {2})";
 
+    public static final double BADGE_MIN_SCALE = 0.1;
+    public static final double BADGE_MAX_SCALE = 1.2;
+
     private Constants() {
     }
 }

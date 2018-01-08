@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer.util;
 
 import static com.gabrielavara.choiceplayer.Constants.RECYCLE_BIN;
+import static com.gabrielavara.choiceplayer.util.Opinion.DISLIKE;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXSnackbar;
 import com.sun.jna.platform.FileUtils;
+
 import javafx.collections.ObservableList;
 
 public class RecycleBinFileMover extends FileMover {
@@ -19,6 +21,11 @@ public class RecycleBinFileMover extends FileMover {
     @Override
     protected String getTarget() {
         return RECYCLE_BIN;
+    }
+
+    @Override
+    protected Opinion getOpinion() {
+        return DISLIKE;
     }
 
     @Override

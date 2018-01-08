@@ -17,6 +17,7 @@ public class PlaylistCell extends ListCell<PlaylistItemView> {
 
     private static final ExecutorService executorService = Executors.newFixedThreadPool(10, r -> {
         Thread t = new Thread(r);
+        t.setName("Album art loader thread " + t.getId());
         t.setDaemon(true);
         return t;
     });

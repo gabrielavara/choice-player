@@ -179,3 +179,10 @@
     -fx-text-fill: foreground-bright-color;
     -fx-font: 14 "Arial Rounded MT Bold";
 }
+
+.badge-label {
+    -fx-background-radius: 30;
+    -fx-background-color: accent-color;
+    -fx-font: 14 "Arial Rounded MT Bold";
+    -fx-text-fill: foreground-bright-color;
+}

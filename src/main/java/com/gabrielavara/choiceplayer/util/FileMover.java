@@ -13,17 +13,20 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXSnackbar;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class FileMover {
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");
@@ -88,6 +91,7 @@ public abstract class FileMover {
         } else {
             remove(item);
         }
+        Messenger.send(new FileMovedMessage(getOpinion()));
     }
 
     private void animateCells(PlaylistItemView item, PlaylistCell cell, List<PlaylistCell> cellsAfter) {
@@ -140,6 +144,8 @@ public abstract class FileMover {
     }
 
     protected abstract String getTarget();
+
+    protected abstract Opinion getOpinion();
 
     protected abstract void moveFile(PlaylistItemView itemView) throws IOException;
 }

@@ -2,6 +2,7 @@ package com.gabrielavara.choiceplayer.util;
 
 import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_WAIT_MS;
+import static com.gabrielavara.choiceplayer.util.Opinion.LIKE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -11,11 +12,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
+import org.awaitility.Awaitility;
+
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXSnackbar;
+
 import javafx.collections.ObservableList;
-import org.awaitility.Awaitility;
 
 public class LikedFolderFileMover extends FileMover {
 
@@ -26,6 +29,11 @@ public class LikedFolderFileMover extends FileMover {
     @Override
     protected String getTarget() {
         return ChoicePlayerApplication.getSettings().getLikedFolder();
+    }
+
+    @Override
+    protected Opinion getOpinion() {
+        return LIKE;
     }
 
     @Override
