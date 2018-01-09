@@ -57,11 +57,7 @@ public class AnimatedBadgeController implements Initializable {
         badgeLabel.setMouseTransparent(true);
         toDecorate.hoverProperty().addListener((ov, oldValue, newValue) -> {
             setLocationIfNeeded();
-            if (newValue) {
-                createTimeLine(IN).play();
-            } else {
-                createTimeLine(OUT).play();
-            }
+            createTimeLine(newValue ? IN : OUT).play();
         });
     }
 
