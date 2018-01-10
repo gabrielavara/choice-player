@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer;
 
 public class Constants {
+    public static final int VERY_SHORT_ANIMATION_DURATION = 100;
     public static final int SHORT_ANIMATION_DURATION = 200;
     public static final int ANIMATION_DURATION = 400;
     public static final int LONG_ANIMATION_DURATION = 700;
@@ -44,7 +45,7 @@ public class Constants {
     public static final String COLOR_PATTERN = "rgb({0}, {1}, {2})";
 
     public static final double BADGE_MIN_SCALE = 0.1;
-    public static final double BADGE_MAX_SCALE = 1.2;
+    public static final double BADGE_MAX_SCALE = 1.3;
     public static final double BADGE_SIZE = 26;
     public static final int BADGE_VISIBILITY_SECONDS = 3;
 

@@ -1,11 +1,11 @@
 package com.gabrielavara.choiceplayer.controls.animatedbadge;
 
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.BADGE_MAX_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.BADGE_MIN_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.BADGE_SIZE;
 import static com.gabrielavara.choiceplayer.Constants.BADGE_VISIBILITY_SECONDS;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.VERY_SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static javafx.animation.Interpolator.EASE_BOTH;
@@ -83,11 +83,11 @@ public class AnimatedBadgeController implements Initializable {
                         new KeyValue(badgeLabel.scaleXProperty(), BADGE_MIN_SCALE),
                         new KeyValue(badgeLabel.scaleYProperty(), BADGE_MIN_SCALE),
                         new KeyValue(badgeLabel.opacityProperty(), 0)),
-                new KeyFrame(Duration.millis(ANIMATION_DURATION),
+                new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION),
                         new KeyValue(badgeLabel.scaleXProperty(), BADGE_MAX_SCALE, EASE_IN),
                         new KeyValue(badgeLabel.scaleYProperty(), BADGE_MAX_SCALE, EASE_IN),
                         new KeyValue(badgeLabel.opacityProperty(), 1)),
-                new KeyFrame(Duration.millis(ANIMATION_DURATION + SHORT_ANIMATION_DURATION),
+                new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION + VERY_SHORT_ANIMATION_DURATION),
                         new KeyValue(badgeLabel.scaleXProperty(), 1, EASE_OUT),
                         new KeyValue(badgeLabel.scaleYProperty(), 1, EASE_OUT),
                         new KeyValue(badgeLabel.opacityProperty(), 1)));
@@ -99,7 +99,7 @@ public class AnimatedBadgeController implements Initializable {
                         new KeyValue(badgeLabel.scaleXProperty(), direction == IN ? BADGE_MIN_SCALE : 1),
                         new KeyValue(badgeLabel.scaleYProperty(), direction == IN ? BADGE_MIN_SCALE : 1),
                         new KeyValue(badgeLabel.opacityProperty(), direction == IN ? 0 : 1)),
-                new KeyFrame(Duration.millis(ANIMATION_DURATION),
+                new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION),
                         new KeyValue(badgeLabel.scaleXProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, EASE_BOTH),
                         new KeyValue(badgeLabel.scaleYProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, EASE_BOTH),
                         new KeyValue(badgeLabel.opacityProperty(), direction == IN ? 1 : 0)));

@@ -314,6 +314,7 @@ public class PlayerController implements Initializable {
             mediaPlayer.currentTimeProperty().removeListener(currentTimePropertyListener);
             mediaPlayer.dispose();
             waitForDispose();
+            System.gc();
         }
     }
 
