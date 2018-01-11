@@ -4,14 +4,14 @@ public class Constants {
     public static final int VERY_SHORT_ANIMATION_DURATION = 100;
     public static final int SHORT_ANIMATION_DURATION = 200;
     public static final int ANIMATION_DURATION = 400;
-    public static final int LONG_ANIMATION_DURATION = 700;
-    public static final int DELAY = 100;
-    public static final int SHORT_DELAY = 50;
-    public static final int WAIT_TILL_ANIMATING_ITEMS = 800;
+    public static final int LONG_ANIMATION_DURATION = 600;
+    public static final int SHORT_DELAY = 25;
+    public static final int DELAY = 50;
+    public static final int WAIT_TILL_ANIMATING_ITEMS = 1300;
 
     public static final int ALBUM_ART_TRANSLATE_X = 20;
     public static final int LABEL_TRANSLATE_X = 20;
-    public static final int INITIAL_ANIMATION_TRANSLATE_Y = 50;
+    public static final int INITIAL_ANIMATION_TRANSLATE_Y = 100;
     public static final int BIG_ALBUM_ART_TRANSLATE_X = 200;
     public static final int BIG_ALBUM_ART_TRANSLATE_Y = 50;
     public static final int SETTINGS_TRANSLATE_Y = 800;

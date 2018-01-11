@@ -67,6 +67,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
     @Override
     public void stop() throws Exception {
         log.info("Stop application");
+        playlistItems.forEach(item -> item.getMp3().setCurrentlyPlaying(false));
         PlaylistCache.save(playlistItems);
         saveSettings(settings);
         unregisterNativeHook();

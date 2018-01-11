@@ -1,8 +1,8 @@
 package com.gabrielavara.choiceplayer.util;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.DELAY;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static java.util.stream.Collectors.toList;
@@ -134,7 +134,7 @@ public class PlaylistInitializer {
         cells.forEach((PlaylistCell item) -> {
             animateItem(item, direction, delay[0], finishedEventHandler);
             if (direction == IN) {
-                delay[0] += SHORT_DELAY;
+                delay[0] += DELAY;
             }
         });
         if (cells.isEmpty() && finishedEventHandler != null) {

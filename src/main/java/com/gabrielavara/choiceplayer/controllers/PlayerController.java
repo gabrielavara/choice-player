@@ -168,7 +168,6 @@ public class PlayerController implements Initializable {
         registerGlobalKeyListener();
         registerMessageHandlers();
         playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
-        playlistInitializer.loadPlaylist();
         JFXSnackbar snackBar = new JFXSnackbar(mainContainer);
         likedFolderFileMover = new LikedFolderFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
         recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
@@ -374,9 +373,9 @@ public class PlayerController implements Initializable {
 
     private void animateItems() {
         InitialAnimator animator = new InitialAnimator();
-        animator.setup(albumArt, artistLabel, titleLabel, timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
+        animator.setup(albumArt, artistLabel, titleLabel, timeSlider, spinner, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
                 playPauseButton, nextTrackButton, likeButton);
-        animator.add(albumArt).add(artistLabel).add(titleLabel).add(timeSlider).add(elapsedLabel, remainingLabel)
+        animator.add(albumArt).add(spinner).add(artistLabel).add(titleLabel).add(timeSlider).add(elapsedLabel, remainingLabel)
                 .add(dislikeButton)
                 .add(previousTrackButton)
                 .add(playPauseButton)
@@ -390,6 +389,7 @@ public class PlayerController implements Initializable {
             }
             likedAnimatedBadge = new AnimatedBadge(rootContainer, likeButton);
             dislikedAnimatedBadge = new AnimatedBadge(rootContainer, dislikeButton);
+            playlistInitializer.loadPlaylist();
         });
         transition.play();
     }

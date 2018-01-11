@@ -1,10 +1,11 @@
 package com.gabrielavara.choiceplayer.util;
 
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_DELETE_ORIGINAL_FILE;
 import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN;
-import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.RECYCLE_BIN;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
 import static javafx.animation.Interpolator.EASE_BOTH;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gabrielavara.choiceplayer.Constants;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -29,7 +31,6 @@ import javafx.concurrent.Task;
 import javafx.util.Duration;
 
 public abstract class FileMover {
-    public static final int DELAY = 25;
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");
 
     private final PlaylistUtil playlistUtil;
@@ -108,11 +109,11 @@ public abstract class FileMover {
     }
 
     private void animateCurrentCell(PlaylistCell cell, ParallelTransition parallelTransition) {
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), cell);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), cell);
         translateTransition.setFromX(cell.getTranslateX());
         translateTransition.setToX(cell.getTranslateX() + cell.getWidth());
 
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), cell);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), cell);
         fadeTransition.setFromValue(cell.getOpacity());
         fadeTransition.setToValue(0);
 
@@ -122,11 +123,11 @@ public abstract class FileMover {
     private void animateCellsAfter(List<PlaylistCell> cellsAfter, ParallelTransition parallelTransition) {
         for (int i = 0; i < cellsAfter.size(); i++) {
             PlaylistCell c = cellsAfter.get(i);
-            TranslateTransition tt = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), c);
+            TranslateTransition tt = new TranslateTransition(Duration.millis(ANIMATION_DURATION), c);
             tt.setFromY(c.getTranslateY());
             tt.setByY(-c.getHeight());
             tt.setInterpolator(EASE_BOTH);
-            tt.setDelay(Duration.millis(SHORT_ANIMATION_DURATION + DELAY * i));
+            tt.setDelay(Duration.millis(SHORT_ANIMATION_DURATION + SHORT_DELAY * i));
             parallelTransition.getChildren().add(tt);
         }
     }
