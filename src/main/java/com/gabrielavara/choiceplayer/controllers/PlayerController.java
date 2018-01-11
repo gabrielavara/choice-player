@@ -193,6 +193,7 @@ public class PlayerController implements Initializable {
         }
     }
 
+    @SuppressWarnings("squid:S1172")
     private void accessColorChanged(ThemeChangedMessage m) {
         CssModifier.modify(rootContainer);
         playlistInitializer.changeTheme();
@@ -306,6 +307,7 @@ public class PlayerController implements Initializable {
         });
     }
 
+    @SuppressWarnings("squid:S1215")
     private void disposeMediaPlayer() {
         if (mediaPlayer != null) {
             mediaPlayer.setOnReady(null);

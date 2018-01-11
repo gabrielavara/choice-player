@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.controllers.PlayerController;
 import com.jfoenix.controls.JFXButton;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
@@ -50,6 +51,7 @@ public class AnimatedButtonController implements Initializable {
         }
     }
 
+    @SuppressWarnings("squid:S1172")
     private void buttonClicked(MouseEvent e) {
         controller.playPause(false);
         animate();

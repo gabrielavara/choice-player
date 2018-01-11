@@ -23,6 +23,7 @@ public class TimeSliderConverterTest {
         assertEquals("0:30", label);
     }
 
+    @SuppressWarnings("squid:S3415")
     @Test
     public void fromString() {
         // when

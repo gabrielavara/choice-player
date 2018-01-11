@@ -180,6 +180,7 @@ public class PlaylistInitializer {
         return parallelTransition;
     }
 
+    @SuppressWarnings("squid:S1172")
     private ListCell<PlaylistItemView> playListCellFactory(ListView<PlaylistItemView> lv) {
         PlaylistCell cell = new PlaylistCell();
         if (beforeListAnimatedIn) {
