@@ -12,10 +12,11 @@ import static org.jnativehook.keyboard.NativeKeyEvent.VC_RIGHT;
 
 import java.util.logging.Level;
 
-import com.gabrielavara.choiceplayer.controllers.PlayerController;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+
+import com.gabrielavara.choiceplayer.controllers.PlayerController;
 
 public class GlobalKeyListener implements NativeKeyListener {
     private static final int LONG_I = 0;
@@ -40,9 +41,9 @@ public class GlobalKeyListener implements NativeKeyListener {
         boolean isShiftPressed = (e.getModifiers() & SHIFT_MASK) != 0;
         boolean isCtrlPressed = (e.getModifiers() & CTRL_MASK) != 0;
 
-        if (e.getKeyCode() == VC_M && isAltPressed && !isCtrlPressed && !isShiftPressed) {
+        if (e.getKeyCode() == VC_M && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.getLikedFolderFileMover().moveFile();
-        } else if (e.getKeyCode() == VC_D && isAltPressed && !isCtrlPressed && !isShiftPressed) {
+        } else if (e.getKeyCode() == VC_D && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.getRecycleBinFileMover().moveFile();
         } else if (e.getKeyCode() == VC_PAGE_UP && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.getPlaylistUtil().goToPreviousTrack();
@@ -52,7 +53,7 @@ public class GlobalKeyListener implements NativeKeyListener {
             playerController.rewind();
         } else if (e.getKeyCode() == VC_RIGHT && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.fastForward();
-        } else if (e.getKeyCode() == LONG_I && isAltPressed && !isCtrlPressed && !isShiftPressed) {
+        } else if (e.getKeyCode() == LONG_I && isAltPressed && isCtrlPressed && !isShiftPressed) {
             playerController.playPause(true);
         }
     }

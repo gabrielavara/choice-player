@@ -61,10 +61,21 @@ public class PlaylistInitializer {
     }
 
     public void loadPlaylist() {
-        List<PlaylistItemView> cachedItems = PlaylistCache.load();
-        if (!cachedItems.isEmpty()) {
-            playlistItemViews.addAll(cachedItems);
-            showItems();
+        loadPlaylist(true);
+    }
+
+    public void loadPlaylistWithoutCache() {
+        loadPlaylist(false);
+    }
+
+    private void loadPlaylist(boolean loadCached) {
+        List<PlaylistItemView> cachedItems = new ArrayList<>();
+        if (loadCached) {
+            cachedItems.addAll(PlaylistCache.load());
+            if (!cachedItems.isEmpty()) {
+                playlistItemViews.addAll(cachedItems);
+                showItems();
+            }
         }
 
         Task<List<PlaylistItemView>> playListLoaderTask = new Task<List<PlaylistItemView>>() {

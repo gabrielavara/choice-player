@@ -405,7 +405,7 @@ public class PlayerController implements Initializable {
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
-        refreshButton.setOnMouseClicked(e -> playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylist()));
+        refreshButton.setOnMouseClicked(e -> playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylistWithoutCache()));
         settingsButton.setOnMouseClicked(e -> settingsAnimator.animate(IN));
     }
 
