@@ -1,7 +1,7 @@
 package com.gabrielavara.choiceplayer.views;
 
-import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.SETTINGS_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.SETTINGS_TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
@@ -84,14 +84,14 @@ public class SettingsAnimator {
     private ScaleTransition getScaleXTransition(Node node, AnimationDirection animationDirection) {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ANIMATION_DURATION), node);
         scaleTransition.setFromX(node.getScaleX());
-        scaleTransition.setToX(animationDirection == OUT ? ALBUM_ART_SCALE : 1);
+        scaleTransition.setToX(animationDirection == OUT ? SETTINGS_SCALE : 1);
         return scaleTransition;
     }
 
     private ScaleTransition getScaleYTransition(Node node, AnimationDirection animationDirection) {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ANIMATION_DURATION), node);
         scaleTransition.setFromY(node.getScaleY());
-        scaleTransition.setToY(animationDirection == OUT ? ALBUM_ART_SCALE : 1);
+        scaleTransition.setToY(animationDirection == OUT ? SETTINGS_SCALE : 1);
         return scaleTransition;
     }
 

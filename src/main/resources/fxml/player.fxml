@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <StackPane fx:id="rootContainer" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController">
+           fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController" styleClass="root">
     <HBox fx:id="mainContainer">
         <VBox maxWidth="500.0" prefWidth="500.0">
             <StackPane>

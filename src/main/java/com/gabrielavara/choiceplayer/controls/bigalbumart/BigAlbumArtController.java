@@ -1,7 +1,8 @@
 package com.gabrielavara.choiceplayer.controls.bigalbumart;
 
-import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_SCALE;
+import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_SIZE;
 import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_X;
 import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
@@ -44,8 +45,8 @@ public class BigAlbumArtController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        albumArt.setImage(ImageUtil.getDefaultImage());
-        grayScaleAlbumArt.setImage(ImageUtil.getDefaultImage());
+        albumArt.setImage(ImageUtil.getDefaultImage(BIG_ALBUM_ART_SIZE));
+        grayScaleAlbumArt.setImage(ImageUtil.getDefaultImage(BIG_ALBUM_ART_SIZE));
         grayScaleAlbumArt.setOpacity(0);
         pane.getChildren().remove(grayScaleAlbumArt);
     }
@@ -71,8 +72,8 @@ public class BigAlbumArtController implements Initializable {
     }
 
     public void setImage(Optional<byte[]> albumArtData, Direction direction) {
-        Image albumArtImage = ImageUtil.getAlbumArt(albumArtData);
-        Image grayScaleAlbumArtImage = ImageUtil.getGrayScaleAlbumArt(albumArtData);
+        Image albumArtImage = ImageUtil.getAlbumArt(albumArtData, BIG_ALBUM_ART_SIZE);
+        Image grayScaleAlbumArtImage = ImageUtil.getGrayScaleAlbumArt(albumArtData, BIG_ALBUM_ART_SIZE);
 
         ParallelTransition outTransition = getParallelTransition(OUT, direction);
 
@@ -127,14 +128,14 @@ public class BigAlbumArtController implements Initializable {
     private ScaleTransition getScaleXTransition(AnimationDirection animationDirection, ImageView imageView) {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ANIMATION_DURATION), imageView);
         scaleTransition.setFromX(imageView.getScaleX());
-        scaleTransition.setToX(animationDirection == OUT ? ALBUM_ART_SCALE : 1);
+        scaleTransition.setToX(animationDirection == OUT ? BIG_ALBUM_ART_SCALE : 1);
         return scaleTransition;
     }
 
     private ScaleTransition getScaleYTransition(AnimationDirection animationDirection, ImageView imageView) {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ANIMATION_DURATION), imageView);
         scaleTransition.setFromY(imageView.getScaleY());
-        scaleTransition.setToY(animationDirection == OUT ? ALBUM_ART_SCALE : 1);
+        scaleTransition.setToY(animationDirection == OUT ? BIG_ALBUM_ART_SCALE : 1);
         return scaleTransition;
     }
 

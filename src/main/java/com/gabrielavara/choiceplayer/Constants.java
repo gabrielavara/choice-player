@@ -9,11 +9,8 @@ public class Constants {
     public static final int DELAY = 50;
     public static final int WAIT_TILL_ANIMATING_ITEMS = 1300;
 
-    public static final int ALBUM_ART_TRANSLATE_X = 20;
     public static final int LABEL_TRANSLATE_X = 20;
     public static final int INITIAL_ANIMATION_TRANSLATE_Y = 100;
-    public static final int BIG_ALBUM_ART_TRANSLATE_X = 200;
-    public static final int BIG_ALBUM_ART_TRANSLATE_Y = 50;
     public static final int SETTINGS_TRANSLATE_Y = 800;
 
     public static final double SEEK_VOLUME = 0.1;
@@ -35,7 +32,14 @@ public class Constants {
     public static final int SEEK_SECONDS = 10;
 
     public static final String DEFAULT_ALBUM_ART = "src/main/resources/images/default-album-art.jpg";
-    public static final double ALBUM_ART_SCALE = 0.5;
+    public static final int BIG_ALBUM_ART_SIZE = 350;
+    public static final double BIG_ALBUM_ART_SCALE = 0.5;
+    public static final int BIG_ALBUM_ART_TRANSLATE_X = 200;
+    public static final int BIG_ALBUM_ART_TRANSLATE_Y = 50;
+    public static final int ALBUM_ART_SIZE = 72;
+    public static final int ALBUM_ART_TRANSLATE_X = 20;
+
+    public static final double SETTINGS_SCALE = 0.5;
 
     public static final String RECYCLE_BIN = "Recycle bin";
     public static final String COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN = "couldNotMoveFileToRecycleBin";
@@ -43,6 +47,7 @@ public class Constants {
 
     public static final String STYLE_CSS = "style.css";
     public static final String COLOR_PATTERN = "rgb({0}, {1}, {2})";
+    public static final String COLOR_PATTERN_WITH_OPACITY = "rgba({0}, {1}, {2}, {3})";
 
     public static final double BADGE_MIN_SCALE = 0.1;
     public static final double BADGE_MAX_SCALE = 1.3;
