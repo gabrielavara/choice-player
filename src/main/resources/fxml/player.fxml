@@ -10,6 +10,7 @@
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
@@ -17,6 +18,7 @@
 <StackPane fx:id="rootContainer" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.gabrielavara.choiceplayer.controllers.PlayerController" styleClass="root">
+    <ImageView fx:id="backgroundImage"/>
     <HBox fx:id="mainContainer">
         <VBox maxWidth="500.0" prefWidth="500.0">
             <StackPane>

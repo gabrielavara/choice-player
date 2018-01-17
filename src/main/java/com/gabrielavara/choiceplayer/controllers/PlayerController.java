@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer.controllers;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.BACKGROUND_IMAGE_OPACITY;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
@@ -21,6 +22,7 @@ import static javafx.scene.media.MediaPlayer.Status.STOPPED;
 import static javafx.scene.media.MediaPlayer.Status.UNKNOWN;
 import static org.hamcrest.CoreMatchers.equalTo;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -86,6 +88,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
@@ -115,6 +120,8 @@ public class PlayerController implements Initializable {
     public AnimatedLabel artistLabel;
     @FXML
     public AnimatedLabel titleLabel;
+    @FXML
+    public ImageView backgroundImage;
     @FXML
     private HBox mainContainer;
     @FXML
@@ -481,6 +488,28 @@ public class PlayerController implements Initializable {
     private void setCurrentlyPlayingAlbumArt(Direction direction) {
         Optional<byte[]> albumArtData = playlistUtil.getCurrentlyPlayingAlbumArt();
         albumArt.setImage(albumArtData, direction);
+        albumArtData.ifPresent(this::animateBackgroundImageChange);
+    }
+
+    private void animateBackgroundImageChange(byte[] data) {
+        FadeTransition fadeOutTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), backgroundImage);
+        fadeOutTransition.setToValue(0);
+        fadeOutTransition.setOnFinished(e -> {
+            changeBackgroundImage(data);
+            FadeTransition fadeInTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), backgroundImage);
+            fadeInTransition.setToValue(BACKGROUND_IMAGE_OPACITY);
+            fadeInTransition.play();
+        });
+        fadeOutTransition.play();
+    }
+
+    private void changeBackgroundImage(byte[] data) {
+        Image image = new Image(new ByteArrayInputStream(data));
+        backgroundImage.setImage(image);
+        double size = Math.max(rootContainer.getWidth(), rootContainer.getHeight());
+        backgroundImage.setFitHeight(size);
+        backgroundImage.setFitWidth(size);
+        backgroundImage.setEffect(new BoxBlur(20, 20, 3));
     }
 
     private void registerGlobalKeyListener() {

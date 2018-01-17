@@ -43,6 +43,7 @@ public class AnimatedLabelController implements Initializable {
     public void setText(String text) {
         this.text = text;
         second.setText(text);
+        second.toFront();
         animateOut(first);
         animateIn(second);
     }
