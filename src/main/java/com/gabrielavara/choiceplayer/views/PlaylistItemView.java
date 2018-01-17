@@ -18,7 +18,7 @@ public class PlaylistItemView {
     @Getter
     private String indexAsString;
     @Getter
-    private int index;
+    private Integer index;
     @Getter
     private Mp3 mp3;
     @Getter
