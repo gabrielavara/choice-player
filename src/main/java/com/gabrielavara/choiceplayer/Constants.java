@@ -54,6 +54,9 @@ public class Constants {
     public static final double BADGE_SIZE = 26;
     public static final int BADGE_VISIBILITY_SECONDS = 3;
 
+    public static final double BACKGROUND_IMAGE_OPACITY = 0.15;
+    public static final double PLAYLIST_BACKGROUND_OPACITY = 0.1;
+
     private Constants() {
     }
 }
