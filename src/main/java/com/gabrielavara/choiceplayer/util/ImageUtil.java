@@ -36,10 +36,8 @@ public class ImageUtil {
 
     public static Image getDefaultImage(int size) {
         if (defaultImage == null) {
-            try {
-                FileInputStream inputStream = new FileInputStream(DEFAULT_ALBUM_ART);
+            try (FileInputStream inputStream = new FileInputStream(DEFAULT_ALBUM_ART)) {
                 defaultImage = new Image(inputStream, size, size, true, false);
-                inputStream.close();
             } catch (IOException e) {
                 log.error("Could not load default album art");
             }

@@ -8,6 +8,7 @@ public class Constants {
     public static final int SHORT_DELAY = 25;
     public static final int DELAY = 50;
     public static final int WAIT_TILL_ANIMATING_ITEMS = 1300;
+    public static final int SPLASH_ANIMATION_DURATION = 3000;
 
     public static final int LABEL_TRANSLATE_X = 20;
     public static final int INITIAL_ANIMATION_TRANSLATE_Y = 100;
