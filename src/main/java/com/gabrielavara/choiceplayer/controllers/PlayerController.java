@@ -4,6 +4,7 @@ import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.BACKGROUND_IMAGE_OPACITY;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
+import static com.gabrielavara.choiceplayer.Constants.PLAYLIST_BACKGROUND_OPACITY;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
@@ -91,10 +92,13 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.Getter;
 
@@ -168,6 +172,7 @@ public class PlayerController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CssModifier.modify(rootContainer);
+        setPlaylistStackPaneBackground();
         playPauseButton.setController(this);
         setupAlbumAndTitleLabels();
         timeSlider.setLabelFormatter(timeSliderConverter);
@@ -182,6 +187,13 @@ public class PlayerController implements Initializable {
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
         addSettings();
         animateItems();
+    }
+
+    private void setPlaylistStackPaneBackground() {
+        Color backgroundColor = ChoicePlayerApplication.getColors().getBackgroundColor();
+        Color opaqueBackgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), PLAYLIST_BACKGROUND_OPACITY);
+        Background playlistStackPaneBackground = new Background(new BackgroundFill(opaqueBackgroundColor, null, null));
+        playlistStackPane.setBackground(playlistStackPaneBackground);
     }
 
     private void registerMessageHandlers() {
@@ -505,10 +517,10 @@ public class PlayerController implements Initializable {
 
     private void changeBackgroundImage(byte[] data) {
         Image image = new Image(new ByteArrayInputStream(data));
-        backgroundImage.setImage(image);
-        double size = Math.max(rootContainer.getWidth(), rootContainer.getHeight());
-        backgroundImage.setFitHeight(size);
+        double size = Math.max(rootContainer.getHeight(), rootContainer.getWidth());
         backgroundImage.setFitWidth(size);
+        backgroundImage.setFitHeight(size);
+        backgroundImage.setImage(image);
         backgroundImage.setEffect(new BoxBlur(20, 20, 3));
     }
 

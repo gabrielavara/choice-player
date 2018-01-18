@@ -96,9 +96,9 @@ public class AnimatedBadgeController implements Initializable {
     private Timeline createTimeLine(AnimationDirection direction) {
         return new Timeline(
                 new KeyFrame(Duration.ZERO,
-                        new KeyValue(badgeLabel.scaleXProperty(), direction == IN ? BADGE_MIN_SCALE : 1),
-                        new KeyValue(badgeLabel.scaleYProperty(), direction == IN ? BADGE_MIN_SCALE : 1),
-                        new KeyValue(badgeLabel.opacityProperty(), direction == IN ? 0 : 1)),
+                        new KeyValue(badgeLabel.scaleXProperty(), badgeLabel.getScaleX()),
+                        new KeyValue(badgeLabel.scaleYProperty(), badgeLabel.getScaleY()),
+                        new KeyValue(badgeLabel.opacityProperty(), badgeLabel.getOpacity())),
                 new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION),
                         new KeyValue(badgeLabel.scaleXProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, EASE_BOTH),
                         new KeyValue(badgeLabel.scaleYProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, EASE_BOTH),

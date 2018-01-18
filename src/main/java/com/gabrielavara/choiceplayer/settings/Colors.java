@@ -8,6 +8,8 @@ public class Colors {
     private final Color accentColor;
     private final Color foregroundBrightColor;
     private final Color foregroundColor;
+    private final Color backgroundBrightColor;
+    private final Color backgroundColor;
     private final Color absoluteColor;
     private final Color errorColor = new Color(1, 0, 0, 1);
 
@@ -15,6 +17,8 @@ public class Colors {
         accentColor = ColorConverter.convert(settings.getTheme().getAccentColor());
         foregroundBrightColor = ColorConverter.convert(settings.getTheme().getStyle().getForegroundBrightColor());
         foregroundColor = ColorConverter.convert(settings.getTheme().getStyle().getForegroundColor());
+        backgroundBrightColor = ColorConverter.convert(settings.getTheme().getStyle().getBackgroundBrightColor());
+        backgroundColor = ColorConverter.convert(settings.getTheme().getStyle().getBackgroundColor());
         absoluteColor = ColorConverter.convert(settings.getTheme().getStyle().getAbsoluteColor());
     }
 }

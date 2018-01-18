@@ -208,7 +208,8 @@ public class PlaylistInitializer {
     }
 
     public List<PlaylistCell> getCellsAfter(PlaylistItemView playlistItemView) {
-        return cells.stream().filter(c -> c.getPlaylistItemView() != null && playlistItemView.getIndex() < c.getPlaylistItemView().getIndex()).collect(toList());
+        return cells.stream().filter(c -> c.getPlaylistItemView() != null && playlistItemView.getIndex() < c.getPlaylistItemView().getIndex())
+                .sorted((c1, c2) -> c1.getPlaylistItemView().getIndex().compareTo(c2.getPlaylistItemView().getIndex())).collect(toList());
     }
 
     public void changeTheme() {

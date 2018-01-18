@@ -11,7 +11,7 @@
 }
 
 .playlistStackPane {
-    -fx-background: background-color;
+    -fx-background: transparent;
 }
 
 .label {
@@ -137,8 +137,8 @@
 }
 
 .list-view {
-    -fx-box-border: background-bright-color;
-    -fx-background-color: background-color;
+    -fx-box-border: transparent;
+    -fx-background-color: transparent;
 }
 
 .list-view .scroll-bar:vertical .track,
@@ -174,11 +174,13 @@
 .combo-box-popup .list-view .list-cell {
     -fx-text-fill: foreground-color;
     -fx-font: 14 "Arial Rounded MT Bold";
+    -fx-background-color: background-color;
 }
 
 .combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover {
     -fx-text-fill: foreground-bright-color;
     -fx-font: 14 "Arial Rounded MT Bold";
+    -fx-background-color: background-color;
 }
 
 .badge-label {
