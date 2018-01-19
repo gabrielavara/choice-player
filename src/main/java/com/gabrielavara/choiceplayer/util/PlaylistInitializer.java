@@ -5,10 +5,12 @@ import static com.gabrielavara.choiceplayer.Constants.DELAY;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -89,6 +91,7 @@ public class PlaylistInitializer {
         playListLoaderTask.setOnSucceeded(e -> {
             List<PlaylistItemView> items = playListLoaderTask.getValue();
             if (!cachedItems.equals(items)) {
+                Optional<PlaylistItemView> selected = playlistItemViews.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
                 log.info("Loaded playlist not equals cached playlist");
                 if (playlistItemViews.isEmpty()) {
                     playlistItemViews.addAll(items);
@@ -100,6 +103,7 @@ public class PlaylistInitializer {
                         showItems();
                     });
                 }
+                selectInNewItems(selected);
             }
             if (cachedItems.isEmpty() && items.isEmpty()) {
                 showItems();
@@ -107,6 +111,17 @@ public class PlaylistInitializer {
         });
 
         new Thread(playListLoaderTask).start();
+    }
+
+    private void selectInNewItems(Optional<PlaylistItemView> selected) {
+        selected.ifPresent(v -> {
+            Optional<PlaylistItemView> newSelected = playlistItemViews.stream().filter(item -> item.getMp3().equals(v.getMp3())).findFirst();
+            newSelected.ifPresent(s -> {
+                Optional<PlaylistCell> cell = getCell(s);
+                cell.ifPresent(c -> c.getPlaylistItem().animateToState(SELECTED));
+                s.getMp3().setCurrentlyPlaying(true);
+            });
+        });
     }
 
     private void showItems() {
@@ -209,7 +224,7 @@ public class PlaylistInitializer {
 
     public List<PlaylistCell> getCellsAfter(PlaylistItemView playlistItemView) {
         return cells.stream().filter(c -> c.getPlaylistItemView() != null && playlistItemView.getIndex() < c.getPlaylistItemView().getIndex())
-                .sorted((c1, c2) -> c1.getPlaylistItemView().getIndex().compareTo(c2.getPlaylistItemView().getIndex())).collect(toList());
+                .sorted(Comparator.comparing(c2 -> c2.getPlaylistItemView().getIndex())).collect(toList());
     }
 
     public void changeTheme() {
