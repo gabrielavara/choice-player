@@ -22,6 +22,7 @@ public class Messenger {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> void send(T message) {
         if (map.containsKey(message.getClass())) {
             map.get(message.getClass()).forEach(consumer -> consumer.consume(message));

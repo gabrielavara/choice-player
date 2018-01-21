@@ -210,7 +210,7 @@ public class PlayerController implements Initializable {
         }
     }
 
-    @SuppressWarnings("squid:S1172")
+    @SuppressWarnings({"squid:S1172", "unused"})
     private void accessColorChanged(ThemeChangedMessage m) {
         CssModifier.modify(rootContainer);
         playlistInitializer.changeTheme();
@@ -219,7 +219,7 @@ public class PlayerController implements Initializable {
     private void settingsClosed(SettingsClosedMessage m) {
         settingsAnimator.animate(OUT, () -> {
             if (m.isFolderChanged()) {
-                playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylist());
+                playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylist(), Optional.empty());
                 settings.resetFolderChanged();
             }
         });
@@ -422,7 +422,10 @@ public class PlayerController implements Initializable {
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
-        refreshButton.setOnMouseClicked(e -> playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylistWithoutCache()));
+        refreshButton.setOnMouseClicked(e -> {
+            Optional<PlaylistItemView> selected = playlistItems.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
+            playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylistWithoutCache(), selected);
+        });
         settingsButton.setOnMouseClicked(e -> settingsAnimator.animate(IN));
     }
 

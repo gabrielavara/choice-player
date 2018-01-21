@@ -23,10 +23,12 @@ public class ImageUtil {
     private ImageUtil() {
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Image getAlbumArt(Optional<byte[]> albumArtData, int size) {
         return albumArtData.map(bytes -> new Image(new ByteArrayInputStream(bytes), size, size, true, false)).orElseGet(() -> getDefaultImage(size));
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Image getGrayScaleAlbumArt(Optional<byte[]> albumArtData, int size) {
         return albumArtData.map(bytes -> {
             Image image = new Image(new ByteArrayInputStream(bytes), size, size, true, false);

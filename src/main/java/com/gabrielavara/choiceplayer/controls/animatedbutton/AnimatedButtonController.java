@@ -51,7 +51,7 @@ public class AnimatedButtonController implements Initializable {
         }
     }
 
-    @SuppressWarnings("squid:S1172")
+    @SuppressWarnings({"squid:S1172", "unused"})
     private void buttonClicked(MouseEvent e) {
         controller.playPause(false);
         animate();

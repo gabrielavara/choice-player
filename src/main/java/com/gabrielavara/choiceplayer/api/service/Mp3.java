@@ -15,7 +15,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "currentlyPlaying")
 @NoArgsConstructor
 public class Mp3 {
     private static final String EMPTY = "";
