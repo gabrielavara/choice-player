@@ -4,7 +4,6 @@ import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.BACKGROUND_IMAGE_OPACITY;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
-import static com.gabrielavara.choiceplayer.Constants.PLAYLIST_BACKGROUND_OPACITY;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
@@ -190,8 +189,7 @@ public class PlayerController implements Initializable {
     }
 
     private void setPlaylistStackPaneBackground() {
-        Color backgroundColor = ChoicePlayerApplication.getColors().getBackgroundColor();
-        Color opaqueBackgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), PLAYLIST_BACKGROUND_OPACITY);
+        Color opaqueBackgroundColor = ChoicePlayerApplication.getColors().getOpaqueBackgroundColor();
         Background playlistStackPaneBackground = new Background(new BackgroundFill(opaqueBackgroundColor, null, null));
         playlistStackPane.setBackground(playlistStackPaneBackground);
     }
@@ -450,6 +448,10 @@ public class PlayerController implements Initializable {
 
     private EventHandler<ActionEvent> seek() {
         return t -> mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
+    }
+
+    public void playPause() {
+        playPause(true);
     }
 
     public void playPause(boolean animatePlayPauseButton) {

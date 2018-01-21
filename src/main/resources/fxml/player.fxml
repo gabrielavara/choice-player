@@ -96,7 +96,7 @@
                 </JFXButton>
             </HBox>
         </VBox>
-        <StackPane fx:id="playlistStackPane" styleClass="playlistStackPane" HBox.hgrow="ALWAYS">
+        <StackPane fx:id="playlistStackPane" HBox.hgrow="ALWAYS">
             <JFXListView fx:id="playlist" maxWidth="1.7976931348623157E308" prefWidth="500.0" HBox.hgrow="ALWAYS">
                 <placeholder>
                     <Label text=""/>

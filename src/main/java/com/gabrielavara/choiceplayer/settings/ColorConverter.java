@@ -7,7 +7,7 @@ public class ColorConverter {
     }
 
     public static Color convert(java.awt.Color c) {
-        return new Color(((double) c.getRed()) / 255, ((double) c.getGreen()) / 255, ((double) c.getBlue()) / 255, 1.0);
+        return new Color(((double) c.getRed()) / 255, ((double) c.getGreen()) / 255, ((double) c.getBlue()) / 255, ((double) c.getAlpha()) / 255);
     }
 
     public static Color convert(AccentColor c) {

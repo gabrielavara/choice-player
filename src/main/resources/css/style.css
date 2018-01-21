@@ -10,10 +10,6 @@
     -fx-text-fill: foreground-color;
 }
 
-.playlistStackPane {
-    -fx-background: transparent;
-}
-
 .label {
     -fx-font: 14 "Arial Rounded MT Bold";
 }
@@ -141,15 +137,17 @@
     -fx-background-color: transparent;
 }
 
+.list-view .scroll-bar:vertical,
 .list-view .scroll-bar:vertical .track,
 .list-view .scroll-bar:vertical .track-background,
 .list-view .scroll-bar:vertical .increment-button,
 .list-view .scroll-bar:vertical .decrement-button,
+.list-view .scroll-bar:horizontal,
 .list-view .scroll-bar:horizontal .track-background,
 .list-view .scroll-bar:horizontal .increment-button,
 .list-view .scroll-bar:horizontal .decrement-button,
 .list-view .corner {
-    -fx-background-color: background-color;
+    -fx-background-color: transparent;
 }
 
 .list-view .scroll-bar:vertical .thumb,

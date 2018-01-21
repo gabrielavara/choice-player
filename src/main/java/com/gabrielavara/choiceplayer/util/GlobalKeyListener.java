@@ -18,6 +18,8 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import com.gabrielavara.choiceplayer.controllers.PlayerController;
 
+import javafx.application.Platform;
+
 public class GlobalKeyListener implements NativeKeyListener {
     private static final int LONG_I = 0;
 
@@ -42,24 +44,32 @@ public class GlobalKeyListener implements NativeKeyListener {
         boolean isCtrlPressed = (e.getModifiers() & CTRL_MASK) != 0;
 
         if (e.getKeyCode() == VC_M && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            playerController.getLikedFolderFileMover().moveFile();
+            runOnApplicationThread(playerController.getLikedFolderFileMover()::moveFile);
         } else if (e.getKeyCode() == VC_D && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            playerController.getRecycleBinFileMover().moveFile();
+            runOnApplicationThread(playerController.getRecycleBinFileMover()::moveFile);
         } else if (e.getKeyCode() == VC_PAGE_UP && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            playerController.getPlaylistUtil().goToPreviousTrack();
+            runOnApplicationThread(playerController.getPlaylistUtil()::goToPreviousTrack);
         } else if (e.getKeyCode() == VC_PAGE_DOWN && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            playerController.getPlaylistUtil().goToNextTrack();
+            runOnApplicationThread(playerController.getPlaylistUtil()::goToNextTrack);
         } else if (e.getKeyCode() == VC_LEFT && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            playerController.rewind();
+            runOnApplicationThread(playerController::rewind);
         } else if (e.getKeyCode() == VC_RIGHT && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            playerController.fastForward();
+            runOnApplicationThread(playerController::fastForward);
         } else if (e.getKeyCode() == LONG_I && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            playerController.playPause(true);
+            runOnApplicationThread(playerController::playPause);
         }
+    }
+
+    private void runOnApplicationThread(ActionToRun action) {
+        Platform.runLater(action::run);
     }
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
         // Nothing to do
+    }
+
+    private interface ActionToRun {
+        void run();
     }
 }

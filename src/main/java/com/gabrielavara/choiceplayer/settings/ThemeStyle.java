@@ -11,6 +11,8 @@ public enum ThemeStyle {
 
     private Color backgroundColor;
     private Color backgroundBrightColor;
+    private Color opaqueBackgroundColor;
+    private Color opaqueBackgroundBrightColor;
     private Color foregroundColor;
     private Color foregroundBrightColor;
     private Color absoluteColor;
@@ -21,6 +23,8 @@ public enum ThemeStyle {
         this.foregroundColor = foregroundColor;
         this.foregroundBrightColor = foregroundBrightColor;
         this.absoluteColor = absoluteColor;
+        opaqueBackgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), 25);
+        opaqueBackgroundBrightColor = new Color(backgroundBrightColor.getRed(), backgroundBrightColor.getGreen(), backgroundBrightColor.getBlue(), 25);
     }
 
     @Override
