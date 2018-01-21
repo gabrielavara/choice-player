@@ -18,17 +18,17 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.gabrielavara'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 jar {
+    baseName = "ChoicePlayer"
+    version = "1.0.0"
     manifest {
-        attributes 'Main-Class': 'com.gabrielavara.choiceplayer.ChoicePlayerApplication'
-    }
-
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        attributes = ['Main-Class'         : 'com.gabrielavara.choiceplayer.ChoicePlayerApplication',
+                      'Application-Name'   : 'Choice Player',
+                      'Application-Version': '1.0.0']
     }
 }
 

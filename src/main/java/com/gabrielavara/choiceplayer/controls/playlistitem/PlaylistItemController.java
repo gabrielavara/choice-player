@@ -3,6 +3,8 @@ package com.gabrielavara.choiceplayer.controls.playlistitem;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.Arrays.asList;
+import static javafx.geometry.Pos.BOTTOM_CENTER;
+import static javafx.geometry.Pos.TOP_CENTER;
 
 import java.net.URL;
 import java.util.List;
@@ -136,6 +138,7 @@ public class PlaylistItemController implements Initializable {
     }
 
     private Timeline createIndicatorTimeLine(PlaylistItemState state) {
+        StackPane.setAlignment(indicator, state == SELECTED ? TOP_CENTER : BOTTOM_CENTER);
         return new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(indicator.heightProperty(), state == SELECTED ? 0d : height)),
                 new KeyFrame(Duration.millis(ANIMATION_DURATION), new KeyValue(indicator.heightProperty(), state == SELECTED ? height : 0d)));

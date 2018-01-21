@@ -71,6 +71,7 @@ public class BigAlbumArtController implements Initializable {
         parallelTransition.play();
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public void setImage(Optional<byte[]> albumArtData, Direction direction) {
         Image albumArtImage = ImageUtil.getAlbumArt(albumArtData, BIG_ALBUM_ART_SIZE);
         Image grayScaleAlbumArtImage = ImageUtil.getGrayScaleAlbumArt(albumArtData, BIG_ALBUM_ART_SIZE);

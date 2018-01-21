@@ -152,7 +152,7 @@
 
 .list-view .scroll-bar:vertical .thumb,
 .list-view .scroll-bar:horizontal .thumb {
-    -fx-background-color: background-bright-color;
+    -fx-background-color: foreground-color;
 }
 
 .list-cell {
