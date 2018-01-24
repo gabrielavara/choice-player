@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,9 @@ public class PlaylistInitializer {
 
     private void loadPlaylist(boolean loadCached) {
         List<PlaylistItemView> cachedItems = new ArrayList<>();
+        Optional<PlaylistItemView> selected = playlistItemViews.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
+        playlistItemViews.clear();
+
         if (loadCached) {
             cachedItems.addAll(PlaylistCache.load());
             if (!cachedItems.isEmpty()) {
@@ -80,6 +84,12 @@ public class PlaylistInitializer {
             }
         }
 
+        Task<List<PlaylistItemView>> playListLoaderTask = createPlaylistLoaderTask(cachedItems, selected);
+        new Thread(playListLoaderTask).start();
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Task<List<PlaylistItemView>> createPlaylistLoaderTask(List<PlaylistItemView> cachedItems, Optional<PlaylistItemView> selected) {
         Task<List<PlaylistItemView>> playListLoaderTask = new Task<List<PlaylistItemView>>() {
             @Override
             protected List<PlaylistItemView> call() {
@@ -90,26 +100,30 @@ public class PlaylistInitializer {
 
         playListLoaderTask.setOnSucceeded(e -> {
             List<PlaylistItemView> items = playListLoaderTask.getValue();
-            if (!cachedItems.equals(items)) {
-                Optional<PlaylistItemView> selected = playlistItemViews.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
-                log.info("Loaded playlist not equals cached playlist");
-                if (playlistItemViews.isEmpty()) {
-                    playlistItemViews.addAll(items);
-                    showItems(selected);
-                } else {
-                    animateItems(OUT, ev -> {
-                        playlistItemViews.clear();
-                        playlistItemViews.addAll(items);
-                        showItems(selected);
-                    }, Optional.empty());
-                }
-            }
             if (cachedItems.isEmpty() && items.isEmpty()) {
                 showItems(Optional.empty());
             }
-        });
 
-        new Thread(playListLoaderTask).start();
+            if (!cachedItems.equals(items)) {
+                reloadItems(items, selected);
+            }
+        });
+        return playListLoaderTask;
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private void reloadItems(List<PlaylistItemView> items, Optional<PlaylistItemView> selected) {
+        log.info("Loaded playlist not equals cached playlist");
+        if (playlistItemViews.isEmpty()) {
+            playlistItemViews.addAll(items);
+            showItems(selected);
+        } else {
+            animateItems(OUT, ev -> {
+                playlistItemViews.clear();
+                playlistItemViews.addAll(items);
+                showItems(selected);
+            }, Optional.empty());
+        }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -149,33 +163,34 @@ public class PlaylistInitializer {
         int[] delay = new int[1];
         delay[0] = 0;
         beforeListAnimatedIn = true;
-        cells.forEach((PlaylistCell item) -> {
-            animateItem(item, direction, delay[0], finishedEventHandler, selected);
+
+        ParallelTransition parallelTransition = getItemsParallelTransition(direction, delay);
+
+        parallelTransition.setOnFinished(e -> {
+            if (direction == IN) {
+                beforeListAnimatedIn = false;
+                selectInNewItems(selected);
+            } else {
+                finishedEventHandler.handle(null);
+            }
+        });
+        parallelTransition.play();
+    }
+
+    private ParallelTransition getItemsParallelTransition(AnimationDirection direction, int[] delay) {
+        ParallelTransition parallelTransition = new ParallelTransition();
+
+        Stream<PlaylistCell> sortedPlaylistCells = cells.stream().filter(c -> c.getPlaylistItemView() != null)
+                        .sorted(Comparator.comparing(c2 -> c2.getPlaylistItemView().getIndex()));
+
+        sortedPlaylistCells.forEach((PlaylistCell item) -> {
+            Transition transition = getItemTransition(item, direction, delay[0]);
+            parallelTransition.getChildren().add(transition);
             if (direction == IN) {
                 delay[0] += DELAY;
             }
         });
-        if (cells.isEmpty() && finishedEventHandler != null) {
-            finishedEventHandler.handle(null);
-        }
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void animateItem(PlaylistCell item, AnimationDirection direction, int delay, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected) {
-        Transition transition = getItemTransition(item, direction, delay);
-        if (direction == IN && cells.indexOf(item) == cells.size() - 1) {
-            transition.setOnFinished(e -> {
-                item.setOpacity(1);
-                beforeListAnimatedIn = false;
-                selectInNewItems(selected);
-            });
-        } else if (direction == IN) {
-            transition.setOnFinished(e -> item.setOpacity(1));
-        }
-        if (direction == OUT && cells.indexOf(item) == cells.size() - 1) {
-            transition.setOnFinished(finishedEventHandler);
-        }
-        transition.play();
+        return parallelTransition;
     }
 
     private Transition getItemTransition(Node item, AnimationDirection direction, int delay) {
