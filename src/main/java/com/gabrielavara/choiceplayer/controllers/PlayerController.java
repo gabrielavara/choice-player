@@ -25,7 +25,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -284,14 +283,7 @@ public class PlayerController implements Initializable {
 
     private void play(Mp3 mp3) {
         disposeMediaPlayer();
-        loadBeep();
-        disposeMediaPlayer();
         loadMediaPlayer(mp3);
-    }
-
-    private void loadBeep() {
-        Optional<String> mediaUrl = MediaUrl.create(Paths.get("src/main/resources/mp3/beep.mp3"));
-        mediaUrl.ifPresent(s -> mediaPlayer = new MediaPlayer(new Media(s)));
     }
 
     private void loadMediaPlayer(Mp3 mp3) {
