@@ -243,9 +243,16 @@ public class PlayerController implements Initializable {
 
     private void selectionChanged(SelectionChangedMessage message) {
         Mp3 newValue = message.getNewValue();
+        Optional<Mp3> oldValue = message.getOldValue();
+        log.info("Playlist selection changed to: {}", newValue);
+
+        newValue.setCurrentlyPlaying(true);
+        oldValue.ifPresent(old -> old.setCurrentlyPlaying(false));
+
         artistLabel.setText(newValue.getArtist());
         titleLabel.setText(newValue.getTitle());
         timeSliderConverter.setLength(newValue.getLength());
+
         if (message.isPlay()) {
             play(newValue);
             playPauseButton.play();

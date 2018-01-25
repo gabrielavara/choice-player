@@ -24,6 +24,7 @@ import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
+import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
@@ -129,7 +130,11 @@ public class PlaylistInitializer {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private void showItems(Optional<PlaylistItemView> selected) {
         PauseTransition wait = new PauseTransition(Duration.millis(50));
-        wait.setOnFinished(ev -> animateItems(IN, selected));
+        wait.setOnFinished(ev -> animateItems(IN, e -> {
+            if (ChoicePlayerApplication.getSettings().isAutoPlay() && !selected.isPresent()) {
+                Messenger.send(new SelectionChangedMessage(playlistItemViews.get(0).getMp3(), null, true));
+            }
+        }, selected));
         wait.play();
     }
 
@@ -170,9 +175,8 @@ public class PlaylistInitializer {
             if (direction == IN) {
                 beforeListAnimatedIn = false;
                 selectInNewItems(selected);
-            } else {
-                finishedEventHandler.handle(null);
             }
+            finishedEventHandler.handle(null);
         });
         parallelTransition.play();
     }
@@ -181,7 +185,7 @@ public class PlaylistInitializer {
         ParallelTransition parallelTransition = new ParallelTransition();
 
         Stream<PlaylistCell> sortedPlaylistCells = cells.stream().filter(c -> c.getPlaylistItemView() != null)
-                        .sorted(Comparator.comparing(c2 -> c2.getPlaylistItemView().getIndex()));
+                .sorted(Comparator.comparing(c2 -> c2.getPlaylistItemView().getIndex()));
 
         sortedPlaylistCells.forEach((PlaylistCell item) -> {
             Transition transition = getItemTransition(item, direction, delay[0]);

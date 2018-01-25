@@ -26,7 +26,6 @@ public class InitialAnimator {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         fadeTransition.setToValue(1);
         fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS));
-        fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         translateTransition.setByX(ALBUM_ART_TRANSLATE);
@@ -43,7 +42,6 @@ public class InitialAnimator {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         fadeTransition.setToValue(1);
         fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS));
-        fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         translateTransition.setByX(-PLAYLIST_TRANSLATE);
