@@ -4,6 +4,7 @@ import static com.gabrielavara.choiceplayer.Constants.DELAY;
 import static com.gabrielavara.choiceplayer.Constants.INITIAL_ANIMATION_TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.WAIT_TILL_ANIMATING_ITEMS;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -25,12 +26,12 @@ public class InitialAnimator {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         fadeTransition.setToValue(1);
         fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS));
-        fadeTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+        fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         translateTransition.setByX(ALBUM_ART_TRANSLATE);
         translateTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS));
-        translateTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+        translateTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         parallelTransition.getChildren().addAll(translateTransition, fadeTransition);
     }
@@ -42,12 +43,12 @@ public class InitialAnimator {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         fadeTransition.setToValue(1);
         fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS));
-        fadeTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+        fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
         translateTransition.setByX(-PLAYLIST_TRANSLATE);
         translateTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS));
-        translateTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+        translateTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         parallelTransition.getChildren().addAll(translateTransition, fadeTransition);
     }
@@ -65,12 +66,12 @@ public class InitialAnimator {
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
             fadeTransition.setToValue(1);
             fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS * 2 + step * DELAY));
-            fadeTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+            fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
             TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
             translateTransition.setByY(-INITIAL_ANIMATION_TRANSLATE_Y);
             translateTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS * 2 + step * DELAY));
-            translateTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+            translateTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
             parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
         }

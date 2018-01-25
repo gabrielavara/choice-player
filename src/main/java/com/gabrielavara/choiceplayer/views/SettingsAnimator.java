@@ -5,8 +5,8 @@ import static com.gabrielavara.choiceplayer.Constants.SETTINGS_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.SETTINGS_TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
-import static javafx.animation.Interpolator.EASE_IN;
-import static javafx.animation.Interpolator.EASE_OUT;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
 
@@ -77,7 +77,7 @@ public class SettingsAnimator {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), node);
         fadeTransition.setFromValue(node.getOpacity());
         fadeTransition.setToValue(animationDirection == OUT ? 0 : 1);
-        fadeTransition.setInterpolator(animationDirection == IN ? EASE_IN : EASE_OUT);
+        fadeTransition.setInterpolator(animationDirection == IN ? QUADRATIC_EASE_IN : QUADRATIC_EASE_OUT);
         return fadeTransition;
     }
 
@@ -99,7 +99,7 @@ public class SettingsAnimator {
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), node);
         translateTransition.setFromY(node.getTranslateY());
         translateTransition.setToY(animationDirection == IN ? 0 : SETTINGS_TRANSLATE_Y);
-        translateTransition.setInterpolator(animationDirection == IN ? EASE_OUT : EASE_IN);
+        translateTransition.setInterpolator(animationDirection == IN ? QUADRATIC_EASE_OUT : QUADRATIC_EASE_IN);
         return translateTransition;
     }
 

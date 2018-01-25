@@ -6,7 +6,8 @@ import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_MOVE_FILE_TO_REC
 import static com.gabrielavara.choiceplayer.Constants.RECYCLE_BIN;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
-import static javafx.animation.Interpolator.EASE_BOTH;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_BOTH;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
 
 import java.io.IOException;
 import java.util.List;
@@ -111,10 +112,12 @@ public abstract class FileMover {
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), cell);
         translateTransition.setFromX(cell.getTranslateX());
         translateTransition.setToX(cell.getTranslateX() + cell.getWidth());
+        translateTransition.setInterpolator(QUADRATIC_EASE_IN);
 
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), cell);
         fadeTransition.setFromValue(cell.getOpacity());
         fadeTransition.setToValue(0);
+        fadeTransition.setInterpolator(QUADRATIC_EASE_IN);
 
         parallelTransition.getChildren().addAll(translateTransition, fadeTransition);
     }
@@ -125,7 +128,7 @@ public abstract class FileMover {
             TranslateTransition tt = new TranslateTransition(Duration.millis(ANIMATION_DURATION), c);
             tt.setFromY(c.getTranslateY());
             tt.setByY(-c.getHeight());
-            tt.setInterpolator(EASE_BOTH);
+            tt.setInterpolator(QUADRATIC_EASE_BOTH);
             tt.setDelay(Duration.millis(SHORT_ANIMATION_DURATION + SHORT_DELAY * i));
             parallelTransition.getChildren().add(tt);
         }

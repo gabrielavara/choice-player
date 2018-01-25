@@ -61,6 +61,7 @@ import com.gabrielavara.choiceplayer.util.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.util.TimeSliderConverter;
+import com.gabrielavara.choiceplayer.views.ButtonBox;
 import com.gabrielavara.choiceplayer.views.InitialAnimator;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -77,7 +78,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
@@ -232,29 +232,8 @@ public class PlayerController implements Initializable {
     }
 
     private void initializeButtonHBox() {
-        buttonHBox.setOpacity(0);
-        buttonHBox.setTranslateY(buttonHBox.getHeight());
-
-        playlist.setOnMouseEntered(e -> getButtonTransition(true).play());
-        playlist.setOnMouseExited(e -> {
-            if (e.getY() >= playlist.getHeight() || e.getY() <= 0 || e.getX() >= playlist.getWidth() || e.getX() <= 0) {
-                getButtonTransition(false).play();
-            }
-        });
-    }
-
-    private ParallelTransition getButtonTransition(boolean in) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHBox);
-        fadeTransition.setFromValue(buttonHBox.getOpacity());
-        fadeTransition.setToValue(in ? 1 : 0);
-
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), buttonHBox);
-        translateTransition.setFromY(buttonHBox.getTranslateY());
-        translateTransition.setToY(in ? 0 : buttonHBox.getHeight());
-
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
-        return parallelTransition;
+        ButtonBox buttonBox = new ButtonBox(buttonHBox, playlist);
+        buttonBox.initialize();
     }
 
     private void selectPlaylistItem(PlaylistItemSelectedMessage message) {

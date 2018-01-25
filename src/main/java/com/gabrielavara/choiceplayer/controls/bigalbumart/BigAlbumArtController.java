@@ -8,8 +8,8 @@ import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_Y;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
-import static javafx.animation.Interpolator.EASE_IN;
-import static javafx.animation.Interpolator.EASE_OUT;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 import java.net.URL;
 import java.util.Optional;
@@ -122,7 +122,7 @@ public class BigAlbumArtController implements Initializable {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), imageView);
         fadeTransition.setFromValue(animationDirection == OUT ? 1 : 0);
         fadeTransition.setToValue(animationDirection == OUT ? 0 : 1);
-        fadeTransition.setInterpolator(animationDirection == IN ? EASE_IN : EASE_OUT);
+        fadeTransition.setInterpolator(animationDirection == IN ? QUADRATIC_EASE_IN : QUADRATIC_EASE_OUT);
         return fadeTransition;
     }
 
@@ -130,6 +130,7 @@ public class BigAlbumArtController implements Initializable {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ANIMATION_DURATION), imageView);
         scaleTransition.setFromX(imageView.getScaleX());
         scaleTransition.setToX(animationDirection == OUT ? BIG_ALBUM_ART_SCALE : 1);
+        scaleTransition.setInterpolator(animationDirection == OUT ? QUADRATIC_EASE_OUT : QUADRATIC_EASE_IN);
         return scaleTransition;
     }
 
@@ -137,6 +138,7 @@ public class BigAlbumArtController implements Initializable {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ANIMATION_DURATION), imageView);
         scaleTransition.setFromY(imageView.getScaleY());
         scaleTransition.setToY(animationDirection == OUT ? BIG_ALBUM_ART_SCALE : 1);
+        scaleTransition.setInterpolator(animationDirection == OUT ? QUADRATIC_EASE_OUT : QUADRATIC_EASE_IN);
         return scaleTransition;
     }
 
@@ -145,7 +147,7 @@ public class BigAlbumArtController implements Initializable {
         int translateX = direction == FORWARD ? -BIG_ALBUM_ART_TRANSLATE_X : BIG_ALBUM_ART_TRANSLATE_X;
         translateTransition.setFromX(animationDirection == IN ? translateX : 0);
         translateTransition.setToX(animationDirection == IN ? 0 : translateX);
-        translateTransition.setInterpolator(animationDirection == IN ? EASE_IN : EASE_OUT);
+        translateTransition.setInterpolator(animationDirection == IN ? QUADRATIC_EASE_IN : QUADRATIC_EASE_OUT);
         return translateTransition;
     }
 
@@ -153,7 +155,7 @@ public class BigAlbumArtController implements Initializable {
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), imageView);
         translateTransition.setFromY(imageView.getTranslateY());
         translateTransition.setToY(animationDirection == IN ? 0 : BIG_ALBUM_ART_TRANSLATE_Y);
-        translateTransition.setInterpolator(animationDirection == IN ? EASE_OUT : EASE_IN);
+        translateTransition.setInterpolator(animationDirection == IN ? QUADRATIC_EASE_OUT : QUADRATIC_EASE_IN);
         return translateTransition;
     }
 }

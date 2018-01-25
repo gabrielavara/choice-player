@@ -2,6 +2,7 @@ package com.gabrielavara.choiceplayer.controls.animatedlabel;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.LABEL_TRANSLATE_X;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,9 +53,11 @@ public class AnimatedLabelController implements Initializable {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION * 2), label);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
+        fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION * 2), label);
         translateTransition.setByX(-LABEL_TRANSLATE_X);
+        translateTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
@@ -72,9 +75,11 @@ public class AnimatedLabelController implements Initializable {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION * 2), label);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
+        fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION * 2), label);
         translateTransition.setByX(-LABEL_TRANSLATE_X);
+        translateTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(fadeTransition, translateTransition);

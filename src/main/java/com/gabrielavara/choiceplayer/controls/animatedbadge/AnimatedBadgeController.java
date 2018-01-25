@@ -8,9 +8,9 @@ import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.VERY_SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
-import static javafx.animation.Interpolator.EASE_BOTH;
-import static javafx.animation.Interpolator.EASE_IN;
-import static javafx.animation.Interpolator.EASE_OUT;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_BOTH;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 import static javafx.geometry.Pos.CENTER;
 
 import java.net.URL;
@@ -84,12 +84,12 @@ public class AnimatedBadgeController implements Initializable {
                         new KeyValue(badgeLabel.scaleYProperty(), BADGE_MIN_SCALE),
                         new KeyValue(badgeLabel.opacityProperty(), 0)),
                 new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION),
-                        new KeyValue(badgeLabel.scaleXProperty(), BADGE_MAX_SCALE, EASE_IN),
-                        new KeyValue(badgeLabel.scaleYProperty(), BADGE_MAX_SCALE, EASE_IN),
+                        new KeyValue(badgeLabel.scaleXProperty(), BADGE_MAX_SCALE, QUADRATIC_EASE_IN),
+                        new KeyValue(badgeLabel.scaleYProperty(), BADGE_MAX_SCALE, QUADRATIC_EASE_IN),
                         new KeyValue(badgeLabel.opacityProperty(), 1)),
                 new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION + VERY_SHORT_ANIMATION_DURATION),
-                        new KeyValue(badgeLabel.scaleXProperty(), 1, EASE_OUT),
-                        new KeyValue(badgeLabel.scaleYProperty(), 1, EASE_OUT),
+                        new KeyValue(badgeLabel.scaleXProperty(), 1, QUADRATIC_EASE_OUT),
+                        new KeyValue(badgeLabel.scaleYProperty(), 1, QUADRATIC_EASE_OUT),
                         new KeyValue(badgeLabel.opacityProperty(), 1)));
     }
 
@@ -100,8 +100,8 @@ public class AnimatedBadgeController implements Initializable {
                         new KeyValue(badgeLabel.scaleYProperty(), badgeLabel.getScaleY()),
                         new KeyValue(badgeLabel.opacityProperty(), badgeLabel.getOpacity())),
                 new KeyFrame(Duration.millis(SHORT_ANIMATION_DURATION),
-                        new KeyValue(badgeLabel.scaleXProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, EASE_BOTH),
-                        new KeyValue(badgeLabel.scaleYProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, EASE_BOTH),
+                        new KeyValue(badgeLabel.scaleXProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, QUADRATIC_EASE_BOTH),
+                        new KeyValue(badgeLabel.scaleYProperty(), direction == IN ? 1 : BADGE_MIN_SCALE, QUADRATIC_EASE_BOTH),
                         new KeyValue(badgeLabel.opacityProperty(), direction == IN ? 1 : 0)));
     }
 

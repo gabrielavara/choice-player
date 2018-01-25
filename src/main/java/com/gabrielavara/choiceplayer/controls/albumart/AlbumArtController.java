@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer.controls.albumart;
 
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,6 +53,7 @@ public class AlbumArtController implements Initializable {
         fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), albumArt);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
+        fadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
         fadeTransition.setOnFinished(e -> {
             setBackground();
             fadeTransition = null;
@@ -63,14 +65,17 @@ public class AlbumArtController implements Initializable {
         FadeTransition buttonFadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), playButton);
         buttonFadeTransition.setFromValue(playButton.getOpacity());
         buttonFadeTransition.setToValue(hover ? 1 : 0);
+        buttonFadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         TranslateTransition buttonTranslateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), playButton);
         buttonTranslateTransition.setFromX(playButton.getTranslateX());
         buttonTranslateTransition.setToX(hover ? 0 : -TRANSLATE_X);
+        buttonTranslateTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         FadeTransition albumArtFadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), albumArt);
         albumArtFadeTransition.setFromValue(albumArt.getOpacity());
         albumArtFadeTransition.setToValue(hover ? 0.25 : 1);
+        albumArtFadeTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         ParallelTransition parallelTransition = new ParallelTransition();
         parallelTransition.getChildren().addAll(buttonFadeTransition, buttonTranslateTransition, albumArtFadeTransition);
