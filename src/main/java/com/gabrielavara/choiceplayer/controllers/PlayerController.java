@@ -392,15 +392,19 @@ public class PlayerController implements Initializable {
 
     private void animateItems() {
         InitialAnimator animator = new InitialAnimator();
-        animator.setup(albumArt, artistLabel, titleLabel, timeSlider, spinner, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
+        animator.setupAlbumArt(albumArt);
+        animator.setupPlaylist(playlistStackPane);
+
+        animator.setup(timeSlider, elapsedLabel, remainingLabel, dislikeButton, previousTrackButton,
                 playPauseButton, nextTrackButton, likeButton);
-        animator.add(albumArt).add(spinner).add(artistLabel).add(titleLabel).add(timeSlider).add(elapsedLabel, remainingLabel)
+        animator.add(timeSlider).add(elapsedLabel, remainingLabel)
                 .add(dislikeButton)
                 .add(previousTrackButton)
                 .add(playPauseButton)
                 .add(nextTrackButton)
                 .add(likeButton);
         ParallelTransition transition = animator.build();
+
         transition.setOnFinished(e -> {
             if (!new File(ChoicePlayerApplication.getSettings().getFolder()).exists()
                     || !new File(ChoicePlayerApplication.getSettings().getLikedFolder()).exists()) {

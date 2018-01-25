@@ -14,6 +14,43 @@ import javafx.util.Duration;
 public class InitialAnimator {
     private ParallelTransition parallelTransition = new ParallelTransition();
     private int step = 0;
+    private static final int ALBUM_ART_TRANSLATE = 425;
+    private static final int PLAYLIST_TRANSLATE = 700;
+    private static final int DELAY_BETWEEN_ITEMS = 400;
+
+    public void setupAlbumArt(Node node) {
+        node.setTranslateX(-ALBUM_ART_TRANSLATE);
+        node.setOpacity(0);
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
+        fadeTransition.setToValue(1);
+        fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS));
+        fadeTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
+        translateTransition.setByX(ALBUM_ART_TRANSLATE);
+        translateTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS));
+        translateTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+
+        parallelTransition.getChildren().addAll(translateTransition, fadeTransition);
+    }
+
+    public void setupPlaylist(Node node) {
+        node.setTranslateX(PLAYLIST_TRANSLATE);
+        node.setOpacity(0);
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
+        fadeTransition.setToValue(1);
+        fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS));
+        fadeTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
+        translateTransition.setByX(-PLAYLIST_TRANSLATE);
+        translateTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS));
+        translateTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
+
+        parallelTransition.getChildren().addAll(translateTransition, fadeTransition);
+    }
 
     public void setup(Node... nodes) {
         for (Node node : nodes) {
@@ -26,13 +63,14 @@ public class InitialAnimator {
         step++;
         for (Node node : nodes) {
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
-            fadeTransition.setFromValue(node.getOpacity());
             fadeTransition.setToValue(1);
-            fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + step * DELAY));
+            fadeTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS * 2 + step * DELAY));
+            fadeTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
 
             TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), node);
             translateTransition.setByY(-INITIAL_ANIMATION_TRANSLATE_Y);
-            translateTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + step * DELAY));
+            translateTransition.setDelay(Duration.millis(WAIT_TILL_ANIMATING_ITEMS + DELAY_BETWEEN_ITEMS * 2 + step * DELAY));
+            translateTransition.setInterpolator(QuadraticInterpolator.QUADRATIC_EASE_OUT);
 
             parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
         }
