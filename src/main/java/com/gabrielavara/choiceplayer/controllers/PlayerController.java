@@ -213,6 +213,7 @@ public class PlayerController implements Initializable {
     private void accessColorChanged(ThemeChangedMessage m) {
         CssModifier.modify(rootContainer);
         playlistInitializer.changeTheme();
+        setPlaylistStackPaneBackground();
     }
 
     private void settingsClosed(SettingsClosedMessage m) {

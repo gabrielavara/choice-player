@@ -24,7 +24,6 @@ import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
 import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
-import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
@@ -130,11 +129,7 @@ public class PlaylistInitializer {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private void showItems(Optional<PlaylistItemView> selected) {
         PauseTransition wait = new PauseTransition(Duration.millis(50));
-        wait.setOnFinished(ev -> animateItems(IN, e -> {
-            if (ChoicePlayerApplication.getSettings().isAutoPlay() && !selected.isPresent()) {
-                Messenger.send(new SelectionChangedMessage(playlistItemViews.get(0).getMp3(), null, true));
-            }
-        }, selected));
+        wait.setOnFinished(ev -> animateItems(IN, selected));
         wait.play();
     }
 
@@ -176,7 +171,9 @@ public class PlaylistInitializer {
                 beforeListAnimatedIn = false;
                 selectInNewItems(selected);
             }
-            finishedEventHandler.handle(null);
+            if (finishedEventHandler != null) {
+                finishedEventHandler.handle(null);
+            }
         });
         parallelTransition.play();
     }
