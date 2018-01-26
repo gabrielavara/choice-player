@@ -1,54 +1,31 @@
-# Java Gradle CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
 version: 2
 jobs:
   build:
+    
+    working_directory: ~/choice-player
+
     docker:
-      # specify the version you desire here
-      - image: circleci/jdk8:0.1.1
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
-
-    environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
+      - image: circleci/openjdk:8-jdk-browsers
 
     steps:
       - checkout
-      - run: chmod +x gradlew
 
-      # Download and cache dependencies
       - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run: ./gradlew dependencies
-
+          key: choice-player-{{ checksum "pom.xml" }}
+      
+      - run: mvn dependency:go-offline
+      
       - save_cache:
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "build.gradle" }}
-
-      # run tests!
-      - run: ./gradlew test
-
-      - run:
-          name: Save test results
-          command: |
-            mkdir -p ~/junit/
-            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
-          when: always
+          key: choice-player-{{ checksum "pom.xml" }}
+      
+      - run: mvn package shade:shade
+      
       - store_test_results:
-          path: ~/junit
+          path: target/surefire-reports
+
+      - run: for i in $(\ls -d target/*shaded.jar); do mv $i $(echo $i | sed 's/choice-player/ChoicePlayer/' | sed 's/\-shaded//'); done;
+      
       - store_artifacts:
-          path: ~/junit
+          path: target/ChoicePlayer-*.jar
