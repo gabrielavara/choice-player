@@ -5,6 +5,8 @@
 playlistCache.json
 settings.json
 /style.css
+dependency-reduced-pom.xml
+target/
 
 ### STS ###
 .apt_generated
