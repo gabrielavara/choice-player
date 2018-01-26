@@ -25,6 +25,8 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
+      - run: pwd; ls; ls target; ls /root/choice-player/target;
+
       - run: for i in $(ls -d /root/choice-player/target/*shaded.jar); do mv $i $(echo $i | sed 's/choice-player/ChoicePlayer/' | sed 's/\-shaded//'); done;
       
       - store_artifacts:
