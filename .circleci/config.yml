@@ -25,7 +25,7 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-      - run: for i in $(\ls -d target/*shaded.jar); do mv $i $(echo $i | sed 's/choice-player/ChoicePlayer/' | sed 's/\-shaded//'); done;
+      - run: for i in $(ls -d /root/choice-player/target/*shaded.jar); do mv $i $(echo $i | sed 's/choice-player/ChoicePlayer/' | sed 's/\-shaded//'); done;
       
       - store_artifacts:
           path: target/ChoicePlayer-1.0.0.jar
