@@ -28,4 +28,4 @@ jobs:
       - run: for i in $(\ls -d target/*shaded.jar); do mv $i $(echo $i | sed 's/choice-player/ChoicePlayer/' | sed 's/\-shaded//'); done;
       
       - store_artifacts:
-          path: target/ChoicePlayer-*.jar
+          path: target/ChoicePlayer-1.0.0.jar
