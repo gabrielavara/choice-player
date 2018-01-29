@@ -1,5 +1,6 @@
 package com.gabrielavara.choiceplayer.api.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllLines;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -41,7 +42,7 @@ public class PlaylistCache {
     private static List<PlaylistItemView> loadFile(Path path) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            String content = readAllLines(path).stream().collect(Collectors.joining(" "));
+            String content = readAllLines(path, UTF_8).stream().collect(Collectors.joining(" "));
             return objectMapper.readValue(content, new TypeReference<List<PlaylistItemView>>() {
             });
         } catch (IOException e) {
