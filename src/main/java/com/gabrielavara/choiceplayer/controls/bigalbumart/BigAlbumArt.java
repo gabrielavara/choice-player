@@ -35,6 +35,7 @@ public class BigAlbumArt extends StackPane {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public void setImage(Optional<byte[]> albumArtData, Direction direction) {
         controller.setImage(albumArtData, direction);
     }

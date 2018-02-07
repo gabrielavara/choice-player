@@ -47,28 +47,38 @@ public class BigAlbumArtController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         albumArt.setImage(ImageUtil.getDefaultImage(BIG_ALBUM_ART_SIZE));
         grayScaleAlbumArt.setImage(ImageUtil.getDefaultImage(BIG_ALBUM_ART_SIZE));
-        grayScaleAlbumArt.setOpacity(0);
         pane.getChildren().remove(grayScaleAlbumArt);
     }
 
     public void animatePlayPause(AnimationDirection animationDirection) {
+        setInitialValues(animationDirection);
+        FadeTransition fadeOutTransition = getFrontTransition(animationDirection);
+        fadeOutTransition.setOnFinished(e -> removeItem(animationDirection));
+        fadeOutTransition.play();
+    }
+
+    private void setInitialValues(AnimationDirection animationDirection) {
         pane.getChildren().add(0, animationDirection == OUT ? grayScaleAlbumArt : albumArt);
         grayScaleAlbumArt.setTranslateY(0);
+        grayScaleAlbumArt.setOpacity(1);
         albumArt.setTranslateY(0);
-        FadeTransition fadeTransition = getFadeTransition(animationDirection, albumArt);
-        FadeTransition grayScaleFadeTransition = getFadeTransition(animationDirection.getInverse(), grayScaleAlbumArt);
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll(fadeTransition, grayScaleFadeTransition);
-        parallelTransition.setOnFinished(e -> {
-            if (animationDirection == OUT) {
-                pane.getChildren().remove(albumArt);
-                isAlbumArtShowed = false;
-            } else {
-                pane.getChildren().remove(grayScaleAlbumArt);
-                isAlbumArtShowed = true;
-            }
-        });
-        parallelTransition.play();
+        albumArt.setOpacity(1);
+    }
+
+    private FadeTransition getFrontTransition(AnimationDirection animationDirection) {
+        return animationDirection == OUT
+                ? getFadeTransition(animationDirection, albumArt)
+                : getFadeTransition(animationDirection.getInverse(), grayScaleAlbumArt);
+    }
+
+    private void removeItem(AnimationDirection animationDirection) {
+        if (animationDirection == OUT) {
+            pane.getChildren().remove(albumArt);
+            isAlbumArtShowed = false;
+        } else {
+            pane.getChildren().remove(grayScaleAlbumArt);
+            isAlbumArtShowed = true;
+        }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
