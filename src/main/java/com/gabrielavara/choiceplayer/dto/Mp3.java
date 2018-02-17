@@ -1,10 +1,18 @@
-package com.gabrielavara.choiceplayer.api.service;
+package com.gabrielavara.choiceplayer.dto;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,13 +21,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
 @ToString
 @EqualsAndHashCode(exclude = "currentlyPlaying")
 @NoArgsConstructor
 public class Mp3 {
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.controllers.PlaylistUtil");
     private static final String EMPTY = "";
-    public static final String DEFAULT_TRACK = "1";
+    private static final String DEFAULT_TRACK = "1";
+
     private String artist;
     private String title;
     private String year;
@@ -28,9 +37,10 @@ public class Mp3 {
     private int trackAsInt;
     private long length;
     private String filename;
+    @Setter
     private boolean currentlyPlaying;
 
-    Mp3(Mp3File mp3) {
+    public Mp3(Mp3File mp3) {
         artist = extractArtist(mp3);
         title = extractTitle(mp3);
         year = extractYear(mp3);
@@ -112,5 +122,27 @@ public class Mp3 {
             }
         }
         return Integer.valueOf(sb.toString());
+    }
+
+    public Optional<byte[]> getAlbumArt() {
+        Path path = Paths.get(getFilename());
+        return getAlbumArtBytes(path);
+    }
+
+    private static Optional<byte[]> getAlbumArtBytes(Path path) {
+        try {
+            Mp3File mp3File = new Mp3File(path);
+            if (mp3File.hasId3v2Tag()) {
+                ID3v2 id3v2Tag = mp3File.getId3v2Tag();
+                return Optional.ofNullable(id3v2Tag.getAlbumImage());
+            }
+        } catch (IOException | UnsupportedTagException | InvalidDataException e) {
+            log.error("Could not load mp3: {}", e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    public boolean shouldSearchForInfo() {
+        return !getAlbumArt().isPresent() || track.equals(DEFAULT_TRACK) || !track.startsWith("0");
     }
 }

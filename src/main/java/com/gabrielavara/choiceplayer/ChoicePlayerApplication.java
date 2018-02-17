@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
+import com.gabrielavara.choiceplayer.playlist.PlaylistCache;
 import com.gabrielavara.choiceplayer.settings.Colors;
 import com.gabrielavara.choiceplayer.settings.Settings;
 import com.gabrielavara.choiceplayer.views.ChoicePlayerSplashScreen;
@@ -39,7 +39,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
     public static void main(String[] args) {
         settings = loadSettings();
         colors = new Colors(settings);
-        launchApp(ChoicePlayerApplication.class, PlayerView.class, new ChoicePlayerSplashScreen(), args);
+        launch(ChoicePlayerApplication.class, PlayerView.class, new ChoicePlayerSplashScreen(), args);
     }
 
     private static Settings loadSettings() {

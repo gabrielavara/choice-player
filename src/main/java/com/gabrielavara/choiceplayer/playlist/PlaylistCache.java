@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.api.service;
+package com.gabrielavara.choiceplayer.playlist;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllLines;
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 
 public class PlaylistCache {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.service.PlaylistCache");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.playlist.PlaylistCache");
     private static final String PLAYLIST_CACHE_JSON = "playlistCache.json";
 
     private PlaylistCache() {

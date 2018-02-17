@@ -20,7 +20,7 @@ import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
 import com.gabrielavara.choiceplayer.settings.AccentColor;
 import com.gabrielavara.choiceplayer.settings.ColorConverter;
 import com.gabrielavara.choiceplayer.settings.ThemeStyle;
-import com.gabrielavara.choiceplayer.util.Messenger;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXComboBox;

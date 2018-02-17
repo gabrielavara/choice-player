@@ -1,6 +1,6 @@
 package com.gabrielavara.choiceplayer.api.controller;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.api.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

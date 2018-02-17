@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.util;
+package com.gabrielavara.choiceplayer.playlist;
 
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.DELAY;
@@ -20,10 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.api.service.Mp3;
-import com.gabrielavara.choiceplayer.api.service.PlaylistCache;
-import com.gabrielavara.choiceplayer.api.service.PlaylistLoader;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
+import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
@@ -45,7 +43,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class PlaylistInitializer {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.util.PlaylistInitializer");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.playlist.PlaylistInitializer");
 
     private ObservableList<PlaylistItemView> playlistItemViews;
     private JFXSpinner spinner;

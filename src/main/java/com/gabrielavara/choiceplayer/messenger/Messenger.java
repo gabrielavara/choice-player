@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.util;
+package com.gabrielavara.choiceplayer.messenger;
 
 import static java.util.Collections.singletonList;
 

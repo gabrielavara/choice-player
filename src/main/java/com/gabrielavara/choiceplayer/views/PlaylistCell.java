@@ -6,8 +6,8 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
 import com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItem;
+import com.gabrielavara.choiceplayer.dto.Mp3;
 
 import javafx.scene.control.ListCell;
 import lombok.Getter;

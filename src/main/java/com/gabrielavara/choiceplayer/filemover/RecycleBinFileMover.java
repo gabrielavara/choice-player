@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.util;
+package com.gabrielavara.choiceplayer.filemover;
 
 import static com.gabrielavara.choiceplayer.Constants.RECYCLE_BIN;
 import static com.gabrielavara.choiceplayer.util.Opinion.DISLIKE;
@@ -6,6 +6,9 @@ import static com.gabrielavara.choiceplayer.util.Opinion.DISLIKE;
 import java.io.File;
 import java.io.IOException;
 
+import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
+import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
+import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXSnackbar;
 import com.sun.jna.platform.FileUtils;

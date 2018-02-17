@@ -4,9 +4,8 @@ import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SIZE;
 
 import java.util.Optional;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.util.ImageUtil;
-import com.gabrielavara.choiceplayer.util.PlaylistUtil;
 
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
@@ -22,7 +21,7 @@ public class AlbumArtLoaderTask extends Task<Image> {
 
     @Override
     protected Image call() {
-        Optional<byte[]> albumArtData = PlaylistUtil.getAlbumArt(mp3);
+        Optional<byte[]> albumArtData = mp3.getAlbumArt();
         return ImageUtil.getAlbumArt(albumArtData, ALBUM_ART_SIZE);
     }
 }

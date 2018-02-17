@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.api.service;
+package com.gabrielavara.choiceplayer.playlist;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;

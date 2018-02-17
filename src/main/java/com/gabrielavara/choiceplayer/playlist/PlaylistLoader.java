@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.api.service;
+package com.gabrielavara.choiceplayer.playlist;
 
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
@@ -23,12 +23,13 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
 public class PlaylistLoader {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.service.PlaylistLoader");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.playlist.PlaylistLoader");
 
     public List<Mp3> load(Path folder) {
         log.info("Start loading playlist");

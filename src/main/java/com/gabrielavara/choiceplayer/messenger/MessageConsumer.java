@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.util;
+package com.gabrielavara.choiceplayer.messenger;
 
 @FunctionalInterface
 public interface MessageConsumer<T> {

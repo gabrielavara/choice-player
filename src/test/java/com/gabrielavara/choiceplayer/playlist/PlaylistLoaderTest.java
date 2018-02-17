@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.api.service;
+package com.gabrielavara.choiceplayer.playlist;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.gabrielavara.choiceplayer.api.service.PlaylistTestInitializer;
+import com.gabrielavara.choiceplayer.dto.Mp3;
 
 public class PlaylistLoaderTest extends PlaylistTestInitializer {
     private final static Path testResourcesFolder = Paths.get("src/test/resources/mp3");

@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.util;
+package com.gabrielavara.choiceplayer.filemover;
 
 import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.FILE_MOVER_WAIT_MS;
@@ -15,6 +15,9 @@ import java.util.concurrent.Callable;
 import org.awaitility.Awaitility;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
+import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
+import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXSnackbar;
 

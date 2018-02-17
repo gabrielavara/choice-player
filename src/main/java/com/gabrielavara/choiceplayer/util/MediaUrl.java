@@ -16,7 +16,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.dto.Mp3;
 
 public class MediaUrl {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.MediaUrl");
@@ -28,7 +28,7 @@ public class MediaUrl {
         return create(Paths.get(mp3.getFilename()));
     }
 
-    public static Optional<String> create(Path path) {
+    private static Optional<String> create(Path path) {
         try {
             String mediaUrl = URLEncoder.encode(path.toAbsolutePath().toString(), UTF_8);
             return Optional.of(FILE + mediaUrl.replace(PER, SLASH).replace(PLUS, ESCAPED_PLUS));

@@ -1,8 +1,9 @@
 package com.gabrielavara.choiceplayer.views;
 
-import com.gabrielavara.choiceplayer.api.service.Mp3;
+import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
