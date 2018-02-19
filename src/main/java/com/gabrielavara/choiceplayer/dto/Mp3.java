@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gabrielavara.choiceplayer.beatport.BeatportSearchInput;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -24,15 +26,20 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(exclude = "currentlyPlaying")
 @NoArgsConstructor
-public class Mp3 {
+public class Mp3 implements BeatportSearchInput {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.api.controllers.PlaylistUtil");
     private static final String EMPTY = "";
     private static final String DEFAULT_TRACK = "1";
 
+    @Setter
     private String artist;
+    @Setter
     private String title;
+    @Setter
     private String year;
+    @Setter
     private String album;
+    @Setter
     private String track;
     private int trackAsInt;
     private long length;
@@ -46,7 +53,7 @@ public class Mp3 {
         year = extractYear(mp3);
         album = extractAlbum(mp3);
         track = extractTrack(mp3);
-        trackAsInt = getTrackAsInt(track);
+        trackAsInt = extractTrackAsInt();
         length = mp3.getLengthInMilliseconds();
         filename = mp3.getFilename();
     }
@@ -111,7 +118,7 @@ public class Mp3 {
         return DEFAULT_TRACK;
     }
 
-    private int getTrackAsInt(String track) {
+    int extractTrackAsInt() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < track.length(); i++) {
             char c = track.charAt(i);
@@ -124,6 +131,7 @@ public class Mp3 {
         return Integer.valueOf(sb.toString());
     }
 
+    @JsonIgnore
     public Optional<byte[]> getAlbumArt() {
         Path path = Paths.get(getFilename());
         return getAlbumArtBytes(path);
@@ -143,6 +151,6 @@ public class Mp3 {
     }
 
     public boolean shouldSearchForInfo() {
-        return !getAlbumArt().isPresent() || track.equals(DEFAULT_TRACK) || !track.startsWith("0");
+        return !getAlbumArt().isPresent() || !track.contains("/");
     }
 }
