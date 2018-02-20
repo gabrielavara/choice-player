@@ -14,7 +14,7 @@ public class BeatportSearchResultParserTest {
     private static final String LINK = "http://classic.beatport.com/release/amun-meta/1831545";
 
     private Mp3 mp3 = new Mp3();
-    private BeatportSearchResultParser beatportSearchResultParser = new BeatportSearchResultParser();
+    private BeatportSearchResultParser searchResultParser = new BeatportSearchResultParser();
 
     @Test
     public void shouldSearch() {
@@ -23,7 +23,7 @@ public class BeatportSearchResultParserTest {
         mp3.setAlbum(ALBUM);
 
         // when
-        BeatportReleases results = beatportSearchResultParser.search(mp3);
+        BeatportReleases results = searchResultParser.parse(mp3);
 
         // then
         assertEquals(1, results.getReleases().size());
@@ -37,7 +37,7 @@ public class BeatportSearchResultParserTest {
         mp3.setAlbum("Album (Round Brackets)");
 
         // when
-        String albumForSearch = beatportSearchResultParser.getAlbumForSearch(mp3);
+        String albumForSearch = searchResultParser.getAlbumForSearch(mp3);
 
         // then
         assertEquals("Album", albumForSearch);
@@ -49,7 +49,7 @@ public class BeatportSearchResultParserTest {
         mp3.setAlbum("Album [Square Brackets]");
 
         // when
-        String albumForSearch = beatportSearchResultParser.getAlbumForSearch(mp3);
+        String albumForSearch = searchResultParser.getAlbumForSearch(mp3);
 
         // then
         assertEquals("Album", albumForSearch);
@@ -61,7 +61,7 @@ public class BeatportSearchResultParserTest {
         mp3.setAlbum("Album (Round Brackets) [Square Brackets]");
 
         // when
-        String albumForSearch = beatportSearchResultParser.getAlbumForSearch(mp3);
+        String albumForSearch = searchResultParser.getAlbumForSearch(mp3);
 
         // then
         assertEquals("Album", albumForSearch);

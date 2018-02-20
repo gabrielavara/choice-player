@@ -17,9 +17,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 abstract class BeatportParser<T extends BeatportSearchInput, U extends BeatportSearchOutput> {
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportParser");
     static final String BEATPORT_COM = "http://classic.beatport.com";
     static final String UTF_8 = "UTF-8";
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportParser");
 
     private Map<String, U> searchResults = new HashMap<>();
     private WebClient webClient;
@@ -30,7 +30,7 @@ abstract class BeatportParser<T extends BeatportSearchInput, U extends BeatportS
         webClient.getOptions().setJavaScriptEnabled(false);
     }
 
-    public U search(T input) {
+    public U parse(T input) {
         String url = getUrl(input);
         if (searchResults.containsKey(url)) {
             return searchResults.get(url);

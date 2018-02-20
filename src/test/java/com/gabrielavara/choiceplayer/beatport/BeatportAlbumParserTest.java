@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 public class BeatportAlbumParserTest {
-    private BeatportAlbumParser trackSearcher = new BeatportAlbumParser();
+    private BeatportAlbumParser albumParser = new BeatportAlbumParser();
 
     @Test
     public void shouldParse() {
@@ -19,7 +19,7 @@ public class BeatportAlbumParserTest {
         BeatportRelease release = new BeatportRelease(artists, album, link);
 
         // when
-        BeatportAlbum beatportAlbum = trackSearcher.search(release);
+        BeatportAlbum beatportAlbum = albumParser.parse(release);
 
         // then
         assertEquals(artists, beatportAlbum.getArtists());
