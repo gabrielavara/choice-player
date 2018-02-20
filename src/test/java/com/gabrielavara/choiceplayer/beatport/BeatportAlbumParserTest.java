@@ -7,11 +7,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class BeatportTrackSearcherTest {
-    private BeatportTrackSearcher trackSearcher = new BeatportTrackSearcher();
+public class BeatportAlbumParserTest {
+    private BeatportAlbumParser trackSearcher = new BeatportAlbumParser();
 
     @Test
-    public void shouldSearch() {
+    public void shouldParse() {
         // given
         List<String> artists = asList("A.M.R", "Stefanie Pereira", "Hanski", "Airsoul", "R3dub");
         String album = "Hear Them Sing";
@@ -25,5 +25,10 @@ public class BeatportTrackSearcherTest {
         assertEquals(artists, beatportAlbum.getArtists());
         assertEquals(album, beatportAlbum.getTitle());
         assertEquals(10, beatportAlbum.getTracks().size());
+
+        assertEquals("1", beatportAlbum.getTracks().get(0).getTrackNumber());
+        assertEquals("Hear Them Sing", beatportAlbum.getTracks().get(0).getTitle());
+        assertEquals("Original Mix", beatportAlbum.getTracks().get(0).getMix());
+        assertEquals(asList("A.M.R", "Stefanie Pereira"), beatportAlbum.getTracks().get(0).getArtists());
     }
 }

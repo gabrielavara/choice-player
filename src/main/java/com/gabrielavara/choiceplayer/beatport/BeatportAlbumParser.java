@@ -8,11 +8,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.text.WordUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-public class BeatportTrackSearcher extends BeatportSearcher<BeatportRelease, BeatportAlbum> {
+public class BeatportAlbumParser extends BeatportParser<BeatportRelease, BeatportAlbum> {
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportAlbumParser");
+
     private static final String ALBUM_TITLE_XPATH = "//div[@class='line release-detail']//h2";
 
     private static final String TRACK_COUNT_XPATH = "count(//table[@class='track-grid track-grid-release']//tr)";
@@ -23,6 +27,7 @@ public class BeatportTrackSearcher extends BeatportSearcher<BeatportRelease, Bea
 
     @Override
     protected String getUrl(BeatportRelease beatportRelease) {
+        log.info("Get album: {}", beatportRelease);
         return beatportRelease.getLink();
     }
 
@@ -43,6 +48,7 @@ public class BeatportTrackSearcher extends BeatportSearcher<BeatportRelease, Bea
             beatportAlbum.addTrack(beatportTrack);
         }
         beatportAlbum.setArtists(new ArrayList<>(albumArtists));
+        log.info("Album parsed: {}", beatportAlbum);
         return beatportAlbum;
     }
 

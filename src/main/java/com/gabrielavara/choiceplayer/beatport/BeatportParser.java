@@ -16,28 +16,18 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-abstract class BeatportSearcher<T extends BeatportSearchInput, U extends BeatportSearchOutput> {
+abstract class BeatportParser<T extends BeatportSearchInput, U extends BeatportSearchOutput> {
     static final String BEATPORT_COM = "http://classic.beatport.com";
     static final String UTF_8 = "UTF-8";
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportSearcher");
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportParser");
 
     private Map<String, U> searchResults = new HashMap<>();
     private WebClient webClient;
 
-    BeatportSearcher() {
+    BeatportParser() {
         webClient = new WebClient();
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setJavaScriptEnabled(false);
-    }
-
-    @SafeVarargs
-    static boolean areDifferentInSize(List<HtmlElement>... elements) {
-        for (int i = 0; i < elements.length; i++) {
-            if (elements[i].size() != elements[i + 1 == elements.length ? 0 : i + 1].size()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public U search(T input) {
@@ -64,6 +54,16 @@ abstract class BeatportSearcher<T extends BeatportSearchInput, U extends Beatpor
     protected abstract String getUrl(T input);
 
     abstract U parseDocument(HtmlPage page);
+
+    @SafeVarargs
+    static boolean areDifferentInSize(List<HtmlElement>... elements) {
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i].size() != elements[i + 1 == elements.length ? 0 : i + 1].size()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     String getText(HtmlElement element) {
         return sanitize(element.getTextContent());

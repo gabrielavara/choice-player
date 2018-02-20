@@ -15,8 +15,8 @@ import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-public class BeatportReleaseSearcher extends BeatportSearcher<Mp3, BeatportReleases> {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportReleaseSearcher");
+public class BeatportSearchResultParser extends BeatportParser<Mp3, BeatportReleases> {
+    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportSearchResultParser");
 
     private static final String SEARCH_URL = BEATPORT_COM + "/search?query={0}";
 
@@ -30,7 +30,9 @@ public class BeatportReleaseSearcher extends BeatportSearcher<Mp3, BeatportRelea
         try {
             String artist = sanitize(mp3.getArtist());
             String album = sanitize(getAlbumForSearch(mp3));
-            queryString = URLEncoder.encode(artist + " " + album, UTF_8).toLowerCase();
+            String artistAndAlbum = artist + " " + album;
+            log.info("Search on Beatport for: {}", artistAndAlbum);
+            queryString = URLEncoder.encode(artistAndAlbum, UTF_8).toLowerCase();
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage(), e);
         }
@@ -61,6 +63,7 @@ public class BeatportReleaseSearcher extends BeatportSearcher<Mp3, BeatportRelea
             BeatportRelease beatportRelease = new BeatportRelease(artists.get(i), texts.get(i), links.get(i));
             results.add(beatportRelease);
         }
+        log.info("Releases found: {}", results);
         return new BeatportReleases(results);
     }
 

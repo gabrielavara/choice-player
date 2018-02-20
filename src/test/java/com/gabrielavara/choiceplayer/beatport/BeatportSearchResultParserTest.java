@@ -8,13 +8,13 @@ import org.junit.Test;
 
 import com.gabrielavara.choiceplayer.dto.Mp3;
 
-public class BeatportReleaseSearcherTest {
+public class BeatportSearchResultParserTest {
     private static final String ARTIST = "Ilan Bluestone & Jason Ross";
     private static final String ALBUM = "Amun / Meta";
     private static final String LINK = "http://classic.beatport.com/release/amun-meta/1831545";
 
     private Mp3 mp3 = new Mp3();
-    private BeatportReleaseSearcher beatportReleaseSearcher = new BeatportReleaseSearcher();
+    private BeatportSearchResultParser beatportSearchResultParser = new BeatportSearchResultParser();
 
     @Test
     public void shouldSearch() {
@@ -23,7 +23,7 @@ public class BeatportReleaseSearcherTest {
         mp3.setAlbum(ALBUM);
 
         // when
-        BeatportReleases results = beatportReleaseSearcher.search(mp3);
+        BeatportReleases results = beatportSearchResultParser.search(mp3);
 
         // then
         assertEquals(1, results.getReleases().size());
@@ -37,7 +37,7 @@ public class BeatportReleaseSearcherTest {
         mp3.setAlbum("Album (Round Brackets)");
 
         // when
-        String albumForSearch = beatportReleaseSearcher.getAlbumForSearch(mp3);
+        String albumForSearch = beatportSearchResultParser.getAlbumForSearch(mp3);
 
         // then
         assertEquals("Album", albumForSearch);
@@ -49,7 +49,7 @@ public class BeatportReleaseSearcherTest {
         mp3.setAlbum("Album [Square Brackets]");
 
         // when
-        String albumForSearch = beatportReleaseSearcher.getAlbumForSearch(mp3);
+        String albumForSearch = beatportSearchResultParser.getAlbumForSearch(mp3);
 
         // then
         assertEquals("Album", albumForSearch);
@@ -61,7 +61,7 @@ public class BeatportReleaseSearcherTest {
         mp3.setAlbum("Album (Round Brackets) [Square Brackets]");
 
         // when
-        String albumForSearch = beatportReleaseSearcher.getAlbumForSearch(mp3);
+        String albumForSearch = beatportSearchResultParser.getAlbumForSearch(mp3);
 
         // then
         assertEquals("Album", albumForSearch);
