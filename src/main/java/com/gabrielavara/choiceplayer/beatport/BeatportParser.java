@@ -70,7 +70,7 @@ abstract class BeatportParser<T extends BeatportSearchInput, U extends BeatportS
     }
 
     List<String> getTexts(List<HtmlElement> elements) {
-        return elements.stream().flatMap(this::getChildrenIfHas).map(this::sanitize).collect(Collectors.toList());
+        return elements.stream().flatMap(this::getChildrenIfHas).map(this::sanitize).distinct().collect(Collectors.toList());
     }
 
     List<String> getHrefs(List<HtmlElement> elements) {
