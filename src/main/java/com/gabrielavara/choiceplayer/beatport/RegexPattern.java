@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 
-enum RegexPatterns {
+enum RegexPattern {
     FEAT(asList(" [fF]eat.? ", " [fF]t.? "), " feat. "), WITH(singletonList(" [wW]ith "), " with "), PRES(singletonList(" [pP]res.? "),
                     " pres. "), AND(asList(" [aA]nd ", " & "), " & "), COMMA(singletonList(", "), ", ");
 
-    RegexPatterns(List<String> patternStrings, String replaceWith) {
+    RegexPattern(List<String> patternStrings, String replaceWith) {
         this.replaceWith = replaceWith;
         patternStrings.forEach(r -> patterns.add(Pattern.compile(r)));
     }
@@ -26,6 +26,6 @@ enum RegexPatterns {
     private List<Pattern> patterns = new ArrayList<>();
 
     static List<Pattern> getAll() {
-        return Arrays.stream(RegexPatterns.values()).flatMap(p -> p.getPatterns().stream()).collect(Collectors.toList());
+        return Arrays.stream(RegexPattern.values()).flatMap(p -> p.getPatterns().stream()).collect(Collectors.toList());
     }
 }

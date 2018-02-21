@@ -69,7 +69,7 @@ public class BeatportSearcher {
 
     private static String sanitizeArtist(String artist) {
         String result = artist;
-        for (Pattern pattern : RegexPatterns.getAll()) {
+        for (Pattern pattern : RegexPattern.getAll()) {
             result = pattern.matcher(artist).replaceAll(" ");
         }
         return result;

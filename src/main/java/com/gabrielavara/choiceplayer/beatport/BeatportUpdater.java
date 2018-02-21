@@ -1,10 +1,10 @@
 package com.gabrielavara.choiceplayer.beatport;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -46,7 +46,7 @@ public class BeatportUpdater {
         Optional<BeatportAlbum> beatportAlbum = BeatportSearcher.search(mp3);
         beatportAlbum.ifPresent(album -> {
             Optional<BeatportTrack> track = getBestTrack(mp3, album);
-            track.ifPresent(t -> update(mp3, t));
+            track.ifPresent(t -> update(mp3, t, album.getTracks().size()));
         });
     }
 
@@ -65,28 +65,28 @@ public class BeatportUpdater {
         }
     }
 
-    private void update(Mp3 mp3, BeatportTrack track) {
-        String newArtist = getArtist(mp3, track);
-        mp3.setArtist(newArtist);
+    private void update(Mp3 mp3, BeatportTrack track, int trackCount) {
+        String artist = getArtist(mp3);
+        mp3.setArtist(artist);
+        mp3.setTrack(getTrackString(track.getTrackNumber()) + "/" + getTrackString(trackCount));
     }
 
-    private String getArtist(Mp3 mp3, BeatportTrack track) {
+    private String getTrackString(int num) {
+        return num < 10 ? "0" + num : "" + num;
+    }
+
+    private String getTrackString(String num) {
+        return num.length() < 2 ? "0" + num : num;
+    }
+
+    private String getArtist(Mp3 mp3) {
         String artist = mp3.getArtist();
-        List<String> splitted = asList(artist.split(" "));
-        List<String> artists = track.getArtists();
-
-        List<String> previous = artists.stream().map(a -> {
-            int i = splitted.indexOf(a);
-            if (i > 0) {
-                return splitted.get(i - 1);
-            } else if (i == 0) {
-                return "";
+        for (RegexPattern regexPattern : RegexPattern.values()) {
+            for (Pattern pattern : regexPattern.getPatterns()) {
+                artist = pattern.matcher(artist).replaceAll(regexPattern.getReplaceWith());
             }
-            return " ";
-        }).collect(toList());
-
-        StringBuilder stringBuilder = new StringBuilder();
-        artists.forEach(a -> stringBuilder.append(previous).append(a));
-        return stringBuilder.toString();
+        }
+        return artist;
     }
+
 }
