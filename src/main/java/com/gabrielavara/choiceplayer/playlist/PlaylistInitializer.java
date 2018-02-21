@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
 import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.messages.PlaylistAnimatedMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
@@ -172,6 +174,7 @@ public class PlaylistInitializer {
             if (finishedEventHandler != null) {
                 finishedEventHandler.handle(null);
             }
+            Messenger.send(new PlaylistAnimatedMessage(direction));
         });
         parallelTransition.play();
     }

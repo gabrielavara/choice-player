@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.beatport.BeatportUpdater;
 import com.gabrielavara.choiceplayer.controls.animatedbadge.AnimatedBadge;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
@@ -48,6 +49,7 @@ import com.gabrielavara.choiceplayer.filemover.FileMover;
 import com.gabrielavara.choiceplayer.filemover.LikedFolderFileMover;
 import com.gabrielavara.choiceplayer.filemover.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
+import com.gabrielavara.choiceplayer.messages.PlaylistAnimatedMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
@@ -167,6 +169,8 @@ public class PlayerController implements Initializable {
     private AnimatedBadge likedAnimatedBadge;
     private AnimatedBadge dislikedAnimatedBadge;
 
+    private BeatportUpdater beatportUpdater = new BeatportUpdater(playlistItems);
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CssModifier.modify(rootContainer);
@@ -199,6 +203,13 @@ public class PlayerController implements Initializable {
         Messenger.register(SettingsClosedMessage.class, this::settingsClosed);
         Messenger.register(ThemeChangedMessage.class, this::accessColorChanged);
         Messenger.register(FileMovedMessage.class, this::fileMoved);
+        Messenger.register(PlaylistAnimatedMessage.class, this::playlistAnimated);
+    }
+
+    private void playlistAnimated(PlaylistAnimatedMessage m) {
+        if (m.getDirection() == IN) {
+            beatportUpdater.update();
+        }
     }
 
     private void fileMoved(FileMovedMessage m) {
