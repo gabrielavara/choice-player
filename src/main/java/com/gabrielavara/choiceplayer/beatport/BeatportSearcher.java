@@ -5,6 +5,7 @@ import static java.util.Comparator.comparingInt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -67,13 +68,10 @@ public class BeatportSearcher {
     }
 
     private static String sanitizeArtist(String artist) {
-        String result = artist.replaceAll(" [fF]eat.? ", " ");
-        result = result.replaceAll(" [fF]t.? ", " ");
-        result = result.replaceAll(" [wW]ith ", " ");
-        result = result.replaceAll(" [pP]res.? ", " ");
-        result = result.replaceAll(" [aA]nd ", " ");
-        result = result.replaceAll(" & ", " ");
-        result = result.replaceAll(", ", " ");
+        String result = artist;
+        for (Pattern pattern : RegexPatterns.getAll()) {
+            result = pattern.matcher(artist).replaceAll(" ");
+        }
         return result;
     }
 
