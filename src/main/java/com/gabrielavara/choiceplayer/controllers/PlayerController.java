@@ -48,11 +48,13 @@ import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.filemover.FileMover;
 import com.gabrielavara.choiceplayer.filemover.LikedFolderFileMover;
 import com.gabrielavara.choiceplayer.filemover.RecycleBinFileMover;
+import com.gabrielavara.choiceplayer.messages.BeginToSaveTagsMessage;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistAnimatedMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
+import com.gabrielavara.choiceplayer.messages.TagsSavedMessage;
 import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
@@ -171,6 +173,8 @@ public class PlayerController implements Initializable {
 
     private BeatportUpdater beatportUpdater = new BeatportUpdater(playlistItems);
 
+    private Duration currentTimeWhenTagsSaved;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CssModifier.modify(rootContainer);
@@ -204,6 +208,21 @@ public class PlayerController implements Initializable {
         Messenger.register(ThemeChangedMessage.class, this::accessColorChanged);
         Messenger.register(FileMovedMessage.class, this::fileMoved);
         Messenger.register(PlaylistAnimatedMessage.class, this::playlistAnimated);
+        Messenger.register(BeginToSaveTagsMessage.class, this::beginToSaveTags);
+        Messenger.register(TagsSavedMessage.class, this::tagsSaved);
+    }
+
+    private void tagsSaved(TagsSavedMessage m) {
+        loadMediaPlayer(m.getMp3());
+        seek(currentTimeWhenTagsSaved);
+    }
+
+    @SuppressWarnings({"squid:S1172", "unused"})
+    private void beginToSaveTags(BeginToSaveTagsMessage m) {
+        if (mediaPlayer != null) {
+            currentTimeWhenTagsSaved = mediaPlayer.getCurrentTime();
+        }
+        disposeMediaPlayer();
     }
 
     private void playlistAnimated(PlaylistAnimatedMessage m) {
@@ -546,6 +565,13 @@ public class PlayerController implements Initializable {
         createSeekTimeLine(seek(SEEK_SECONDS)).play();
     }
 
+    private void seek(Duration duration) {
+        if (mediaPlayer == null) {
+            return;
+        }
+        createSeekTimeLine(seekTo(duration)).play();
+    }
+
     private Timeline createSeekTimeLine(EventHandler<ActionEvent> seek) {
         return new Timeline(
                 new KeyFrame(Duration.ZERO, seek, new KeyValue(mediaPlayer.volumeProperty(), 0)),
@@ -554,5 +580,9 @@ public class PlayerController implements Initializable {
 
     private EventHandler<ActionEvent> seek(int s) {
         return t -> mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(s)));
+    }
+
+    private EventHandler<ActionEvent> seekTo(Duration time) {
+        return t -> mediaPlayer.seek(time);
     }
 }

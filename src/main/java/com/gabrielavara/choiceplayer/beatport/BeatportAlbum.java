@@ -12,6 +12,10 @@ class BeatportAlbum implements BeatportSearchOutput {
     private List<String> artists;
     private String title;
     private List<BeatportTrack> tracks = new ArrayList<>();
+    private String albumArtUrl;
+    private String releaseDate;
+    private String label;
+    private String catalog;
 
     public void addTrack(BeatportTrack beatportTrack) {
         tracks.add(beatportTrack);

@@ -12,10 +12,11 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"indexAsString", "index"})
 @NoArgsConstructor
 public class PlaylistItemView {
     @Getter
+    @JsonIgnore
     private String indexAsString;
     @Getter
     private Integer index;

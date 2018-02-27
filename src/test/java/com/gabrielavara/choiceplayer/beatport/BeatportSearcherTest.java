@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer.beatport;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +13,8 @@ import org.junit.Test;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 
 public class BeatportSearcherTest {
+    private BeatportSearcher beatportSearcher = new BeatportSearcher();
+
     @Test
     public void testSearch() {
         // given
@@ -20,7 +23,7 @@ public class BeatportSearcherTest {
         mp3.setArtist("Ilan Bluestone & Jason Ross");
 
         // when
-        Optional<BeatportAlbum> album = BeatportSearcher.search(mp3);
+        Optional<BeatportAlbum> album = beatportSearcher.search(mp3);
 
         // then
         assertTrue(album.isPresent());
@@ -32,9 +35,15 @@ public class BeatportSearcherTest {
         expected.setTitle("Amun / Meta");
         List<String> expectedArtists = asList("Ilan Bluestone", "Jason Ross");
         expected.setArtists(expectedArtists);
-        BeatportTrack track1 = new BeatportTrack("1", expectedArtists, "Amun", "Original Mix");
-        BeatportTrack track2 = new BeatportTrack("2", expectedArtists, "Meta", "Original Mix");
+        expected.setAlbumArtUrl("http://geo-media.beatport.com/image_size/500x500/623b61e9-ad08-4576-a5b1-767794242b92.jpg");
+        expected.setReleaseDate("2016-08-19");
+        expected.setLabel("Anjunabeats");
+        expected.setCatalog("ANJ395D");
+
+        BeatportTrack track1 = new BeatportTrack("1", expectedArtists, "Amun", "Original Mix", singletonList("Trance"), 128);
+        BeatportTrack track2 = new BeatportTrack("2", expectedArtists, "Meta", "Original Mix", singletonList("Trance"), 128);
         expected.setTracks(asList(track1, track2));
+
         return expected;
     }
 

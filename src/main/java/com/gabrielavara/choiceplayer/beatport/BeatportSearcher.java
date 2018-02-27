@@ -1,81 +1,48 @@
 package com.gabrielavara.choiceplayer.beatport;
 
-import static java.util.Comparator.comparingInt;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.dto.Mp3;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
 
 public class BeatportSearcher {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportSearcher");
-    private static final int MAX_DISTANCE = 10;
+    private static final int MAX_DISTANCE = 15;
 
-    private BeatportSearcher() {
+    private WebDriver driver;
+
+    static {
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver-2.35.exe");
     }
 
-    public static Optional<BeatportAlbum> search(Mp3 mp3) {
+    BeatportSearcher() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("headless");
+        options.addArguments("window-size=1200x600");
+        driver = new ChromeDriver(options);
+    }
+
+    public Optional<BeatportAlbum> search(Mp3 mp3) {
         Optional<BeatportRelease> beatportRelease = getBestBeatportRelease(mp3);
         if (beatportRelease.isPresent()) {
-            BeatportAlbum beatportAlbum = new BeatportAlbumParser().parse(beatportRelease.get());
+            BeatportAlbum beatportAlbum = new BeatportAlbumParser(driver).parse(beatportRelease.get());
             return Optional.of(beatportAlbum);
         } else {
+            log.info("Not found\n");
             return Optional.empty();
         }
     }
 
-    private static Optional<BeatportRelease> getBestBeatportRelease(Mp3 mp3) {
-        List<BeatportReleaseDistance> distances = new ArrayList<>();
-
-        BeatportReleases releases = new BeatportSearchResultParser().parse(mp3);
-
-        releases.getReleases().forEach(r -> {
-            int albumDistance = LevenshteinDistance.calculate(mp3.getAlbum(), r.getAlbum());
-            List<String> sanitizedArtists = r.getArtists().stream().map(BeatportSearcher::sanitizeArtist).collect(Collectors.toList());
-            Optional<Integer> minArtistDistance = Collections2.permutations(sanitizedArtists).stream()
-                    .map(artists -> LevenshteinDistance.calculate(sanitizeArtist(mp3.getArtist()), joinArtists(artists)))
-                    .min(comparingInt(i -> i));
-            minArtistDistance.ifPresent(artistDistance -> distances.add(new BeatportReleaseDistance(albumDistance, artistDistance)));
-        });
-
-        Optional<BeatportReleaseDistance> min = distances.stream().min(comparingInt(BeatportReleaseDistance::getDistanceSum));
-        if (min.isPresent()) {
-            return getBestRelease(distances, releases, min.get());
-        } else {
-            log.info("No minimum present");
-            return Optional.empty();
-        }
-    }
-
-    private static Optional<BeatportRelease> getBestRelease(List<BeatportReleaseDistance> distances, BeatportReleases releases, BeatportReleaseDistance minDistance) {
-        if (minDistance.getDistanceSum() < MAX_DISTANCE) {
-            int minIndex = distances.indexOf(minDistance);
-            BeatportRelease release = releases.getReleases().get(minIndex);
-            log.info("Minimum found: {}", release);
-            return Optional.of(release);
-        } else {
-            log.info("Minimum too far");
-            return Optional.empty();
-        }
-    }
-
-    private static String sanitizeArtist(String artist) {
-        String result = artist;
-        for (Pattern pattern : RegexPattern.getAll()) {
-            result = pattern.matcher(artist).replaceAll(" ");
-        }
-        return result;
-    }
-
-    private static String joinArtists(List<String> artists) {
-        return Joiner.on(" ").join(artists);
+    private Optional<BeatportRelease> getBestBeatportRelease(Mp3 mp3) {
+        BeatportReleases releases = new BeatportSearchResultParser(driver).parse(mp3);
+        BeatportRelease release = releases.getReleases().get(0);
+        String album = BeatportSearchResultParser.getAlbumForSearch(mp3);
+        int albumDistance = LevenshteinDistance.calculate(album, release.getAlbum());
+        return albumDistance < MAX_DISTANCE ? Optional.of(release) : Optional.empty();
     }
 }

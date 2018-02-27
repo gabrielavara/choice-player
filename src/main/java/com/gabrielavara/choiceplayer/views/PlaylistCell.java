@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItem;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ListCell;
 import lombok.Getter;
 
@@ -27,11 +28,25 @@ public class PlaylistCell extends ListCell<PlaylistItemView> {
     @Getter
     private PlaylistItemView playlistItemView;
 
+    private ChangeListener<Boolean> changedPropertyListener = (ov, oldValue, newValue) -> changed(newValue);
+
+    private void changed(Boolean value) {
+        if (value && playlistItem != null && playlistItemView != null) {
+            Mp3 mp3 = playlistItemView.getMp3();
+            playlistItem.setArtist(mp3.getArtist());
+            playlistItem.setTitle(mp3.getTitle());
+            loadAlbumArt(playlistItemView);
+        }
+    }
+
     @Override
     protected void updateItem(PlaylistItemView item, boolean empty) {
+        if (playlistItemView != null && !playlistItemView.equals(item)) {
+            playlistItemView.getMp3().getChanged().removeListener(changedPropertyListener);
+        }
         super.updateItem(item, empty);
-        if (playlistItemView != null && playlistItemView.equals(item)) {
-            return;
+        if (playlistItemView != null) {
+            playlistItemView.getMp3().getChanged().addListener(changedPropertyListener);
         }
         playlistItemView = item;
         if (empty) {

@@ -12,8 +12,12 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 
 enum RegexPattern {
-    FEAT(asList(" [fF]eat.? ", " [fF]t.? "), " feat. "), WITH(singletonList(" [wW]ith "), " with "), PRES(singletonList(" [pP]res.? "),
-                    " pres. "), AND(asList(" [aA]nd ", " & "), " & "), COMMA(singletonList(", "), ", ");
+    FEAT(asList(" [fF]eat.? ", " [fF]t.? "), " feat. "),
+    WITH(singletonList(" [wW]ith "), " with "),
+    PRES(singletonList(" [pP]res.? "), " pres. "),
+    AND(asList(" [aA]nd ", " & "), " & "),
+    COMMA(singletonList(", "), ", "),
+    VS(singletonList(" [vV][sS].? "), " vs. ");
 
     RegexPattern(List<String> patternStrings, String replaceWith) {
         this.replaceWith = replaceWith;

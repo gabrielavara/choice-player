@@ -12,6 +12,6 @@ public class QuadraticInterpolator extends EasingInterpolator {
 
     @Override
     protected double baseCurve(double v) {
-        return Math.pow(v, 2);
+        return Math.pow(v, 3);
     }
 }
