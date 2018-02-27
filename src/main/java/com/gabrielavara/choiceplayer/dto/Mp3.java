@@ -26,6 +26,7 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -189,7 +190,7 @@ public class Mp3 implements BeatportSearchInput {
             newFileName = newFileName.replace(".mp3", "-new.mp3");
             mp3File.save(newFileName);
             replaceFile(getFilename(), newFileName);
-            changed.set(true);
+            Platform.runLater(() -> changed.set(true));
             if (isCurrentlyPlaying()) {
                 Messenger.send(new TagsSavedMessage(this));
             }
