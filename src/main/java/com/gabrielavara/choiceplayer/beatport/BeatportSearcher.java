@@ -1,5 +1,8 @@
 package com.gabrielavara.choiceplayer.beatport;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import org.openqa.selenium.WebDriver;
@@ -40,9 +43,20 @@ public class BeatportSearcher {
 
     private Optional<BeatportRelease> getBestBeatportRelease(Mp3 mp3) {
         BeatportReleases releases = new BeatportSearchResultParser(driver).parse(mp3);
-        BeatportRelease release = releases.getReleases().get(0);
+        List<Integer> albumDistances = new ArrayList<>();
         String album = BeatportSearchResultParser.getAlbumForSearch(mp3);
-        int albumDistance = LevenshteinDistance.calculate(album, release.getAlbum());
-        return albumDistance < MAX_DISTANCE ? Optional.of(release) : Optional.empty();
+        releases.getReleases().forEach(r -> albumDistances.add(LevenshteinDistance.calculate(album, r.getAlbum())));
+        Optional<Integer> min = albumDistances.stream().min(Comparator.comparingInt(i -> i));
+
+        if (min.isPresent()) {
+            int index = albumDistances.indexOf(min.get());
+            log.info("Best release index: {}", index);
+            BeatportRelease release = releases.getReleases().get(index);
+            return min.get() < MAX_DISTANCE ? Optional.of(release) : Optional.empty();
+        } else {
+            log.info("Use first release");
+            BeatportRelease release = releases.getReleases().get(0);
+            return albumDistances.get(0) < MAX_DISTANCE ? Optional.of(release) : Optional.empty();
+        }
     }
 }

@@ -216,7 +216,9 @@ public class Mp3 implements BeatportSearchInput {
             setCommonTags(id3v2Tag);
             id3v2Tag.setAlbumArtist(albumArtist);
             id3v2Tag.setComment(comment);
-            id3v2Tag.setGenreDescription(genre);
+            if (id3v2Tag.getVersion().equals("4.0")) {
+                id3v2Tag.setGenreDescription(genre);
+            }
             id3v2Tag.setBPM(bpm);
         }
     }
