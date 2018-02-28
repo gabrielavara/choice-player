@@ -121,16 +121,25 @@ public class BeatportUpdater {
 
     static String getTitle(BeatportTrack track) {
         String title = track.getTitle();
-        for (String a : track.getArtists()) {
-            if (title.contains(a)) {
-                int i = title.indexOf(a);
-                if (i > 0) {
-                    int spaceIndex = title.substring(0, i - 1).lastIndexOf(' ');
-                    title = title.substring(0, spaceIndex);
+        for (String artist : track.getArtists()) {
+            if (title.contains(artist)) {
+                int artistIndex = title.indexOf(artist);
+                if (artistIndex > 0) {
+                    return getWithoutArtist(title, artistIndex);
                 }
             }
         }
         return title;
+    }
+
+    private static String getWithoutArtist(String title, int i) {
+        String withoutArtist = title.substring(0, i - 1);
+        for (Pattern p : RegexPattern.getAll()) {
+            String pattern = p.pattern();
+            pattern = pattern.substring(0, pattern.length() - 1);
+            withoutArtist = withoutArtist.replaceAll(pattern + "$", "");
+        }
+        return withoutArtist;
     }
 
     private void setAlbumArt(Mp3 mp3, BeatportAlbum album) {
