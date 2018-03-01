@@ -58,7 +58,7 @@ public class BeatportSearchResultParser extends BeatportParser<Mp3, BeatportRele
 
     static String getAlbumForSearch(Mp3 mp3) {
         String album = mp3.getAlbum();
-        album = album.replaceAll("_", " ");
+        album = album.replaceAll("_+", " ");
         int roundIndex = album.indexOf('(');
         int squareIndex = album.indexOf('[');
         int index = roundIndex > 0 && squareIndex > 0 ? Math.min(roundIndex, squareIndex) : Math.max(roundIndex, squareIndex);
