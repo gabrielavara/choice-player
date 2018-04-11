@@ -1,5 +1,6 @@
 package com.gabrielavara.choiceplayer.controls.albumart;
 
+import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_TRANSLATE_X;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
@@ -25,7 +26,6 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class AlbumArtController implements Initializable {
-    private static final int TRANSLATE_X = 20;
     @FXML
     public ImageView albumArt;
     @FXML
@@ -38,7 +38,7 @@ public class AlbumArtController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         playButton.setOpacity(0);
-        playButton.setTranslateX(-TRANSLATE_X);
+        playButton.setTranslateX(-ALBUM_ART_TRANSLATE_X);
         albumArt.setCache(true);
         playButton.setMouseTransparent(true);
     }
@@ -61,7 +61,7 @@ public class AlbumArtController implements Initializable {
         fadeTransition.play();
     }
 
-    public void hover(boolean hover) {
+    void hover(boolean hover) {
         FadeTransition buttonFadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), playButton);
         buttonFadeTransition.setFromValue(playButton.getOpacity());
         buttonFadeTransition.setToValue(hover ? 1 : 0);
@@ -69,7 +69,7 @@ public class AlbumArtController implements Initializable {
 
         TranslateTransition buttonTranslateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), playButton);
         buttonTranslateTransition.setFromX(playButton.getTranslateX());
-        buttonTranslateTransition.setToX(hover ? 0 : -TRANSLATE_X);
+        buttonTranslateTransition.setToX(hover ? 0 : -ALBUM_ART_TRANSLATE_X);
         buttonTranslateTransition.setInterpolator(QUADRATIC_EASE_OUT);
 
         FadeTransition albumArtFadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), albumArt);
@@ -95,7 +95,7 @@ public class AlbumArtController implements Initializable {
         pane.setBackground(new Background(new BackgroundFill(absoluteColor, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
-    public void setTheme() {
+    void setTheme() {
         setBackground();
     }
 }

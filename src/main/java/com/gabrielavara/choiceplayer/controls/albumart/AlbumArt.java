@@ -15,6 +15,7 @@ public class AlbumArt extends AnchorPane {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controls.albumart.AlbumArt");
 
     private AlbumArtController controller;
+    private boolean hoverAllowed = true;
 
     public AlbumArt() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/controls/album_art.fxml"));
@@ -33,12 +34,18 @@ public class AlbumArt extends AnchorPane {
         }
     }
 
+    public void setHoverAllowed(boolean hoverAllowed) {
+        this.hoverAllowed = hoverAllowed;
+    }
+
     public void setImage(Image albumArt) {
         controller.setImage(albumArt);
     }
 
     public void hover(boolean hover) {
-        controller.hover(hover);
+        if (hoverAllowed) {
+            controller.hover(hover);
+        }
     }
 
     public void setTheme() {
