@@ -44,6 +44,7 @@ import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
+import com.gabrielavara.choiceplayer.controls.toast.Toast;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.filemover.FileMover;
 import com.gabrielavara.choiceplayer.filemover.LikedFolderFileMover;
@@ -175,6 +176,8 @@ public class PlayerController implements Initializable {
 
     private Duration currentTimeWhenTagsSaved;
 
+    private Toast toast = new Toast();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CssModifier.modify(rootContainer);
@@ -290,6 +293,14 @@ public class PlayerController implements Initializable {
         }
         setPlaylistItemStates(message);
         setCurrentlyPlayingAlbumArt(getDirection(message, newValue));
+        showToast(newValue);
+    }
+
+    private void showToast(Mp3 newValue) {
+        if (!ChoicePlayerApplication.getStage().isShowing() && ChoicePlayerApplication.getSettings().isShowToast()) {
+            toast.setItems(newValue);
+            toast.showAndDismiss();
+        }
     }
 
     private Direction getDirection(SelectionChangedMessage message, Mp3 newValue) {
@@ -350,7 +361,7 @@ public class PlayerController implements Initializable {
             Awaitility.with().pollInterval(DISPOSE_WAIT_MS, MILLISECONDS).await()
                     .atMost(DISPOSE_MAX_WAIT_MS, MILLISECONDS).until(getStatus(), equalTo(DISPOSED));
         } catch (ConditionTimeoutException e) {
-            log.debug("Media player not disposed :( {}");
+            log.debug("Media player not disposed :( {}", e);
         }
     }
 
