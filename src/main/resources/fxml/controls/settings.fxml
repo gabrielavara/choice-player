@@ -4,6 +4,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXColorPicker?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -81,6 +82,15 @@
                     </graphic>
                 </JFXButton>
             </StackPane>
+        </HBox>
+        <HBox>
+            <VBox.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+            </VBox.margin>
+            <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <Label styleClass="settings-item" text="%settingsShowToast" StackPane.alignment="CENTER_LEFT"/>
+            </StackPane>
+            <JFXToggleButton fx:id="toastToggleButton" onAction="#toastToggleButtonChanged"/>
         </HBox>
         <StackPane alignment="TOP_LEFT">
             <VBox.margin>

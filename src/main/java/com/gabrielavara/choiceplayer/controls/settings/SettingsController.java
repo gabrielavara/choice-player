@@ -17,13 +17,14 @@ import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.settings.AccentColor;
 import com.gabrielavara.choiceplayer.settings.ColorConverter;
 import com.gabrielavara.choiceplayer.settings.ThemeStyle;
-import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXToggleButton;
 
 import javafx.animation.RotateTransition;
 import javafx.collections.FXCollections;
@@ -58,6 +59,8 @@ public class SettingsController implements Initializable {
     public Label titleLabel;
     @FXML
     public JFXButton backButton;
+    @FXML
+    public JFXToggleButton toastToggleButton;
 
     private boolean folderChanged;
 
@@ -164,8 +167,13 @@ public class SettingsController implements Initializable {
         Messenger.send(new ThemeChangedMessage());
     }
 
-    public void resetFolderChanged() {
+    void resetFolderChanged() {
         folderChanged = false;
+    }
+
+    @FXML
+    public void toastToggleButtonChanged(ActionEvent actionEvent) {
+        ChoicePlayerApplication.getSettings().setShowToast(toastToggleButton.isSelected());
     }
 
     private interface SettingsSetter {
