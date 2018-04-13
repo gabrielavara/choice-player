@@ -176,7 +176,7 @@ public class PlayerController implements Initializable {
 
     private Duration currentTimeWhenTagsSaved;
 
-    private Toast toast = new Toast();
+    private Toast toast;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -298,6 +298,9 @@ public class PlayerController implements Initializable {
 
     private void showToast(Mp3 newValue) {
         if (!ChoicePlayerApplication.getStage().isShowing() && ChoicePlayerApplication.getSettings().isShowToast()) {
+            if (toast == null) {
+                toast = new Toast();
+            }
             toast.setItems(newValue);
             toast.showAndDismiss();
         }
