@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.util.CssModifier;
 import com.gabrielavara.choiceplayer.util.ImageUtil;
 
 import javafx.animation.KeyFrame;
@@ -60,6 +61,7 @@ public class Toast {
     }
 
     private void initStage() {
+        CssModifier.modify(root);
         stage = new ToastStage(root);
         stage.setScene(new Scene(root));
         stage.setAlwaysOnTop(true);
@@ -83,14 +85,12 @@ public class Toast {
     }
 
     private Timeline setupShowAnimation() {
-
         Timeline tl = new Timeline();
 
-        double offScreenX = stage.getOffScreenBounds().getX();
-        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX);
-        KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvX);
+        KeyValue kvY = new KeyValue(stage.yLocationProperty(), stage.getOffScreenBounds().getY());
+        KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvY);
 
-        KeyValue kvInter = new KeyValue(stage.xLocationProperty(), stage.getBottomRight().getX());
+        KeyValue kvInter = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY() - stage.getHeight());
         KeyFrame frame2 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvInter);
 
         KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
@@ -107,16 +107,12 @@ public class Toast {
     }
 
     private Timeline setupDismissAnimation() {
-
         Timeline tl = new Timeline();
 
-        double offScreenX = stage.getOffScreenBounds().getX();
-        double trayPadding = 3;
+        KeyValue kvY = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY());
+        KeyFrame frame1 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvY);
 
-        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX + trayPadding);
-        KeyFrame frame1 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvX);
-
-        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.4);
+        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
         KeyFrame frame2 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvOpacity);
 
         tl.getKeyFrames().addAll(frame1, frame2);

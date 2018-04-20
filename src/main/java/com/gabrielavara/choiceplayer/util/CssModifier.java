@@ -22,7 +22,7 @@ import com.gabrielavara.choiceplayer.settings.AccentColor;
 import com.gabrielavara.choiceplayer.settings.Colors;
 import com.gabrielavara.choiceplayer.settings.Settings;
 
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 
 public class CssModifier {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.util.CssModifier");
@@ -30,7 +30,7 @@ public class CssModifier {
     private CssModifier() {
     }
 
-    public static void modify(StackPane rootContainer) {
+    public static void modify(Pane rootContainer) {
         try {
             Settings settings = ChoicePlayerApplication.getSettings();
             Path path = Paths.get("src/main/resources/css/style.css");
