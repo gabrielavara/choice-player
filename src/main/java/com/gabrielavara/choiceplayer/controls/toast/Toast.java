@@ -1,6 +1,7 @@
 package com.gabrielavara.choiceplayer.controls.toast;
 
 import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SIZE;
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -12,7 +13,6 @@ import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.util.ImageUtil;
 
-import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.SequentialTransition;
@@ -90,15 +90,14 @@ public class Toast {
         KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX);
         KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvX);
 
-        Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
-        KeyValue kvInter = new KeyValue(stage.xLocationProperty(), stage.getBottomRight().getX(), interpolator);
-        KeyFrame frame2 = new KeyFrame(Duration.millis(1300), kvInter);
+        KeyValue kvInter = new KeyValue(stage.xLocationProperty(), stage.getBottomRight().getX());
+        KeyFrame frame2 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvInter);
 
         KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
         KeyFrame frame3 = new KeyFrame(Duration.ZERO, kvOpacity);
 
         KeyValue kvOpacity2 = new KeyValue(stage.opacityProperty(), 1.0);
-        KeyFrame frame4 = new KeyFrame(Duration.millis(1000), kvOpacity2);
+        KeyFrame frame4 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvOpacity2);
 
         tl.getKeyFrames().addAll(frame1, frame2, frame3, frame4);
 
@@ -112,14 +111,13 @@ public class Toast {
         Timeline tl = new Timeline();
 
         double offScreenX = stage.getOffScreenBounds().getX();
-        Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
         double trayPadding = 3;
 
-        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX + trayPadding, interpolator);
-        KeyFrame frame1 = new KeyFrame(Duration.millis(1400), kvX);
+        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX + trayPadding);
+        KeyFrame frame1 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvX);
 
         KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.4);
-        KeyFrame frame2 = new KeyFrame(Duration.millis(2000), kvOpacity);
+        KeyFrame frame2 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvOpacity);
 
         tl.getKeyFrames().addAll(frame1, frame2);
 
