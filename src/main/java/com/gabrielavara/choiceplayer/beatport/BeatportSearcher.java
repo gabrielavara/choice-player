@@ -43,6 +43,10 @@ public class BeatportSearcher {
 
     private Optional<BeatportRelease> getBestBeatportRelease(Mp3 mp3) {
         BeatportReleases releases = new BeatportSearchResultParser(driver).parse(mp3);
+        if (releases.getReleases().isEmpty()) {
+            log.info("No release found");
+            return Optional.empty();
+        }
         List<Integer> albumDistances = new ArrayList<>();
         String album = BeatportSearchResultParser.getAlbumForSearch(mp3);
         releases.getReleases().forEach(r -> albumDistances.add(LevenshteinDistance.calculate(album, r.getAlbum())));

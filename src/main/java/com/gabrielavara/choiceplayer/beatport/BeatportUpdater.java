@@ -76,12 +76,17 @@ public class BeatportUpdater {
     }
 
     private Optional<BeatportTrack> getBestTrack(Mp3 mp3, BeatportAlbum album) {
+        if (album.getTracks().size() <= mp3.getTrackAsInt()) {
+            return Optional.empty();
+        }
+
         List<Integer> distances = getDistances(mp3, album);
         Optional<Integer> minDistance = distances.stream().min(comparingInt(i -> i));
 
         if (minDistance.isPresent()) {
             int minIndex = distances.indexOf(minDistance.get());
-            return Optional.of(album.getTracks().get(minIndex));
+            BeatportTrack track = album.getTracks().get(minIndex);
+            return track.getTrackNumber().equals(String.valueOf(mp3.getTrackAsInt())) ? Optional.of(track) : Optional.empty();
         } else {
             return Optional.empty();
         }
