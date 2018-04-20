@@ -297,7 +297,7 @@ public class PlayerController implements Initializable {
     }
 
     private void showToast(Mp3 newValue) {
-        if (!ChoicePlayerApplication.getStage().isShowing() && ChoicePlayerApplication.getSettings().isShowToast()) {
+        if (ChoicePlayerApplication.getSettings().isShowToast()) {
             if (toast == null) {
                 toast = new Toast();
             }

@@ -70,6 +70,7 @@ public class SettingsController implements Initializable {
         folderToLoadLabel.setText(ChoicePlayerApplication.getSettings().getFolder());
         folderToMoveLikedMusicLabel.setText(ChoicePlayerApplication.getSettings().getLikedFolder());
         accentColorPicker.setValue(ChoicePlayerApplication.getColors().getAccentColor());
+        toastToggleButton.setSelected(ChoicePlayerApplication.getSettings().isShowToast());
         ObservableList<String> styles = FXCollections
                 .observableList(asList(resourceBundle.getString("settingsStyleLight"), resourceBundle.getString("settingsStyleDark")));
         styleComboBox.setItems(styles);

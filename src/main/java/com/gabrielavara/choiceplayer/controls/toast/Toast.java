@@ -1,9 +1,6 @@
 package com.gabrielavara.choiceplayer.controls.toast;
 
 import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SIZE;
-import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
-import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -15,8 +12,11 @@ import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.util.ImageUtil;
 
-import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -42,6 +42,10 @@ public class Toast {
     private AnchorPane root;
 
     private boolean isShowed;
+    private ToastStage stage;
+    private SequentialTransition sequentialTransition;
+    private Timeline showAnimation;
+    private Timeline dismissAnimation;
 
     public Toast() {
         try {
@@ -56,14 +60,17 @@ public class Toast {
     }
 
     private void initStage() {
-        ToastStage stage = new ToastStage(root);
+        stage = new ToastStage(root);
         stage.setScene(new Scene(root));
         stage.setAlwaysOnTop(true);
         stage.setLocation(stage.getBottomRight());
+        stage.show();
 
         albumArt.setHoverAllowed(false);
 
-        root.setOnMouseClicked(e -> dismiss());
+        showAnimation = setupShowAnimation();
+        dismissAnimation = setupDismissAnimation();
+        sequentialTransition = new SequentialTransition(showAnimation, dismissAnimation);
     }
 
     public void setItems(Mp3 mp3) {
@@ -72,32 +79,81 @@ public class Toast {
 
         Optional<byte[]> albumArtData = mp3.getAlbumArt();
         Image image = ImageUtil.getAlbumArt(albumArtData, ALBUM_ART_SIZE);
-        this.albumArt.setImage(image);
+        albumArt.setImage(image);
+    }
+
+    private Timeline setupShowAnimation() {
+
+        Timeline tl = new Timeline();
+
+        double offScreenX = stage.getOffScreenBounds().getX();
+        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX);
+        KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvX);
+
+        Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
+        KeyValue kvInter = new KeyValue(stage.xLocationProperty(), stage.getBottomRight().getX(), interpolator);
+        KeyFrame frame2 = new KeyFrame(Duration.millis(1300), kvInter);
+
+        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
+        KeyFrame frame3 = new KeyFrame(Duration.ZERO, kvOpacity);
+
+        KeyValue kvOpacity2 = new KeyValue(stage.opacityProperty(), 1.0);
+        KeyFrame frame4 = new KeyFrame(Duration.millis(1000), kvOpacity2);
+
+        tl.getKeyFrames().addAll(frame1, frame2, frame3, frame4);
+
+        tl.setOnFinished(e -> isShowed = true);
+
+        return tl;
+    }
+
+    private Timeline setupDismissAnimation() {
+
+        Timeline tl = new Timeline();
+
+        double offScreenX = stage.getOffScreenBounds().getX();
+        Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
+        double trayPadding = 3;
+
+        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX + trayPadding, interpolator);
+        KeyFrame frame1 = new KeyFrame(Duration.millis(1400), kvX);
+
+        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.4);
+        KeyFrame frame2 = new KeyFrame(Duration.millis(2000), kvOpacity);
+
+        tl.getKeyFrames().addAll(frame1, frame2);
+
+        tl.setOnFinished(e -> {
+            isShowed = false;
+            stage.close();
+            stage.setLocation(stage.getBottomRight());
+        });
+
+        return tl;
     }
 
     public void showAndDismiss() {
-        TranslateTransition inTransition = getTranslateTransition();
-        inTransition.setOnFinished(e -> {
-            PauseTransition wait = new PauseTransition(Duration.millis(3000));
-            wait.setOnFinished(we -> dismiss());
-            wait.play();
-        });
-        inTransition.play();
-        isShowed = !isShowed;
+        if (isShowed) {
+            dismiss();
+        } else {
+            stage.show();
+            playSequential();
+        }
     }
 
     private void dismiss() {
         if (isShowed) {
-            getTranslateTransition().play();
+            playDismissAnimation();
         }
     }
 
-    private TranslateTransition getTranslateTransition() {
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), root);
-        translateTransition.setFromX(root.getTranslateX());
-        translateTransition.setToX(isShowed ? 0 : -root.getPrefWidth());
-        translateTransition.setInterpolator(isShowed ? QUADRATIC_EASE_IN : QUADRATIC_EASE_OUT);
-        return translateTransition;
+    private void playDismissAnimation() {
+        dismissAnimation.play();
+    }
+
+    private void playSequential() {
+        sequentialTransition.getChildren().get(1).setDelay(Duration.seconds(3));
+        sequentialTransition.play();
     }
 
 }

@@ -11,7 +11,7 @@ public class ToastStage extends Stage {
     private final Location bottomRight;
 
     ToastStage(AnchorPane anchorPane) {
-        initStyle(StageStyle.UNDECORATED);
+        initStyle(StageStyle.TRANSPARENT);
 
         setSize(anchorPane.getPrefWidth(), anchorPane.getPrefHeight());
 
@@ -31,10 +31,10 @@ public class ToastStage extends Stage {
         setHeight(height);
     }
 
-    public Location getOffScreenBounds() {
+    Location getOffScreenBounds() {
         Location loc = getBottomRight();
 
-        return Location.at(loc.getX() + this.getWidth(), loc.getY());
+        return Location.at(loc.getX() + getWidth(), loc.getY());
     }
 
     public void setLocation(Location location) {
@@ -54,7 +54,7 @@ public class ToastStage extends Stage {
         }
     };
 
-    public SimpleDoubleProperty xLocationProperty() {
+    SimpleDoubleProperty xLocationProperty() {
         return xLocationProperty;
     }
 

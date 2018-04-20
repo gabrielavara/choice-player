@@ -7,8 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <AnchorPane fx:id="root" prefWidth="500.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.121"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.gabrielavara.choiceplayer.controls.toast.Toast">
+            xmlns:fx="http://javafx.com/fxml/1">
     <HBox fx:id="hBox" HBox.hgrow="ALWAYS">
         <AlbumArt fx:id="albumArt">
             <HBox.margin>
