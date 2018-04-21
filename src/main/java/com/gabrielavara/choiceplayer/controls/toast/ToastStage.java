@@ -2,7 +2,7 @@ package com.gabrielavara.choiceplayer.controls.toast;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -10,14 +10,14 @@ import javafx.stage.StageStyle;
 public class ToastStage extends Stage {
     private final Location bottomRight;
 
-    ToastStage(AnchorPane anchorPane) {
+    ToastStage(Pane pane) {
         initStyle(StageStyle.TRANSPARENT);
 
-        setSize(anchorPane.getPrefWidth(), anchorPane.getPrefHeight());
+        setSize(pane.getPrefWidth(), pane.getPrefHeight());
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double x = screenBounds.getMinX() + screenBounds.getWidth() - anchorPane.getPrefWidth() - 2;
-        double y = screenBounds.getMinY() + screenBounds.getHeight() - anchorPane.getPrefHeight() - 2;
+        double x = screenBounds.getMinX() + screenBounds.getWidth() - pane.getPrefWidth() - 2;
+        double y = screenBounds.getMinY() + screenBounds.getHeight() - pane.getPrefHeight() - 2;
 
         bottomRight = Location.at(x, y);
     }
@@ -33,7 +33,6 @@ public class ToastStage extends Stage {
 
     Location getOffScreenBounds() {
         Location loc = getBottomRight();
-
         return Location.at(loc.getX() + getWidth(), loc.getY());
     }
 

@@ -1,7 +1,9 @@
 package com.gabrielavara.choiceplayer.controls.toast;
 
 import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SIZE;
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -14,17 +16,15 @@ import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.util.CssModifier;
 import com.gabrielavara.choiceplayer.util.ImageUtil;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
+import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class Toast {
@@ -40,13 +40,10 @@ public class Toast {
     @FXML
     public Label titleLabel;
     @FXML
-    private AnchorPane root;
+    private StackPane root;
 
     private boolean isShowed;
     private ToastStage stage;
-    private SequentialTransition sequentialTransition;
-    private Timeline showAnimation;
-    private Timeline dismissAnimation;
 
     public Toast() {
         try {
@@ -69,10 +66,6 @@ public class Toast {
         stage.show();
 
         albumArt.setHoverAllowed(false);
-
-        showAnimation = setupShowAnimation();
-        dismissAnimation = setupDismissAnimation();
-        sequentialTransition = new SequentialTransition(showAnimation, dismissAnimation);
     }
 
     public void setItems(Mp3 mp3) {
@@ -84,70 +77,32 @@ public class Toast {
         albumArt.setImage(image);
     }
 
-    private Timeline setupShowAnimation() {
-        Timeline tl = new Timeline();
-
-        KeyValue kvY = new KeyValue(stage.yLocationProperty(), stage.getOffScreenBounds().getY());
-        KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvY);
-
-        KeyValue kvInter = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY() - stage.getHeight());
-        KeyFrame frame2 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvInter);
-
-        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame frame3 = new KeyFrame(Duration.ZERO, kvOpacity);
-
-        KeyValue kvOpacity2 = new KeyValue(stage.opacityProperty(), 1.0);
-        KeyFrame frame4 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvOpacity2);
-
-        tl.getKeyFrames().addAll(frame1, frame2, frame3, frame4);
-
-        tl.setOnFinished(e -> isShowed = true);
-
-        return tl;
-    }
-
-    private Timeline setupDismissAnimation() {
-        Timeline tl = new Timeline();
-
-        KeyValue kvY = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY());
-        KeyFrame frame1 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvY);
-
-        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame frame2 = new KeyFrame(Duration.millis(ANIMATION_DURATION), kvOpacity);
-
-        tl.getKeyFrames().addAll(frame1, frame2);
-
-        tl.setOnFinished(e -> {
-            isShowed = false;
-            stage.close();
-            stage.setLocation(stage.getBottomRight());
-        });
-
-        return tl;
-    }
-
     public void showAndDismiss() {
-        if (isShowed) {
-            dismiss();
-        } else {
-            stage.show();
-            playSequential();
-        }
+        stage.show();
+        TranslateTransition inTransition = getTranslateTransition();
+        inTransition.setOnFinished(e -> {
+            PauseTransition wait = new PauseTransition(Duration.millis(3000));
+            wait.setOnFinished(we -> dismiss());
+            wait.play();
+        });
+        inTransition.play();
+        isShowed = !isShowed;
     }
 
     private void dismiss() {
         if (isShowed) {
-            playDismissAnimation();
+            TranslateTransition outTransition = getTranslateTransition();
+            outTransition.setOnFinished(e -> stage.hide());
+            outTransition.play();
         }
     }
 
-    private void playDismissAnimation() {
-        dismissAnimation.play();
-    }
-
-    private void playSequential() {
-        sequentialTransition.getChildren().get(1).setDelay(Duration.seconds(3));
-        sequentialTransition.play();
+    private TranslateTransition getTranslateTransition() {
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), root);
+        translateTransition.setFromX(isShowed ? 0 : -root.getWidth());
+        translateTransition.setToX(isShowed ? -root.getWidth() : 0);
+        translateTransition.setInterpolator(isShowed ? QUADRATIC_EASE_IN : QUADRATIC_EASE_OUT);
+        return translateTransition;
     }
 
 }
