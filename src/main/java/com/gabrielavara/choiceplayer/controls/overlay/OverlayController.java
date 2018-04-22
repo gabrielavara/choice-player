@@ -18,6 +18,10 @@ public class OverlayController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setBackground();
+    }
+
+    void setBackground() {
         Color accentColor = ChoicePlayerApplication.getColors().getAccentColor();
         root.setBackground(new Background(new BackgroundFill(accentColor, null, null)));
     }

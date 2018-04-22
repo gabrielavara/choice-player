@@ -33,5 +33,9 @@ public class Overlay extends StackPane {
             throw new IllegalStateException(COULD_NOT_LOAD, e);
         }
     }
+
+    public void setBackground() {
+        controller.setBackground();
+    }
 }
 

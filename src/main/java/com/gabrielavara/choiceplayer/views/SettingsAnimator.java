@@ -42,6 +42,7 @@ public class SettingsAnimator {
     }
 
     private void animate(Node toRemove, Node toAdd, SettingsAnimatorFinishedCallback callback) {
+        overlay.setBackground();
         overlay.setOpacity(1);
         toAdd.setMouseTransparent(true);
 
