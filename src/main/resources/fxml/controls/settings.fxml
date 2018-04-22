@@ -85,12 +85,21 @@
         </HBox>
         <HBox>
             <VBox.margin>
-                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                <Insets left="12.0" right="12.0"/>
             </VBox.margin>
             <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                 <Label styleClass="settings-item" text="%settingsShowToast" StackPane.alignment="CENTER_LEFT"/>
             </StackPane>
             <JFXToggleButton fx:id="toastToggleButton" onAction="#toastToggleButtonChanged"/>
+        </HBox>
+        <HBox>
+            <VBox.margin>
+                <Insets bottom="12.0" left="12.0" right="12.0"/>
+            </VBox.margin>
+            <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <Label styleClass="settings-item" text="%settingsShowAction" StackPane.alignment="CENTER_LEFT"/>
+            </StackPane>
+            <JFXToggleButton fx:id="actionToggleButton" onAction="#actionToggleButtonChanged"/>
         </HBox>
         <StackPane alignment="TOP_LEFT">
             <VBox.margin>

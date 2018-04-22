@@ -1,7 +1,7 @@
 package com.gabrielavara.choiceplayer.controls.toast;
 
 import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SIZE;
-import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
@@ -11,6 +11,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.controls.CustomStage;
 import com.gabrielavara.choiceplayer.controls.albumart.AlbumArt;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.util.CssModifier;
@@ -25,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class Toast {
@@ -43,7 +46,7 @@ public class Toast {
     private StackPane root;
 
     private boolean isShowed;
-    private ToastStage stage;
+    private CustomStage stage;
 
     public Toast() {
         try {
@@ -59,11 +62,12 @@ public class Toast {
 
     private void initStage() {
         CssModifier.modify(root);
-        stage = new ToastStage(root);
-        stage.setScene(new Scene(root));
+        stage = new CustomStage(root);
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
         stage.setAlwaysOnTop(true);
         stage.setLocation(stage.getBottomRight());
-        stage.show();
 
         albumArt.setHoverAllowed(false);
     }
@@ -71,6 +75,8 @@ public class Toast {
     public void setItems(Mp3 mp3) {
         artistLabel.setText(mp3.getArtist());
         titleLabel.setText(mp3.getTitle());
+        artistLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundBrightColor());
+        titleLabel.setTextFill(ChoicePlayerApplication.getColors().getForegroundColor());
 
         Optional<byte[]> albumArtData = mp3.getAlbumArt();
         Image image = ImageUtil.getAlbumArt(albumArtData, ALBUM_ART_SIZE);
@@ -78,7 +84,9 @@ public class Toast {
     }
 
     public void showAndDismiss() {
+        root.setTranslateX(0);
         stage.show();
+        ChoicePlayerApplication.getStage().requestFocus();
         TranslateTransition inTransition = getTranslateTransition();
         inTransition.setOnFinished(e -> {
             PauseTransition wait = new PauseTransition(Duration.millis(3000));
@@ -94,13 +102,14 @@ public class Toast {
             TranslateTransition outTransition = getTranslateTransition();
             outTransition.setOnFinished(e -> stage.hide());
             outTransition.play();
+            isShowed = !isShowed;
         }
     }
 
     private TranslateTransition getTranslateTransition() {
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(SHORT_ANIMATION_DURATION), root);
-        translateTransition.setFromX(isShowed ? 0 : -root.getWidth());
-        translateTransition.setToX(isShowed ? -root.getWidth() : 0);
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), root);
+        translateTransition.setFromX(isShowed ? 0 : root.getWidth());
+        translateTransition.setToX(isShowed ? root.getWidth() : 0);
         translateTransition.setInterpolator(isShowed ? QUADRATIC_EASE_IN : QUADRATIC_EASE_OUT);
         return translateTransition;
     }

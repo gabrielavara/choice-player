@@ -6,14 +6,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" prefWidth="200" HBox.hgrow="ALWAYS">
-    <HBox fx:id="hBox" HBox.hgrow="ALWAYS">
+<StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" prefWidth="400"
+           prefHeight="84">
+    <HBox fx:id="hBox">
         <AlbumArt fx:id="albumArt">
             <HBox.margin>
                 <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
             </HBox.margin>
         </AlbumArt>
-        <VBox HBox.hgrow="ALWAYS">
+        <VBox>
             <Label fx:id="artistLabel" styleClass="artist-label">
                 <VBox.margin>
                     <Insets bottom="6.0" left="12.0" right="12.0" top="12.0"/>

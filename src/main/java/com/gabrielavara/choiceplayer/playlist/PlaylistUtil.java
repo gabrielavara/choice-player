@@ -6,7 +6,9 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.gabrielavara.choiceplayer.controls.overlay.Action;
 import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -43,6 +45,7 @@ public class PlaylistUtil {
 
     public void goToNextTrack() {
         getNextPlaylistItemView().ifPresent(this::select);
+        Messenger.send(new ActionMessage(Action.NEXT));
     }
 
     Optional<Mp3> getNextTrack() {
@@ -60,6 +63,7 @@ public class PlaylistUtil {
 
     public void goToPreviousTrack() {
         getPreviousPlaylistItemView().ifPresent(this::select);
+        Messenger.send(new ActionMessage(Action.PREVIOUS));
     }
 
     Optional<Mp3> getPreviousTrack() {

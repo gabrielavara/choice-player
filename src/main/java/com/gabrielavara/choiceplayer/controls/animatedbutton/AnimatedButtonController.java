@@ -8,6 +8,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.controllers.PlayerController;
+import com.gabrielavara.choiceplayer.controls.overlay.Action;
+import com.gabrielavara.choiceplayer.messages.ActionMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.jfoenix.controls.JFXButton;
 
 import javafx.animation.FadeTransition;
@@ -57,10 +60,11 @@ public class AnimatedButtonController implements Initializable {
         animate();
     }
 
-    public void animate() {
+    void animate() {
         animate(playButton, playShowed ? OUT : IN);
         animate(pauseButton, playShowed ? IN : OUT);
         playShowed = !playShowed;
+        Messenger.send(new ActionMessage(playShowed ? Action.PAUSE : Action.PLAY));
     }
 
     private void animate(JFXButton button, Direction direction) {

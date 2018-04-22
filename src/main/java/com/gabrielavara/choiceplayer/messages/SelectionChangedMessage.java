@@ -5,19 +5,15 @@ import java.util.Optional;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class SelectionChangedMessage {
     @Getter
-    private Mp3 newValue;
-    private Mp3 oldValue;
+    private final Mp3 newValue;
+    private final Mp3 oldValue;
     @Getter
-    private boolean play;
-
-    public SelectionChangedMessage(Mp3 newValue, Mp3 oldValue, boolean play) {
-        this.newValue = newValue;
-        this.oldValue = oldValue;
-        this.play = play;
-    }
+    private final boolean play;
 
     public Optional<Mp3> getOldValue() {
         return Optional.ofNullable(oldValue);

@@ -8,4 +8,5 @@ public class Settings {
     private String folder = "C:\\Music";
     private String likedFolder = "C:\\Music\\Liked";
     private boolean showToast = true;
+    private boolean showAction = true;
 }

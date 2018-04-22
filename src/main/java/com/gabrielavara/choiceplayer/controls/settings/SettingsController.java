@@ -61,6 +61,8 @@ public class SettingsController implements Initializable {
     public JFXButton backButton;
     @FXML
     public JFXToggleButton toastToggleButton;
+    @FXML
+    public JFXToggleButton actionToggleButton;
 
     private boolean folderChanged;
 
@@ -71,6 +73,7 @@ public class SettingsController implements Initializable {
         folderToMoveLikedMusicLabel.setText(ChoicePlayerApplication.getSettings().getLikedFolder());
         accentColorPicker.setValue(ChoicePlayerApplication.getColors().getAccentColor());
         toastToggleButton.setSelected(ChoicePlayerApplication.getSettings().isShowToast());
+        actionToggleButton.setSelected(ChoicePlayerApplication.getSettings().isShowAction());
         ObservableList<String> styles = FXCollections
                 .observableList(asList(resourceBundle.getString("settingsStyleLight"), resourceBundle.getString("settingsStyleDark")));
         styleComboBox.setItems(styles);
@@ -175,6 +178,11 @@ public class SettingsController implements Initializable {
     @FXML
     public void toastToggleButtonChanged(ActionEvent actionEvent) {
         ChoicePlayerApplication.getSettings().setShowToast(toastToggleButton.isSelected());
+    }
+
+    @FXML
+    public void actionToggleButtonChanged(ActionEvent actionEvent) {
+        ChoicePlayerApplication.getSettings().setShowAction(actionToggleButton.isSelected());
     }
 
     private interface SettingsSetter {

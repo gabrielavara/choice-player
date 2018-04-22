@@ -43,12 +43,15 @@ import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
+import com.gabrielavara.choiceplayer.controls.overlay.Action;
+import com.gabrielavara.choiceplayer.controls.overlay.Overlay;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
 import com.gabrielavara.choiceplayer.controls.toast.Toast;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.filemover.FileMover;
 import com.gabrielavara.choiceplayer.filemover.LikedFolderFileMover;
 import com.gabrielavara.choiceplayer.filemover.RecycleBinFileMover;
+import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messages.BeginToSaveTagsMessage;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistAnimatedMessage;
@@ -177,6 +180,7 @@ public class PlayerController implements Initializable {
     private Duration currentTimeWhenTagsSaved;
 
     private Toast toast;
+    private Overlay overlay;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -213,6 +217,18 @@ public class PlayerController implements Initializable {
         Messenger.register(PlaylistAnimatedMessage.class, this::playlistAnimated);
         Messenger.register(BeginToSaveTagsMessage.class, this::beginToSaveTags);
         Messenger.register(TagsSavedMessage.class, this::tagsSaved);
+        Messenger.register(ActionMessage.class, this::actionHappened);
+    }
+
+    private void actionHappened(ActionMessage m) {
+        if (!ChoicePlayerApplication.getSettings().isShowAction()) {
+            return;
+        }
+        
+        if (overlay == null) {
+            overlay = new Overlay();
+        }
+        overlay.showAndDismiss(m.getAction());
     }
 
     private void tagsSaved(TagsSavedMessage m) {
@@ -297,13 +313,15 @@ public class PlayerController implements Initializable {
     }
 
     private void showToast(Mp3 newValue) {
-        if (ChoicePlayerApplication.getSettings().isShowToast()) {
-            if (toast == null) {
-                toast = new Toast();
-            }
-            toast.setItems(newValue);
-            toast.showAndDismiss();
+        if (!ChoicePlayerApplication.getSettings().isShowToast()) {
+            return;
         }
+
+        if (toast == null) {
+            toast = new Toast();
+        }
+        toast.setItems(newValue);
+        toast.showAndDismiss();
     }
 
     private Direction getDirection(SelectionChangedMessage message, Mp3 newValue) {
@@ -447,8 +465,14 @@ public class PlayerController implements Initializable {
         timeSlider.setOnMouseReleased(e -> enableTimeSliderUpdate());
         timeSlider.setOnMouseClicked(e -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
-        likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
-        dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
+        likeButton.setOnMouseClicked(e -> {
+            likedFolderFileMover.moveFile();
+            Messenger.send(new ActionMessage(Action.LIKE));
+        });
+        dislikeButton.setOnMouseClicked(e -> {
+            recycleBinFileMover.moveFile();
+            Messenger.send(new ActionMessage(Action.DISLIKE));
+        });
         refreshButton.setOnMouseClicked(e -> {
             Optional<PlaylistItemView> selected = playlistItems.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
             playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylistWithoutCache(), selected);

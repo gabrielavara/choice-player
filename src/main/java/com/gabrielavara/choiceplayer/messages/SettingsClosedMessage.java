@@ -1,12 +1,10 @@
 package com.gabrielavara.choiceplayer.messages;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class SettingsClosedMessage {
-    private boolean folderChanged;
-
-    public SettingsClosedMessage(boolean folderChanged) {
-        this.folderChanged = folderChanged;
-    }
+    private final boolean folderChanged;
 }

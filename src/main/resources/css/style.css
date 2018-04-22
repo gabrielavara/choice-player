@@ -67,7 +67,7 @@
     -fx-font: 14 "Arial Rounded MT Bold";
 }
 
-.button .icon {
+.icon {
     -fx-fill: foreground-bright-color;
 }
 

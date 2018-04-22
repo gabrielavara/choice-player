@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.controls.toast;
+package com.gabrielavara.choiceplayer.controls;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
