@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.controllers.PlayerController;
-import com.gabrielavara.choiceplayer.controls.overlay.Action;
+import com.gabrielavara.choiceplayer.controls.actionicon.Action;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.jfoenix.controls.JFXButton;

@@ -1,4 +1,4 @@
-package com.gabrielavara.choiceplayer.controls.overlay;
+package com.gabrielavara.choiceplayer.controls.actionicon;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 

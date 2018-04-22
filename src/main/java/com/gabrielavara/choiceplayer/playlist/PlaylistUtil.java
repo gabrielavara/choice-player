@@ -6,7 +6,7 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.gabrielavara.choiceplayer.controls.overlay.Action;
+import com.gabrielavara.choiceplayer.controls.actionicon.Action;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;

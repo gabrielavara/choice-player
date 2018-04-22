@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.beatport.BeatportUpdater;
+import com.gabrielavara.choiceplayer.controls.actionicon.ActionIcon;
 import com.gabrielavara.choiceplayer.controls.animatedbadge.AnimatedBadge;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
@@ -179,7 +180,7 @@ public class PlayerController implements Initializable {
     private Duration currentTimeWhenTagsSaved;
 
     private Toast toast;
-    private Overlay overlay;
+    private ActionIcon actionIcon;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -199,6 +200,7 @@ public class PlayerController implements Initializable {
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
         addSettings();
         animateItems();
+        mainContainer.layout();
     }
 
     private void setPlaylistStackPaneBackground() {
@@ -224,10 +226,10 @@ public class PlayerController implements Initializable {
             return;
         }
 
-        if (overlay == null) {
-            overlay = new Overlay();
+        if (actionIcon == null) {
+            actionIcon = new ActionIcon();
         }
-        overlay.showAndDismiss(m.getAction());
+        actionIcon.showAndDismiss(m.getAction());
     }
 
     private void tagsSaved(TagsSavedMessage m) {
@@ -275,8 +277,10 @@ public class PlayerController implements Initializable {
 
     private void addSettings() {
         settings = new Settings();
+        Overlay overlay = new Overlay();
         rootContainer.getChildren().add(settings);
-        settingsAnimator = new SettingsAnimator(mainContainer, settings);
+        rootContainer.getChildren().add(overlay);
+        settingsAnimator = new SettingsAnimator(mainContainer, settings, overlay);
     }
 
     private void initializeButtonHBox() {

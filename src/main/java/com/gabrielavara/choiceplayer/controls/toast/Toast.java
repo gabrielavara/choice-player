@@ -89,7 +89,6 @@ public class Toast {
     public void showAndDismiss() {
         root.setTranslateX(0);
         stage.show();
-        ChoicePlayerApplication.getStage().requestFocus();
 
         if (inTransition != null) {
             stopTransitions();

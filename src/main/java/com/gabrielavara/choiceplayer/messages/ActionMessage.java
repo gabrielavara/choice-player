@@ -1,6 +1,6 @@
 package com.gabrielavara.choiceplayer.messages;
 
-import com.gabrielavara.choiceplayer.controls.overlay.Action;
+import com.gabrielavara.choiceplayer.controls.actionicon.Action;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
