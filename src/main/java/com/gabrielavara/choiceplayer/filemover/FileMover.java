@@ -18,6 +18,8 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gabrielavara.choiceplayer.controls.overlay.Action;
+import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
@@ -64,6 +66,7 @@ public abstract class FileMover {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+        Messenger.send(new ActionMessage(getOpinion() == Opinion.LIKE ? Action.LIKE : Action.DISLIKE));
     }
 
     private Task<Void> createMoveTask(PlaylistItemView item) {
@@ -113,17 +116,12 @@ public abstract class FileMover {
     }
 
     private void animateCurrentCell(PlaylistCell cell, ParallelTransition parallelTransition) {
-        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(ANIMATION_DURATION), cell);
-        translateTransition.setFromX(cell.getTranslateX());
-        translateTransition.setToX(cell.getTranslateX() + cell.getWidth());
-        translateTransition.setInterpolator(QUADRATIC_EASE_IN);
-
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), cell);
         fadeTransition.setFromValue(cell.getOpacity());
         fadeTransition.setToValue(0);
         fadeTransition.setInterpolator(QUADRATIC_EASE_IN);
 
-        parallelTransition.getChildren().addAll(translateTransition, fadeTransition);
+        parallelTransition.getChildren().addAll(fadeTransition);
     }
 
     private void animateCellsAfter(List<PlaylistCell> cellsAfter, ParallelTransition parallelTransition) {

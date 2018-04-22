@@ -61,6 +61,7 @@ public class PlaylistInitializer {
         playlist.setItems(playlistItemViews);
         playlist.setCellFactory(this::playListCellFactory);
         playlist.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener());
+        playlist.setOnScroll(e -> cells.forEach(c -> c.setOpacity(1)));
     }
 
     public void loadPlaylist() {

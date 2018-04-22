@@ -43,7 +43,6 @@ import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
-import com.gabrielavara.choiceplayer.controls.overlay.Action;
 import com.gabrielavara.choiceplayer.controls.overlay.Overlay;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
 import com.gabrielavara.choiceplayer.controls.toast.Toast;
@@ -224,7 +223,7 @@ public class PlayerController implements Initializable {
         if (!ChoicePlayerApplication.getSettings().isShowAction()) {
             return;
         }
-        
+
         if (overlay == null) {
             overlay = new Overlay();
         }
@@ -465,14 +464,8 @@ public class PlayerController implements Initializable {
         timeSlider.setOnMouseReleased(e -> enableTimeSliderUpdate());
         timeSlider.setOnMouseClicked(e -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
-        likeButton.setOnMouseClicked(e -> {
-            likedFolderFileMover.moveFile();
-            Messenger.send(new ActionMessage(Action.LIKE));
-        });
-        dislikeButton.setOnMouseClicked(e -> {
-            recycleBinFileMover.moveFile();
-            Messenger.send(new ActionMessage(Action.DISLIKE));
-        });
+        likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
+        dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
         refreshButton.setOnMouseClicked(e -> {
             Optional<PlaylistItemView> selected = playlistItems.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
             playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylistWithoutCache(), selected);
