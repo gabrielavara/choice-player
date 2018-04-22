@@ -38,6 +38,7 @@ public class Overlay {
     private MaterialDesignIconView iconView;
 
     private CustomStage stage;
+    private ParallelTransition parallelTransition;
 
     public Overlay() {
         try {
@@ -68,9 +69,13 @@ public class Overlay {
         stage.show();
         ChoicePlayerApplication.getStage().requestFocus();
 
-        ParallelTransition parallelTransition = new ParallelTransition(getScaleXTransition(), getScaleYTransition(), getSequentialFadeTransition());
-        parallelTransition.setOnFinished(e -> stage.hide());
-        parallelTransition.play();
+        if (parallelTransition != null) {
+            parallelTransition.playFromStart();
+        } else {
+            parallelTransition = new ParallelTransition(getScaleXTransition(), getScaleYTransition(), getSequentialFadeTransition());
+            parallelTransition.setOnFinished(e -> stage.hide());
+            parallelTransition.play();
+        }
     }
 
     private ScaleTransition getScaleXTransition() {

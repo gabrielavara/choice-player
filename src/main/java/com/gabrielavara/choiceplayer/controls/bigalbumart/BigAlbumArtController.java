@@ -50,7 +50,7 @@ public class BigAlbumArtController implements Initializable {
         pane.getChildren().remove(grayScaleAlbumArt);
     }
 
-    public void animatePlayPause(AnimationDirection animationDirection) {
+    void animatePlayPause(AnimationDirection animationDirection) {
         setInitialValues(animationDirection);
         FadeTransition fadeOutTransition = getFrontTransition(animationDirection);
         fadeOutTransition.setOnFinished(e -> removeItem(animationDirection));
@@ -58,7 +58,10 @@ public class BigAlbumArtController implements Initializable {
     }
 
     private void setInitialValues(AnimationDirection animationDirection) {
-        pane.getChildren().add(0, animationDirection == OUT ? grayScaleAlbumArt : albumArt);
+        ImageView element = animationDirection == OUT ? grayScaleAlbumArt : albumArt;
+        if (!pane.getChildren().contains(element)) {
+            pane.getChildren().add(0, element);
+        }
         grayScaleAlbumArt.setTranslateY(0);
         grayScaleAlbumArt.setOpacity(1);
         albumArt.setTranslateY(0);

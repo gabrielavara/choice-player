@@ -47,6 +47,9 @@ public class Toast {
 
     private boolean isShowed;
     private CustomStage stage;
+    private TranslateTransition inTransition;
+    private PauseTransition wait;
+    private TranslateTransition outTransition;
 
     public Toast() {
         try {
@@ -87,23 +90,52 @@ public class Toast {
         root.setTranslateX(0);
         stage.show();
         ChoicePlayerApplication.getStage().requestFocus();
-        TranslateTransition inTransition = getTranslateTransition();
-        inTransition.setOnFinished(e -> {
-            PauseTransition wait = new PauseTransition(Duration.millis(3000));
-            wait.setOnFinished(we -> dismiss());
-            wait.play();
-        });
-        inTransition.play();
+
+        if (inTransition != null) {
+            stopTransitions();
+            inTransition.playFromStart();
+        } else {
+            createInTransition();
+            inTransition.play();
+        }
         isShowed = !isShowed;
     }
 
+    private void stopTransitions() {
+        if (wait != null) {
+            wait.stop();
+        }
+        if (outTransition != null) {
+            outTransition.stop();
+        }
+    }
+
+    private void createInTransition() {
+        inTransition = getTranslateTransition();
+        inTransition.setOnFinished(e -> {
+            if (wait != null) {
+                wait.playFromStart();
+            } else {
+                wait = new PauseTransition(Duration.millis(3000));
+                wait.setOnFinished(we -> dismiss());
+                wait.play();
+            }
+        });
+    }
+
     private void dismiss() {
-        if (isShowed) {
-            TranslateTransition outTransition = getTranslateTransition();
+        if (!isShowed) {
+            return;
+        }
+
+        if (outTransition != null) {
+            outTransition.playFromStart();
+        } else {
+            outTransition = getTranslateTransition();
             outTransition.setOnFinished(e -> stage.hide());
             outTransition.play();
-            isShowed = !isShowed;
         }
+        isShowed = !isShowed;
     }
 
     private TranslateTransition getTranslateTransition() {
