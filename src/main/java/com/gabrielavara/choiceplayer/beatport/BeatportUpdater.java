@@ -77,6 +77,7 @@ public class BeatportUpdater {
 
     private Optional<BeatportTrack> getBestTrack(Mp3 mp3, BeatportAlbum album) {
         if (album.getTracks().size() <= mp3.getTrackAsInt()) {
+            log.info("Track number is greater than album track count");
             return Optional.empty();
         }
 
@@ -86,6 +87,10 @@ public class BeatportUpdater {
         if (minDistance.isPresent()) {
             int minIndex = distances.indexOf(minDistance.get());
             BeatportTrack track = album.getTracks().get(minIndex);
+            log.info("Beatport track number: {}. Mp3 track number: {}", track.getTrackNumber(), mp3.getTrackAsInt());
+            if (mp3.getTrackAsInt() == 0) {
+                return Optional.of(track);
+            }
             return track.getTrackNumber().equals(String.valueOf(mp3.getTrackAsInt())) ? Optional.of(track) : Optional.empty();
         } else {
             return Optional.empty();

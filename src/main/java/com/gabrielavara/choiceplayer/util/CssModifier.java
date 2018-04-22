@@ -30,7 +30,7 @@ public class CssModifier {
     private CssModifier() {
     }
 
-    public static void modify(Pane rootContainer) {
+    public static void modify(Pane pane) {
         try {
             Settings settings = ChoicePlayerApplication.getSettings();
             Path path = Paths.get("src/main/resources/css/style.css");
@@ -46,8 +46,8 @@ public class CssModifier {
 
             log.info("Change css");
             String css = new File(STYLE_CSS).toURI().toURL().toExternalForm();
-            rootContainer.getStylesheets().clear();
-            rootContainer.getStylesheets().add(css);
+            pane.getStylesheets().clear();
+            pane.getStylesheets().add(css);
             ChoicePlayerApplication.setColors(new Colors(ChoicePlayerApplication.getSettings()));
         } catch (IOException e) {
             log.error("Could not modify style.css");
