@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 
@@ -47,7 +46,7 @@ public class Mp3 implements BeatportSearchInput {
     private String artist;
     @Setter
     @JsonIgnore
-    private String albumArtist;
+    private String albumArtist = EMPTY;
     @Setter
     @JsonIgnore
     private String comment;
@@ -76,6 +75,7 @@ public class Mp3 implements BeatportSearchInput {
 
     public Mp3(Mp3File mp3) {
         artist = extractArtist(mp3);
+        albumArtist = extractAlbumArtist(mp3);
         title = extractTitle(mp3);
         year = extractYear(mp3);
         album = extractAlbum(mp3);
@@ -93,6 +93,14 @@ public class Mp3 implements BeatportSearchInput {
         if (mp3.hasId3v1Tag()) {
             ID3v1 id3v1Tag = mp3.getId3v1Tag();
             return id3v1Tag.getArtist();
+        }
+        return EMPTY;
+    }
+
+    private String extractAlbumArtist(Mp3File mp3) {
+        if (mp3.hasId3v2Tag()) {
+            ID3v2 id3v2Tag = mp3.getId3v2Tag();
+            return id3v2Tag.getAlbumArtist();
         }
         return EMPTY;
     }
@@ -186,10 +194,7 @@ public class Mp3 implements BeatportSearchInput {
             Mp3File mp3File = new Mp3File(path);
             setId3v2Tag(bytes, mp3File);
             setId3v1Tag(mp3File);
-            String newFileName = mp3File.getFilename();
-            newFileName = newFileName.replace(".mp3", "-new.mp3");
-            mp3File.save(newFileName);
-            replaceFile(getFilename(), newFileName);
+            updateFile(mp3File);
             Platform.runLater(() -> changed.set(true));
             if (isCurrentlyPlaying()) {
                 Messenger.send(new TagsSavedMessage(this));
@@ -199,13 +204,43 @@ public class Mp3 implements BeatportSearchInput {
         }
     }
 
-    private void replaceFile(String fileName, String newFileName) throws IOException {
+    private String getNewFileName(Mp3File mp3File) {
+        String id3v1Album = mp3File.hasId3v1Tag() ? mp3File.getId3v1Tag().getArtist() : EMPTY;
+        String newArtist = mp3File.hasId3v2Tag() ? mp3File.getId3v2Tag().getArtist() : id3v1Album;
+        String id3v1Title = mp3File.hasId3v1Tag() ? mp3File.getId3v1Tag().getTitle() : EMPTY;
+        String newTitle = mp3File.hasId3v2Tag() ? mp3File.getId3v2Tag().getTitle() : id3v1Title;
+        Path path = Paths.get(mp3File.getFilename());
+        String folder = mp3File.getFilename().replace(path.getFileName().toString(), EMPTY);
+        return folder + newArtist + " - " + newTitle + ".mp3";
+    }
+
+    private void updateFile(Mp3File mp3File) throws IOException, NotSupportedException {
+        String newFileName = getNewFileName(mp3File);
+        if (newFileName.equals(mp3File.getFilename())) {
+            replaceFile(mp3File, newFileName);
+        } else {
+            saveAsNew(mp3File, newFileName);
+        }
+    }
+
+    private void replaceFile(Mp3File mp3File, String newFileName) throws IOException, NotSupportedException {
+        newFileName = newFileName.replace(".mp3", "-new.mp3");
+        mp3File.save(newFileName);
         Path from = Paths.get(newFileName);
-        Path to = Paths.get(fileName);
-        BasicFileAttributes basicFileAttributes = Files.getFileAttributeView(to, BasicFileAttributeView.class).readAttributes();
-        FileTime creationTime = basicFileAttributes.creationTime();
+        Path to = Paths.get(getFilename());
+        FileTime creationTime = Files.getFileAttributeView(to, BasicFileAttributeView.class).readAttributes().creationTime();
         Files.move(from, to, REPLACE_EXISTING);
         Files.getFileAttributeView(to, BasicFileAttributeView.class).setTimes(FileTime.fromMillis(System.currentTimeMillis()), null, creationTime);
+    }
+
+    private void saveAsNew(Mp3File mp3File, String newFileName) throws IOException, NotSupportedException {
+        mp3File.save(newFileName);
+        Path oldPath = Paths.get(getFilename());
+        Path newPath = Paths.get(newFileName);
+        FileTime creationTime = Files.getFileAttributeView(oldPath, BasicFileAttributeView.class).readAttributes().creationTime();
+        Files.getFileAttributeView(newPath, BasicFileAttributeView.class).setTimes(FileTime.fromMillis(System.currentTimeMillis()), null, creationTime);
+        Files.delete(oldPath);
+        filename = mp3File.getFilename();
     }
 
     private void setId3v2Tag(byte[] bytes, Mp3File mp3File) {
@@ -238,6 +273,6 @@ public class Mp3 implements BeatportSearchInput {
     }
 
     public boolean shouldSearchForInfo() {
-        return !getAlbumArt().isPresent() || !track.contains("/");
+        return !getAlbumArt().isPresent() || !track.contains("/") || albumArtist.equals(EMPTY) || year.length() <= 4;
     }
 }

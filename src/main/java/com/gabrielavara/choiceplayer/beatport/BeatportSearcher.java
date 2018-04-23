@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.dto.Mp3;
 
-public class BeatportSearcher {
+class BeatportSearcher {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportSearcher");
     private static final int MAX_DISTANCE = 15;
 
@@ -30,7 +30,7 @@ public class BeatportSearcher {
         driver = new ChromeDriver(options);
     }
 
-    public Optional<BeatportAlbum> search(Mp3 mp3) {
+    Optional<BeatportAlbum> search(Mp3 mp3) {
         Optional<BeatportRelease> beatportRelease = getBestBeatportRelease(mp3);
         if (beatportRelease.isPresent()) {
             BeatportAlbum beatportAlbum = new BeatportAlbumParser(driver).parse(beatportRelease.get());
@@ -54,9 +54,10 @@ public class BeatportSearcher {
 
         if (min.isPresent()) {
             int index = albumDistances.indexOf(min.get());
-            log.info("Best release index: {}", index);
             BeatportRelease release = releases.getReleases().get(index);
-            return min.get() < MAX_DISTANCE ? Optional.of(release) : Optional.empty();
+            boolean albumContains = release.getAlbum().toLowerCase().contains(mp3.getAlbum().toLowerCase());
+            log.info("Best release index: {}. Distance: {}. Album contains: {}", index, min.get(), albumContains);
+            return min.get() < MAX_DISTANCE || albumContains ? Optional.of(release) : Optional.empty();
         } else {
             log.info("Use first release");
             BeatportRelease release = releases.getReleases().get(0);
