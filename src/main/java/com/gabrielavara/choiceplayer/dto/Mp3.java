@@ -59,7 +59,7 @@ public class Mp3 implements BeatportSearchInput {
     @Setter
     private String title;
     @Setter
-    private String year;
+    private String year = EMPTY;
     @Setter
     private String album;
     @Setter
@@ -273,6 +273,6 @@ public class Mp3 implements BeatportSearchInput {
     }
 
     public boolean shouldSearchForInfo() {
-        return !getAlbumArt().isPresent() || !track.contains("/") || albumArtist.equals(EMPTY) || year.length() <= 4;
+        return !getAlbumArt().isPresent() || !track.contains("/") || albumArtist.equals(EMPTY) || year == null || year.length() <= 4;
     }
 }

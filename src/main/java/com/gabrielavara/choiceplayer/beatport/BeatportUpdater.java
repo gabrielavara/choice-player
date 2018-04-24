@@ -52,9 +52,13 @@ public class BeatportUpdater {
             @Override
             protected Void call() {
                 playlistItems.forEach(pi -> {
-                    Mp3 mp3 = pi.getMp3();
-                    if (mp3.shouldSearchForInfo()) {
-                        update(mp3);
+                    try {
+                        Mp3 mp3 = pi.getMp3();
+                        if (mp3.shouldSearchForInfo()) {
+                            update(mp3);
+                        }
+                    } catch (Exception e) {
+                        log.error("Exception occurred during Beatport search", e);
                     }
                 });
                 return null;
@@ -63,16 +67,12 @@ public class BeatportUpdater {
     }
 
     private void update(Mp3 mp3) {
-        try {
-            log.info("Search for: {}", mp3);
-            Optional<BeatportAlbum> beatportAlbum = beatportSearcher.search(mp3);
-            beatportAlbum.ifPresent(album -> {
-                Optional<BeatportTrack> track = getBestTrack(mp3, album);
-                track.ifPresent(t -> update(mp3, t, album));
-            });
-        } catch (Exception e) {
-            log.error("Exception occurred during Beatport search", e);
-        }
+        log.info("Search for: {}", mp3);
+        Optional<BeatportAlbum> beatportAlbum = beatportSearcher.search(mp3);
+        beatportAlbum.ifPresent(album -> {
+            Optional<BeatportTrack> track = getBestTrack(mp3, album);
+            track.ifPresent(t -> update(mp3, t, album));
+        });
     }
 
     private Optional<BeatportTrack> getBestTrack(Mp3 mp3, BeatportAlbum album) {
