@@ -20,7 +20,7 @@ abstract class BeatportParser<T extends BeatportSearchInput, U extends BeatportS
         this.driver = driver;
     }
 
-    public U parse(T input) {
+    U parse(T input) {
         String url = getUrl(input);
         if (searchResults.containsKey(url)) {
             return searchResults.get(url);

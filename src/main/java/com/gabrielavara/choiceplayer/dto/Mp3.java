@@ -273,6 +273,6 @@ public class Mp3 implements BeatportSearchInput {
     }
 
     public boolean shouldSearchForInfo() {
-        return !getAlbumArt().isPresent() || !track.contains("/") || albumArtist.equals(EMPTY) || year == null || year.length() <= 4;
+        return !getAlbumArt().isPresent() || !track.contains("/") || albumArtist == null || albumArtist.equals(EMPTY) || year == null || year.length() <= 4;
     }
 }

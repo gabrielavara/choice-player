@@ -21,7 +21,7 @@ import com.google.common.base.Joiner;
 public class BeatportSearchResultParser extends BeatportParser<Mp3, BeatportReleases> {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportSearchResultParser");
 
-    private static final String SEARCH_URL = BEATPORT_COM + "/search?query={0}&facets[0]=fieldType%3Arelease&perPage=10";
+    private static final String SEARCH_URL = BEATPORT_COM + "/search?query={0}&facets[0]=fieldType%3Arelease";
 
     private static final String RELEASES_XPATH = "//div[@class='search-component']//ul[contains(@class,'tile-list-items')]";
     private static final String RELEASE_TITLES_XPATH = RELEASES_XPATH + "//a[@class='item-title']";

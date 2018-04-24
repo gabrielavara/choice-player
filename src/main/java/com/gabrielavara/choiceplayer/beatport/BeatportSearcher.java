@@ -47,9 +47,12 @@ class BeatportSearcher {
             log.info("No release found");
             return Optional.empty();
         }
+
         List<Integer> albumDistances = new ArrayList<>();
         String album = BeatportSearchResultParser.getAlbumForSearch(mp3);
-        releases.getReleases().forEach(r -> albumDistances.add(LevenshteinDistance.calculate(album, r.getAlbum())));
+
+        int size = releases.getReleases().size();
+        releases.getReleases().subList(0, Math.min(10, size)).forEach(r -> albumDistances.add(LevenshteinDistance.calculate(album, r.getAlbum())));
         Optional<Integer> min = albumDistances.stream().min(Comparator.comparingInt(i -> i));
 
         if (min.isPresent()) {
@@ -57,11 +60,26 @@ class BeatportSearcher {
             BeatportRelease release = releases.getReleases().get(index);
             boolean albumContains = release.getAlbum().toLowerCase().contains(mp3.getAlbum().toLowerCase());
             log.info("Best release index: {}. Distance: {}. Album contains: {}", index, min.get(), albumContains);
-            return min.get() < MAX_DISTANCE || albumContains ? Optional.of(release) : Optional.empty();
+            return min.get() < MAX_DISTANCE || albumContains ? Optional.of(release) : checkMoreReleases(releases, album);
         } else {
             log.info("Use first release");
             BeatportRelease release = releases.getReleases().get(0);
             return albumDistances.get(0) < MAX_DISTANCE ? Optional.of(release) : Optional.empty();
         }
+    }
+
+    private Optional<BeatportRelease> checkMoreReleases(BeatportReleases releases, String album) {
+        log.info("Check more releases");
+        int size = releases.getReleases().size();
+        if (size < 11) {
+            return Optional.empty();
+        }
+        for (BeatportRelease release : releases.getReleases().subList(11, size)) {
+            int distance = LevenshteinDistance.calculate(album, release.getAlbum());
+            if (distance < MAX_DISTANCE) {
+                return Optional.of(release);
+            }
+        }
+        return Optional.empty();
     }
 }
