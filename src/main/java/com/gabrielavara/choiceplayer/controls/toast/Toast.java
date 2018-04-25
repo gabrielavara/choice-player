@@ -2,6 +2,7 @@ package com.gabrielavara.choiceplayer.controls.toast;
 
 import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SIZE;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.TOAST_TIMEOUT;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
@@ -115,7 +116,7 @@ public class Toast {
             if (wait != null) {
                 wait.playFromStart();
             } else {
-                wait = new PauseTransition(Duration.millis(3000));
+                wait = new PauseTransition(Duration.millis(TOAST_TIMEOUT));
                 wait.setOnFinished(we -> dismiss());
                 wait.play();
             }

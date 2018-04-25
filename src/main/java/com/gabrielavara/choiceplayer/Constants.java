@@ -57,6 +57,8 @@ public class Constants {
 
     public static final double BACKGROUND_IMAGE_OPACITY = 0.2;
 
+    public static final int TOAST_TIMEOUT = 5000;
+
     private Constants() {
     }
 }
