@@ -200,7 +200,7 @@ public class PlayerController implements Initializable {
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
         addSettings();
         animateItems();
-        mainContainer.layout();
+        ChoicePlayerApplication.getStage().setTitle("Choice Player");
     }
 
     private void setPlaylistStackPaneBackground() {
@@ -313,6 +313,7 @@ public class PlayerController implements Initializable {
         setPlaylistItemStates(message);
         setCurrentlyPlayingAlbumArt(getDirection(message, newValue));
         showToast(newValue);
+        ChoicePlayerApplication.getStage().setTitle(newValue.getArtist() + " - " + newValue.getTitle());
     }
 
     private void showToast(Mp3 newValue) {
