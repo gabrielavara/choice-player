@@ -77,14 +77,14 @@ public class ActionIcon {
     }
 
     private ScaleTransition getScaleXTransition() {
-        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(LONG_ANIMATION_DURATION), iconView);
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(LONG_ANIMATION_DURATION), root);
         scaleTransition.setFromX(0.1);
         scaleTransition.setToX(1);
         return scaleTransition;
     }
 
     private ScaleTransition getScaleYTransition() {
-        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(LONG_ANIMATION_DURATION), iconView);
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(LONG_ANIMATION_DURATION), root);
         scaleTransition.setFromY(0.1);
         scaleTransition.setToY(1);
         return scaleTransition;
@@ -97,7 +97,7 @@ public class ActionIcon {
     }
 
     private FadeTransition getFadeTransition(AnimationDirection animationDirection) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION / 2), iconView);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(LONG_ANIMATION_DURATION / 2), root);
         fadeTransition.setFromValue(animationDirection == IN ? 0 : 1);
         fadeTransition.setToValue(animationDirection == IN ? 1 : 0);
         return fadeTransition;

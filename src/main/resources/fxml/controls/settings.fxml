@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel?>
-<?import com.jfoenix.controls.JFXButton?>
+<?import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton?>
 <?import com.jfoenix.controls.JFXColorPicker?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXToggleButton?>
@@ -16,12 +16,12 @@
       fx:controller="com.gabrielavara.choiceplayer.controls.settings.SettingsController">
     <AnchorPane fx:id="titleContainer">
         <Label fx:id="titleLabel" styleClass="settings-title" text="%settings"/>
-        <JFXButton fx:id="backButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
+        <GrowingButton fx:id="backButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false">
             <graphic>
                 <MaterialDesignIconView glyphName="KEYBOARD_BACKSPACE" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
                                         styleClass="icon"/>
             </graphic>
-        </JFXButton>
+        </GrowingButton>
         <VBox.margin>
             <Insets bottom="12.0" left="24.0" right="24.0" top="24.0"/>
         </VBox.margin>
@@ -49,13 +49,13 @@
                 </AnimatedLabel>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
-                           onMouseClicked="#folderToLoadBrowseButtonClicked">
+                <GrowingButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
+                               onMouseClicked="#folderToLoadBrowseButtonClicked">
                     <graphic>
                         <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
                     </graphic>
-                </JFXButton>
+                </GrowingButton>
             </StackPane>
         </HBox>
         <HBox>
@@ -74,13 +74,13 @@
                 </AnimatedLabel>
             </VBox>
             <StackPane>
-                <JFXButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
-                           onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">
+                <GrowingButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
+                               onMouseClicked="#folderToMoveLikedMusicBrowseButtonClicked">
                     <graphic>
                         <MaterialDesignIconView glyphName="FOLDER" size="30" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
                     </graphic>
-                </JFXButton>
+                </GrowingButton>
             </StackPane>
         </HBox>
         <HBox>

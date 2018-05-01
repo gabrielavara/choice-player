@@ -15,13 +15,13 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
+import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.settings.AccentColor;
 import com.gabrielavara.choiceplayer.settings.ColorConverter;
 import com.gabrielavara.choiceplayer.settings.ThemeStyle;
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
@@ -50,15 +50,15 @@ public class SettingsController implements Initializable {
     @FXML
     public JFXColorPicker accentColorPicker;
     @FXML
-    public JFXButton folderToLoadBrowseButton;
+    public GrowingButton folderToLoadBrowseButton;
     @FXML
-    public JFXButton folderToMoveLikedMusicBrowseButton;
+    public GrowingButton folderToMoveLikedMusicBrowseButton;
     @FXML
     public AnchorPane titleContainer;
     @FXML
     public Label titleLabel;
     @FXML
-    public JFXButton backButton;
+    public GrowingButton backButton;
     @FXML
     public JFXToggleButton toastToggleButton;
     @FXML

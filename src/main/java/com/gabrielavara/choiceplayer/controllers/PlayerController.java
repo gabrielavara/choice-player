@@ -44,6 +44,7 @@ import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
 import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
+import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton;
 import com.gabrielavara.choiceplayer.controls.overlay.Overlay;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
 import com.gabrielavara.choiceplayer.controls.toast.Toast;
@@ -73,7 +74,6 @@ import com.gabrielavara.choiceplayer.views.InitialAnimator;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.gabrielavara.choiceplayer.views.SettingsAnimator;
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSnackbar;
@@ -121,9 +121,9 @@ public class PlayerController implements Initializable {
     @FXML
     public HBox buttonHBox;
     @FXML
-    public JFXButton refreshButton;
+    public GrowingButton refreshButton;
     @FXML
-    public JFXButton settingsButton;
+    public GrowingButton settingsButton;
     @FXML
     public StackPane rootContainer;
     @FXML
@@ -137,13 +137,13 @@ public class PlayerController implements Initializable {
     @FXML
     private JFXListView<PlaylistItemView> playlist;
     @FXML
-    private JFXButton likeButton;
+    private GrowingButton likeButton;
     @FXML
-    private JFXButton dislikeButton;
+    private GrowingButton dislikeButton;
     @FXML
-    private JFXButton previousTrackButton;
+    private GrowingButton previousTrackButton;
     @FXML
-    private JFXButton nextTrackButton;
+    private GrowingButton nextTrackButton;
     @FXML
     private AnimatedButton playPauseButton;
     @FXML
@@ -419,7 +419,7 @@ public class PlayerController implements Initializable {
         Duration currentTime = mediaPlayer.getCurrentTime();
         TimeFormatter.Times formattedTimes = TimeFormatter.getFormattedTimes(currentTime, duration);
         elapsedLabel.setText(formattedTimes.getElapsed());
-        remainingLabel.setText(formattedTimes.getRemaining());
+        remainingLabel.setText("-" + formattedTimes.getRemaining());
         return currentTime;
     }
 

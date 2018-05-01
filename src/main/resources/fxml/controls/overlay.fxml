@@ -5,6 +5,5 @@
 <StackPane fx:id="root" prefHeight="400" prefWidth="600" xmlns="http://javafx.com/javafx/8.0.121"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.gabrielavara.choiceplayer.controls.overlay.OverlayController">
-    <MaterialDesignIconView glyphName="SETTINGS" size="156" strokeType="OUTSIDE" strokeWidth="0.0"
-                            styleClass="icon"/>
+    <MaterialDesignIconView glyphName="SETTINGS" size="156" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="icon"/>
 </StackPane>

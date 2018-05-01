@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
+<?import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton?>
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -8,11 +8,12 @@
             fx:controller="com.gabrielavara.choiceplayer.controls.albumart.AlbumArtController"
             fx:id="pane" prefHeight="72.0" prefWidth="72.0">
     <ImageView fx:id="albumArt" fitHeight="72.0" fitWidth="72.0" opacity="0"/>
-    <JFXButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" AnchorPane.bottomAnchor="0.0"
-               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <GrowingButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false"
+                   AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <graphic>
             <MaterialDesignIconView glyphName="PLAY" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                     styleClass="icon"/>
         </graphic>
-    </JFXButton>
+    </GrowingButton>
 </AnchorPane>

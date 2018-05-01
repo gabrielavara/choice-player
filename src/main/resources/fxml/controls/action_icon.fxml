@@ -2,8 +2,9 @@
 
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.scene.layout.StackPane?>
-<StackPane fx:id="root" prefHeight="200" prefWidth="200" xmlns="http://javafx.com/javafx/8.0.121"
+<?import javafx.scene.shape.Circle?>
+<StackPane fx:id="root" prefHeight="240" prefWidth="240" xmlns="http://javafx.com/javafx/8.0.121"
            xmlns:fx="http://javafx.com/fxml/1">
-    <MaterialDesignIconView fx:id="iconView" glyphName="THUMB_DOWN" size="156" strokeType="OUTSIDE" strokeWidth="0.0"
-                            styleClass="icon"/>
+    <Circle fill="#00000066" radius="120.0" strokeWidth="0"/>
+    <MaterialDesignIconView fx:id="iconView" glyphName="THUMB_DOWN" size="162" strokeWidth="0.0" styleClass="icon"/>
 </StackPane>

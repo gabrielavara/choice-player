@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.jfoenix.controls.JFXButton;
+import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -29,7 +29,7 @@ public class AlbumArtController implements Initializable {
     @FXML
     public ImageView albumArt;
     @FXML
-    public JFXButton playButton;
+    public GrowingButton playButton;
     @FXML
     public AnchorPane pane;
 

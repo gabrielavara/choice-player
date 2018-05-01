@@ -9,24 +9,25 @@ import java.util.ResourceBundle;
 
 import com.gabrielavara.choiceplayer.controllers.PlayerController;
 import com.gabrielavara.choiceplayer.controls.actionicon.Action;
+import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
-import com.jfoenix.controls.JFXButton;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import lombok.Setter;
 
 public class AnimatedButtonController implements Initializable {
     @FXML
-    public JFXButton playButton;
+    public GrowingButton playButton;
     @FXML
-    public JFXButton pauseButton;
+    public GrowingButton pauseButton;
     @Setter
     private PlayerController controller;
     private boolean playShowed = true;
@@ -67,7 +68,7 @@ public class AnimatedButtonController implements Initializable {
         Messenger.send(new ActionMessage(playShowed ? Action.PAUSE : Action.PLAY));
     }
 
-    private void animate(JFXButton button, Direction direction) {
+    private void animate(Button button, Direction direction) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(SHORT_ANIMATION_DURATION), button);
         fadeTransition.setFromValue(direction == IN ? 0 : 1);
         fadeTransition.setToValue(direction == IN ? 1 : 0);

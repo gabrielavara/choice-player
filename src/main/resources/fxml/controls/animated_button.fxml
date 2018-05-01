@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
+<?import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton?>
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButtonController"
             maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity"
             minWidth="-Infinity">
-    <JFXButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+    <GrowingButton fx:id="playButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
         <graphic>
             <MaterialDesignIconView glyphName="PLAY" size="56" strokeType="OUTSIDE" strokeWidth="0.0"
                                     styleClass="icon"/>
         </graphic>
-    </JFXButton>
-    <JFXButton fx:id="pauseButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+    </GrowingButton>
+    <GrowingButton fx:id="pauseButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
         <graphic>
             <MaterialDesignIconView glyphName="PAUSE" size="56" strokeType="OUTSIDE" strokeWidth="0.0"
                                     styleClass="icon"/>
         </graphic>
-    </JFXButton>
+    </GrowingButton>
 </AnchorPane>

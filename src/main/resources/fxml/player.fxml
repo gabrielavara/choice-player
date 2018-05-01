@@ -3,7 +3,7 @@
 <?import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton?>
 <?import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel?>
 <?import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt?>
-<?import com.jfoenix.controls.JFXButton?>
+<?import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXSpinner?>
@@ -52,7 +52,7 @@
                 <Label fx:id="remainingLabel"/>
             </HBox>
             <HBox alignment="CENTER" prefWidth="500.0">
-                <JFXButton fx:id="dislikeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                <GrowingButton fx:id="dislikeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
                     <graphic>
                         <MaterialDesignIconView glyphName="THUMB_DOWN" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
@@ -60,8 +60,8 @@
                     <HBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                     </HBox.margin>
-                </JFXButton>
-                <JFXButton fx:id="previousTrackButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                </GrowingButton>
+                <GrowingButton fx:id="previousTrackButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
                     <HBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                     </HBox.margin>
@@ -69,14 +69,14 @@
                         <MaterialDesignIconView glyphName="SKIP_PREVIOUS" size="32" strokeType="OUTSIDE"
                                                 strokeWidth="0.0" styleClass="icon"/>
                     </graphic>
-                </JFXButton>
+                </GrowingButton>
                 <AnimatedButton fx:id="playPauseButton">
                     <HBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                     </HBox.margin>
                 </AnimatedButton>
-                <JFXButton fx:id="nextTrackButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="35.0"
-                           layoutY="10.0" mnemonicParsing="false">
+                <GrowingButton fx:id="nextTrackButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="35.0"
+                               layoutY="10.0" mnemonicParsing="false">
                     <HBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                     </HBox.margin>
@@ -84,8 +84,8 @@
                         <MaterialDesignIconView glyphName="SKIP_NEXT" size="32" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
                     </graphic>
-                </JFXButton>
-                <JFXButton fx:id="likeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                </GrowingButton>
+                <GrowingButton fx:id="likeButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
                     <HBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                     </HBox.margin>
@@ -93,7 +93,7 @@
                         <MaterialDesignIconView glyphName="THUMB_UP" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
                     </graphic>
-                </JFXButton>
+                </GrowingButton>
             </HBox>
         </VBox>
         <StackPane fx:id="playlistStackPane" HBox.hgrow="ALWAYS">
@@ -112,8 +112,8 @@
                 <StackPane.margin>
                     <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
                 </StackPane.margin>
-                <JFXButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
-                           minWidth="52.0" styleClass="button-accent-color">
+                <GrowingButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
+                               minWidth="52.0" styleClass="button-accent-color">
                     <graphic>
                         <MaterialDesignIconView glyphName="REFRESH" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
@@ -121,9 +121,9 @@
                     <HBox.margin>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
                     </HBox.margin>
-                </JFXButton>
-                <JFXButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
-                           minWidth="52.0" styleClass="button-accent-color">
+                </GrowingButton>
+                <GrowingButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
+                               minWidth="52.0" styleClass="button-accent-color">
                     <graphic>
                         <MaterialDesignIconView glyphName="SETTINGS" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
@@ -131,7 +131,7 @@
                     <HBox.margin>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
                     </HBox.margin>
-                </JFXButton>
+                </GrowingButton>
             </HBox>
         </StackPane>
     </HBox>
