@@ -34,6 +34,7 @@ public class Constants {
     public static final int SEEK_SECONDS = 10;
 
     public static final String DEFAULT_ALBUM_ART = "src/main/resources/images/default-album-art.jpg";
+    public static final String DEFAULT_ALBUM_ART_PNG = "src/main/resources/images/default-album-art.png";
     public static final int BIG_ALBUM_ART_SIZE = 350;
     public static final double BIG_ALBUM_ART_SCALE = 0.5;
     public static final int BIG_ALBUM_ART_TRANSLATE_X = 200;
