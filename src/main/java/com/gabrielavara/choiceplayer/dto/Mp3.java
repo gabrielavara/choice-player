@@ -262,9 +262,9 @@ public class Mp3 implements BeatportSearchInput {
     }
 
     private void setId3v1Tag(Mp3File mp3) {
-        ID3v1 id3v1Tag = mp3.hasId3v2Tag() ? mp3.getId3v1Tag() : new ID3v1Tag();
+        ID3v1 id3v1Tag = mp3.hasId3v1Tag() ? mp3.getId3v1Tag() : new ID3v1Tag();
         setCommonTags(id3v1Tag);
-        if (!mp3.hasId3v2Tag()) {
+        if (!mp3.hasId3v1Tag()) {
             mp3.setId3v1Tag(id3v1Tag);
         }
     }
