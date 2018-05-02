@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.beatport.BeatportUpdater;
+import com.gabrielavara.choiceplayer.controls.actionicon.Action;
 import com.gabrielavara.choiceplayer.controls.actionicon.ActionIcon;
 import com.gabrielavara.choiceplayer.controls.animatedbadge.AnimatedBadge;
 import com.gabrielavara.choiceplayer.controls.animatedbutton.AnimatedButton;
@@ -591,6 +592,7 @@ public class PlayerController implements Initializable {
         if (mediaPlayer == null) {
             return;
         }
+        Messenger.send(new ActionMessage(Action.REWIND));
         createSeekTimeLine(seek(-SEEK_SECONDS)).play();
     }
 
@@ -598,6 +600,7 @@ public class PlayerController implements Initializable {
         if (mediaPlayer == null) {
             return;
         }
+        Messenger.send(new ActionMessage(Action.FAST_FORWARD));
         createSeekTimeLine(seek(SEEK_SECONDS)).play();
     }
 

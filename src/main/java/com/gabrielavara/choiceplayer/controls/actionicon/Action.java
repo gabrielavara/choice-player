@@ -3,7 +3,7 @@ package com.gabrielavara.choiceplayer.controls.actionicon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 
 public enum Action {
-    LIKE, DISLIKE, PREVIOUS, NEXT, PAUSE, PLAY;
+    LIKE, DISLIKE, PREVIOUS, NEXT, REWIND, FAST_FORWARD, PAUSE, PLAY;
 
     public MaterialDesignIcon getIcon() {
         switch (this) {
@@ -15,6 +15,10 @@ public enum Action {
                 return MaterialDesignIcon.SKIP_PREVIOUS;
             case NEXT:
                 return MaterialDesignIcon.SKIP_NEXT;
+            case REWIND:
+                return MaterialDesignIcon.REWIND;
+            case FAST_FORWARD:
+                return MaterialDesignIcon.FAST_FORWARD;
             case PAUSE:
                 return MaterialDesignIcon.PAUSE;
             case PLAY:
