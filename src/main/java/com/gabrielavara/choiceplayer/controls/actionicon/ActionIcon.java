@@ -3,6 +3,7 @@ package com.gabrielavara.choiceplayer.controls.actionicon;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.CustomStage.StageLocation.CENTER;
 
 import java.io.IOException;
 
@@ -53,12 +54,10 @@ public class ActionIcon {
 
     private void initStage() {
         root.setBackground(Background.EMPTY);
-        stage = new CustomStage(root);
+        stage = new CustomStage(root, CENTER);
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
-        stage.setAlwaysOnTop(true);
-        stage.setLocation(stage.getCenter());
     }
 
     public void showAndDismiss(Action action) {

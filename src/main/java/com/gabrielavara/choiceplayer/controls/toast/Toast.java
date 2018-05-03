@@ -3,6 +3,7 @@ package com.gabrielavara.choiceplayer.controls.toast;
 import static com.gabrielavara.choiceplayer.Constants.ALBUM_ART_SIZE;
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.TOAST_TIMEOUT;
+import static com.gabrielavara.choiceplayer.controls.CustomStage.StageLocation.BOTTOM_RIGHT;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
@@ -66,12 +67,10 @@ public class Toast {
 
     private void initStage() {
         CssModifier.modify(root);
-        stage = new CustomStage(root);
+        stage = new CustomStage(root, BOTTOM_RIGHT);
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
-        stage.setAlwaysOnTop(true);
-        stage.setLocation(stage.getBottomRight());
 
         albumArt.setHoverAllowed(false);
     }

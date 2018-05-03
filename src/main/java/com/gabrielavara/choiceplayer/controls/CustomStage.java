@@ -12,7 +12,7 @@ public class CustomStage extends Stage {
     private final Location bottomRight;
     private final Location center;
 
-    public CustomStage(Pane pane) {
+    public CustomStage(Pane pane, StageLocation stageLocation) {
         initStyle(StageStyle.TRANSPARENT);
 
         setSize(pane.getPrefWidth(), pane.getPrefHeight());
@@ -25,6 +25,18 @@ public class CustomStage extends Stage {
 
         bottomRight = Location.at(bottomRightX, bottomRightY);
         center = Location.at(centerX, centerY);
+
+        setAlwaysOnTop(true);
+        setLocation(getLocation(stageLocation));
+    }
+
+    private Location getLocation(StageLocation stageLocation) {
+        if (stageLocation == StageLocation.CENTER) {
+            return center;
+        } else if (stageLocation == StageLocation.BOTTOM_RIGHT) {
+            return bottomRight;
+        }
+        return center;
     }
 
     private void setSize(double width, double height) {
@@ -32,8 +44,12 @@ public class CustomStage extends Stage {
         setHeight(height);
     }
 
-    public void setLocation(Location location) {
+    private void setLocation(Location location) {
         setX(location.getX());
         setY(location.getY());
+    }
+
+    public enum StageLocation {
+        CENTER, BOTTOM_RIGHT
     }
 }
