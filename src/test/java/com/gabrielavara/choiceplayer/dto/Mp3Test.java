@@ -54,6 +54,8 @@ public class Mp3Test {
         // given
         Mp3 mp3 = mp3WithAlbumArt();
         mp3.setTrack("01/02");
+        mp3.setAlbumArtist("abc");
+        mp3.setYear("2018-05-03");
 
         // when
         boolean shouldSearchForInfo = mp3.shouldSearchForInfo();
