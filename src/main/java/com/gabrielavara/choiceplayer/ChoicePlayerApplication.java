@@ -21,6 +21,8 @@ import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import de.felixroske.jfxsupport.AbstractJavaFxApplicationSupport;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -65,6 +67,13 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
     }
 
     @Override
+    public void beforeShowingSplash(Stage splashStage) {
+        Image img = new Image(getClass().getResource("/icon/64.png").toExternalForm());
+        splashStage.getIcons().clear();
+        splashStage.getIcons().add(img);
+    }
+
+    @Override
     public void stop() throws Exception {
         log.info("Stop application");
         playlistItems.forEach(item -> item.getMp3().setCurrentlyPlaying(false));
@@ -79,7 +88,7 @@ public class ChoicePlayerApplication extends AbstractJavaFxApplicationSupport {
         try {
             GlobalScreen.unregisterNativeHook();
         } catch (NativeHookException e) {
-            log.error("Could not unregister native hook!", e.getMessage());
+            log.error("Could not unregister native hook: {}", e.getMessage());
         }
     }
 
