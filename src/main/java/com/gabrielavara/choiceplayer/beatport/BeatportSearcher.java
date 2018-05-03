@@ -15,7 +15,7 @@ import com.gabrielavara.choiceplayer.dto.Mp3;
 
 class BeatportSearcher {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportSearcher");
-    private static final int MAX_DISTANCE = 15;
+    private static final int MAX_DISTANCE = 22;
 
     private WebDriver driver;
 

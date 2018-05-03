@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 
 public class BeatportUpdater {
+    private static final int MAX_DISTANCE = 10;
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.beatport.BeatportUpdater");
 
     private ObservableList<PlaylistItemView> playlistItems;
@@ -85,13 +86,12 @@ public class BeatportUpdater {
         Optional<Integer> minDistance = distances.stream().min(comparingInt(i -> i));
 
         if (minDistance.isPresent()) {
-            int minIndex = distances.indexOf(minDistance.get());
+            Integer distance = minDistance.get();
+            int minIndex = distances.indexOf(distance);
             BeatportTrack track = album.getTracks().get(minIndex);
-            log.info("Beatport track number: {}. Mp3 track number: {}", track.getTrackNumber(), mp3.getTrackAsInt());
-            if (mp3.getTrackAsInt() == 0) {
-                return Optional.of(track);
-            }
-            return track.getTrackNumber().equals(String.valueOf(mp3.getTrackAsInt())) ? Optional.of(track) : Optional.empty();
+            boolean trackEquals = track.getTrackNumber().equals(String.valueOf(mp3.getTrackAsInt()));
+            log.info("Beatport track number: {}, Mp3 track number: {}, Distance: {}", track.getTrackNumber(), mp3.getTrackAsInt(), distance);
+            return mp3.getTrackAsInt() == 0 || trackEquals || distance < MAX_DISTANCE ? Optional.of(track) : Optional.empty();
         } else {
             return Optional.empty();
         }

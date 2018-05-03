@@ -245,13 +245,14 @@ public class Mp3 implements BeatportSearchInput {
         filename = mp3.getFilename();
     }
 
-    private void setId3v2Tag(byte[] bytes, Mp3File mp3) {
+    private void setId3v2Tag(byte[] albumArtBytes, Mp3File mp3) {
         ID3v2 id3v2Tag = mp3.hasId3v2Tag() ? mp3.getId3v2Tag() : new ID3v24Tag();
         id3v2Tag.clearAlbumImage();
-        id3v2Tag.setAlbumImage(bytes, "image/jpeg");
+        id3v2Tag.setAlbumImage(albumArtBytes, "image/jpeg");
         setCommonTags(id3v2Tag);
         id3v2Tag.setAlbumArtist(albumArtist);
         id3v2Tag.setComment(comment);
+        id3v2Tag.setYear(year);
         if (id3v2Tag.getVersion().equals("4.0")) {
             id3v2Tag.setGenreDescription(genre);
         }
@@ -264,6 +265,7 @@ public class Mp3 implements BeatportSearchInput {
     private void setId3v1Tag(Mp3File mp3) {
         ID3v1 id3v1Tag = mp3.hasId3v1Tag() ? mp3.getId3v1Tag() : new ID3v1Tag();
         setCommonTags(id3v1Tag);
+        id3v1Tag.setYear(year.substring(0, Math.min(year.length(), 4)));
         if (!mp3.hasId3v1Tag()) {
             mp3.setId3v1Tag(id3v1Tag);
         }
@@ -277,6 +279,12 @@ public class Mp3 implements BeatportSearchInput {
     }
 
     public boolean shouldSearchForInfo() {
-        return !getAlbumArt().isPresent() || !track.contains("/") || albumArtist == null || albumArtist.equals(EMPTY) || year == null || year.length() <= 4;
+        boolean albumArtPresent = getAlbumArt().isPresent();
+        boolean trackContainsPer = track.contains("/");
+        boolean albumArtistNullOrEmpty = albumArtist == null || albumArtist.equals(EMPTY);
+        boolean yearNullOrShorterThanFive = year == null || year.length() < 5;
+        log.info("Album art present: {}, track contains /: {}, album artist empty: {}, year shorter than 5: {} for {}",
+                albumArtPresent, trackContainsPer, albumArtistNullOrEmpty, yearNullOrShorterThanFive, this);
+        return !albumArtPresent || !trackContainsPer || albumArtistNullOrEmpty || yearNullOrShorterThanFive;
     }
 }
