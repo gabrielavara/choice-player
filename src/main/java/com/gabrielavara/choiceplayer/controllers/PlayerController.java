@@ -56,8 +56,8 @@ import com.gabrielavara.choiceplayer.filemover.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messages.BeginToSaveTagsMessage;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
-import com.gabrielavara.choiceplayer.messages.PlaylistAnimatedMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
+import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectionChangedMessage;
 import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.messages.TagsSavedMessage;
@@ -216,7 +216,7 @@ public class PlayerController implements Initializable {
         Messenger.register(SettingsClosedMessage.class, this::settingsClosed);
         Messenger.register(ThemeChangedMessage.class, this::accessColorChanged);
         Messenger.register(FileMovedMessage.class, this::fileMoved);
-        Messenger.register(PlaylistAnimatedMessage.class, this::playlistAnimated);
+        Messenger.register(PlaylistLoadedMessage.class, this::playlistLoaded);
         Messenger.register(BeginToSaveTagsMessage.class, this::beginToSaveTags);
         Messenger.register(TagsSavedMessage.class, this::tagsSaved);
         Messenger.register(ActionMessage.class, this::actionHappened);
@@ -246,10 +246,9 @@ public class PlayerController implements Initializable {
         disposeMediaPlayer();
     }
 
-    private void playlistAnimated(PlaylistAnimatedMessage m) {
-        if (m.getDirection() == IN) {
-            beatportUpdater.update();
-        }
+    @SuppressWarnings({"squid:S1172", "unused"})
+    private void playlistLoaded(PlaylistLoadedMessage m) {
+        beatportUpdater.update();
     }
 
     private void fileMoved(FileMovedMessage m) {

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
 import com.gabrielavara.choiceplayer.dto.Mp3;
-import com.gabrielavara.choiceplayer.messages.PlaylistAnimatedMessage;
+import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -81,7 +81,7 @@ public class PlaylistInitializer {
             cachedItems.addAll(PlaylistCache.load());
             if (!cachedItems.isEmpty()) {
                 playlistItemViews.addAll(cachedItems);
-                showItems(Optional.empty());
+                showItems(Optional.empty(), false);
             }
         }
 
@@ -102,11 +102,13 @@ public class PlaylistInitializer {
         playListLoaderTask.setOnSucceeded(e -> {
             List<PlaylistItemView> items = playListLoaderTask.getValue();
             if (cachedItems.isEmpty() && items.isEmpty()) {
-                showItems(Optional.empty());
+                showItems(Optional.empty(), true);
             }
 
             if (!cachedItems.equals(items)) {
                 reloadItems(items, selected);
+            } else if (!items.isEmpty()) {
+                Messenger.send(new PlaylistLoadedMessage());
             }
         });
         return playListLoaderTask;
@@ -117,32 +119,38 @@ public class PlaylistInitializer {
         log.info("Loaded playlist not equals cached playlist");
         if (playlistItemViews.isEmpty()) {
             playlistItemViews.addAll(items);
-            showItems(selected);
+            showItems(selected, true);
         } else {
             animateItems(OUT, ev -> {
                 playlistItemViews.clear();
                 playlistItemViews.addAll(items);
-                showItems(selected);
-            }, Optional.empty());
+                showItems(selected, true);
+            }, Optional.empty(), false);
         }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void showItems(Optional<PlaylistItemView> selected) {
+    private void showItems(Optional<PlaylistItemView> selected, boolean playlistLoaded) {
         PauseTransition wait = new PauseTransition(Duration.millis(50));
-        wait.setOnFinished(ev -> animateItems(IN, selected));
+        wait.setOnFinished(ev -> animateInItems(selected, playlistLoaded));
         wait.play();
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void animateItems(AnimationDirection direction, Optional<PlaylistItemView> selected) {
-        animateItems(direction, null, selected);
+    private void animateInItems(Optional<PlaylistItemView> selected, boolean playlistLoaded) {
+        animateItems(IN, null, selected, playlistLoaded);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public void animateItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected) {
         animateSpinner(direction.getInverse());
-        animateListItems(direction, finishedEventHandler, selected);
+        animateListItems(direction, finishedEventHandler, selected, false);
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private void animateItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected, boolean playlistLoaded) {
+        animateSpinner(direction.getInverse());
+        animateListItems(direction, finishedEventHandler, selected, playlistLoaded);
     }
 
     private void animateSpinner(AnimationDirection direction) {
@@ -160,7 +168,7 @@ public class PlaylistInitializer {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected) {
+    private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected, boolean playlistLoaded) {
         int[] delay = new int[1];
         delay[0] = 0;
         beforeListAnimatedIn = true;
@@ -175,7 +183,9 @@ public class PlaylistInitializer {
             if (finishedEventHandler != null) {
                 finishedEventHandler.handle(null);
             }
-            Messenger.send(new PlaylistAnimatedMessage(direction));
+            if (playlistLoaded && direction == IN) {
+                Messenger.send(new PlaylistLoadedMessage());
+            }
         });
         parallelTransition.play();
     }
