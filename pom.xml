@@ -129,7 +129,7 @@
             <id>skip.Beatport.tests</id>
             <activation>
                 <property>
-                    <name>skip.Beatport.tests</name>
+                    <name>skip.some.tests</name>
                     <value>true</value>
                 </property>
             </activation>
@@ -141,6 +141,8 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/Beatport*.java</exclude>
+                                <exclude>**/PlaylistTest.java</exclude>
+                                <exclude>**/ChoicePlayerApplicationTests.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

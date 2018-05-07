@@ -20,7 +20,7 @@ jobs:
             - ~/.m2
           key: choice-player-{{ checksum "pom.xml" }}
       
-      - run: mvn package shade:shade -Pskip.Beatport.tests
+      - run: mvn package shade:shade -Pskip.some.tests
       
       - store_test_results:
           path: target/surefire-reports
