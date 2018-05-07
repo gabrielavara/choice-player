@@ -126,7 +126,7 @@
 
     <profiles>
         <profile>
-            <id>skip.Beatport.tests</id>
+            <id>skip.some.tests</id>
             <activation>
                 <property>
                     <name>skip.some.tests</name>
