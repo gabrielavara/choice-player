@@ -6,7 +6,7 @@ import static com.gabrielavara.choiceplayer.util.Opinion.DISLIKE;
 import java.io.File;
 import java.io.IOException;
 
-import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
+import com.gabrielavara.choiceplayer.playlist.Playlist;
 import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -17,8 +17,8 @@ import javafx.collections.ObservableList;
 
 public class RecycleBinFileMover extends FileMover {
 
-    public RecycleBinFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, PlaylistInitializer playlistInitializer, JFXSnackbar snackBar) {
-        super(playlistUtil, mp3Files, playlistInitializer, snackBar);
+    public RecycleBinFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, Playlist playlist, JFXSnackbar snackBar) {
+        super(playlistUtil, mp3Files, playlist, snackBar);
     }
 
     @Override

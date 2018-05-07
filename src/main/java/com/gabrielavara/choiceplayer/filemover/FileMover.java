@@ -22,7 +22,7 @@ import com.gabrielavara.choiceplayer.controls.actionicon.Action;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
-import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
+import com.gabrielavara.choiceplayer.playlist.Playlist;
 import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
@@ -41,14 +41,14 @@ public abstract class FileMover {
 
     private final PlaylistUtil playlistUtil;
     private final ObservableList<PlaylistItemView> playlistItemViews;
-    private final PlaylistInitializer playlistInitializer;
+    private final Playlist playlist;
     private final JFXSnackbar snackBar;
     private final ResourceBundle resourceBundle;
 
-    FileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> playlistItemViews, PlaylistInitializer playlistInitializer, JFXSnackbar snackBar) {
+    FileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> playlistItemViews, Playlist playlist, JFXSnackbar snackBar) {
         this.playlistUtil = playlistUtil;
         this.playlistItemViews = playlistItemViews;
-        this.playlistInitializer = playlistInitializer;
+        this.playlist = playlist;
         this.snackBar = snackBar;
         resourceBundle = ResourceBundle.getBundle("language.player");
     }
@@ -92,10 +92,10 @@ public abstract class FileMover {
     }
 
     private void animateRemove(PlaylistItemView item) {
-        Optional<PlaylistCell> currentCell = playlistInitializer.getCell(item);
+        Optional<PlaylistCell> currentCell = playlist.getCell(item);
         if (currentCell.isPresent()) {
             PlaylistCell cell = currentCell.get();
-            List<PlaylistCell> cellsAfter = playlistInitializer.getCellsAfter(item);
+            List<PlaylistCell> cellsAfter = playlist.getCellsAfter(item);
             animateCells(item, cell, cellsAfter);
         } else {
             remove(item);

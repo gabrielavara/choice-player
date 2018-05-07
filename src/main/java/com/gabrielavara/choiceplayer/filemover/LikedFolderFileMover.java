@@ -15,7 +15,7 @@ import java.util.concurrent.Callable;
 import org.awaitility.Awaitility;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
+import com.gabrielavara.choiceplayer.playlist.Playlist;
 import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -25,8 +25,8 @@ import javafx.collections.ObservableList;
 
 public class LikedFolderFileMover extends FileMover {
 
-    public LikedFolderFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, PlaylistInitializer playlistInitializer, JFXSnackbar snackBar) {
-        super(playlistUtil, mp3Files, playlistInitializer, snackBar);
+    public LikedFolderFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, Playlist playlist, JFXSnackbar snackBar) {
+        super(playlistUtil, mp3Files, playlist, snackBar);
     }
 
     @Override

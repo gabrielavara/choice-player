@@ -63,7 +63,8 @@ import com.gabrielavara.choiceplayer.messages.SettingsClosedMessage;
 import com.gabrielavara.choiceplayer.messages.TagsSavedMessage;
 import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
-import com.gabrielavara.choiceplayer.playlist.PlaylistInitializer;
+import com.gabrielavara.choiceplayer.playlist.Playlist;
+import com.gabrielavara.choiceplayer.playlist.PlaylistAnimator;
 import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.CssModifier;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
@@ -114,29 +115,29 @@ public class PlayerController implements Initializable {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.controllers.PlayerController");
 
     @FXML
-    public JFXSpinner spinner;
+    private JFXSpinner spinner;
     @FXML
-    public StackPane playlistStackPane;
+    private StackPane playlistStackPane;
     @FXML
-    public BigAlbumArt albumArt;
+    private BigAlbumArt albumArt;
     @FXML
-    public HBox buttonHBox;
+    private HBox buttonHBox;
     @FXML
-    public GrowingButton refreshButton;
+    private GrowingButton refreshButton;
     @FXML
-    public GrowingButton settingsButton;
+    private GrowingButton settingsButton;
     @FXML
-    public StackPane rootContainer;
+    private StackPane rootContainer;
     @FXML
-    public AnimatedLabel artistLabel;
+    private AnimatedLabel artistLabel;
     @FXML
-    public AnimatedLabel titleLabel;
+    private AnimatedLabel titleLabel;
     @FXML
-    public ImageView backgroundImage;
+    private ImageView backgroundImage;
     @FXML
     private HBox mainContainer;
     @FXML
-    private JFXListView<PlaylistItemView> playlist;
+    private JFXListView<PlaylistItemView> playlistView;
     @FXML
     private GrowingButton likeButton;
     @FXML
@@ -158,7 +159,7 @@ public class PlayerController implements Initializable {
     private ObservableList<PlaylistItemView> playlistItems = FXCollections.observableArrayList();
     @Getter
     private PlaylistUtil playlistUtil = new PlaylistUtil(playlistItems);
-    private PlaylistInitializer playlistInitializer;
+    private Playlist playlist;
 
     private MediaPlayer mediaPlayer;
     private Duration duration;
@@ -193,10 +194,11 @@ public class PlayerController implements Initializable {
         setButtonListeners();
         registerGlobalKeyListener();
         registerMessageHandlers();
-        playlistInitializer = new PlaylistInitializer(playlist, playlistItems, spinner, playlistStackPane);
+        PlaylistAnimator playlistAnimator = new PlaylistAnimator(playlistView, spinner, playlistStackPane);
+        playlist = new Playlist(playlistView, playlistItems, playlistAnimator);
         JFXSnackbar snackBar = new JFXSnackbar(mainContainer);
-        likedFolderFileMover = new LikedFolderFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
-        recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlistInitializer, snackBar);
+        likedFolderFileMover = new LikedFolderFileMover(playlistUtil, playlistItems, playlist, snackBar);
+        recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlist, snackBar);
         initializeButtonHBox();
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
         addSettings();
@@ -262,14 +264,14 @@ public class PlayerController implements Initializable {
     @SuppressWarnings({"squid:S1172", "unused"})
     private void accessColorChanged(ThemeChangedMessage m) {
         CssModifier.modify(rootContainer);
-        playlistInitializer.changeTheme();
+        playlist.changeTheme();
         setPlaylistStackPaneBackground();
     }
 
     private void settingsClosed(SettingsClosedMessage m) {
         settingsAnimator.animate(OUT, () -> {
             if (m.isFolderChanged()) {
-                playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylist(), Optional.empty());
+                playlist.reload();
                 settings.resetFolderChanged();
             }
         });
@@ -284,13 +286,13 @@ public class PlayerController implements Initializable {
     }
 
     private void initializeButtonHBox() {
-        ButtonBox buttonBox = new ButtonBox(buttonHBox, playlist);
+        ButtonBox buttonBox = new ButtonBox(buttonHBox, playlistView);
         buttonBox.initialize();
     }
 
     private void selectPlaylistItem(PlaylistItemSelectedMessage message) {
         int index = message.getPlaylistItemView().getIndex() - 1;
-        MultipleSelectionModel<PlaylistItemView> selectionModel = playlist.getSelectionModel();
+        MultipleSelectionModel<PlaylistItemView> selectionModel = playlistView.getSelectionModel();
         selectionModel.select(index);
     }
 
@@ -343,14 +345,14 @@ public class PlayerController implements Initializable {
         message.getOldValue().ifPresent(ov -> {
             Optional<PlaylistItemView> oldPlaylistItem = playlistUtil.getPlaylistItemView(ov);
             oldPlaylistItem.ifPresent(i -> {
-                Optional<PlaylistCell> cell = playlistInitializer.getCell(i);
+                Optional<PlaylistCell> cell = playlist.getCell(i);
                 cell.ifPresent(c -> c.getPlaylistItem().animateToState(DESELECTED));
             });
         });
 
         Optional<PlaylistItemView> newPlaylistItem = playlistUtil.getCurrentlyPlayingPlaylistItemView();
         newPlaylistItem.ifPresent(i -> {
-            Optional<PlaylistCell> cell = playlistInitializer.getCell(i);
+            Optional<PlaylistCell> cell = playlist.getCell(i);
             cell.ifPresent(c -> c.getPlaylistItem().animateToState(SELECTED));
         });
     }
@@ -457,7 +459,7 @@ public class PlayerController implements Initializable {
             }
             likedAnimatedBadge = new AnimatedBadge(rootContainer, likeButton);
             dislikedAnimatedBadge = new AnimatedBadge(rootContainer, dislikeButton);
-            playlistInitializer.loadPlaylist();
+            playlist.load();
         });
         transition.play();
     }
@@ -471,10 +473,7 @@ public class PlayerController implements Initializable {
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
-        refreshButton.setOnMouseClicked(e -> {
-            Optional<PlaylistItemView> selected = playlistItems.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
-            playlistInitializer.animateItems(OUT, ev -> playlistInitializer.loadPlaylistWithoutCache(), selected);
-        });
+        refreshButton.setOnMouseClicked(e -> playlist.reloadWithoutCache());
         settingsButton.setOnMouseClicked(e -> settingsAnimator.animate(IN));
     }
 

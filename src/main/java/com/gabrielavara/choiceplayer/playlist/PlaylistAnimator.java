@@ -5,24 +5,17 @@ import static com.gabrielavara.choiceplayer.Constants.DELAY;
 import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
-import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
 import static java.util.stream.Collectors.toList;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
-import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
+import com.gabrielavara.choiceplayer.messages.SelectItemInNewPlaylistMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -34,8 +27,6 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -44,113 +35,42 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-public class PlaylistInitializer {
-    private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.playlist.PlaylistInitializer");
-
-    private ObservableList<PlaylistItemView> playlistItemViews;
-    private JFXSpinner spinner;
-    private StackPane playlistStackPane;
+public class PlaylistAnimator {
+    private final JFXSpinner spinner;
+    private final StackPane playlistStackPane;
     private List<PlaylistCell> cells = new ArrayList<>();
     private boolean beforeListAnimatedIn = true;
 
-    public PlaylistInitializer(JFXListView<PlaylistItemView> playlist, ObservableList<PlaylistItemView> playlistItemViews, JFXSpinner spinner,
-                               StackPane playlistStackPane) {
-        this.playlistItemViews = playlistItemViews;
+    public PlaylistAnimator(JFXListView<PlaylistItemView> playlistView, JFXSpinner spinner, StackPane playlistStackPane) {
         this.spinner = spinner;
         this.playlistStackPane = playlistStackPane;
-        playlist.setItems(playlistItemViews);
-        playlist.setCellFactory(this::playListCellFactory);
-        playlist.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener());
-        playlist.setOnScroll(e -> cells.forEach(c -> c.setOpacity(1)));
-    }
-
-    public void loadPlaylist() {
-        loadPlaylist(true);
-    }
-
-    public void loadPlaylistWithoutCache() {
-        loadPlaylist(false);
-    }
-
-    private void loadPlaylist(boolean loadCached) {
-        List<PlaylistItemView> cachedItems = new ArrayList<>();
-        Optional<PlaylistItemView> selected = playlistItemViews.stream().filter(v -> v.getMp3().isCurrentlyPlaying()).findFirst();
-        playlistItemViews.clear();
-
-        if (loadCached) {
-            cachedItems.addAll(PlaylistCache.load());
-            if (!cachedItems.isEmpty()) {
-                playlistItemViews.addAll(cachedItems);
-                showItems(Optional.empty(), false);
-            }
-        }
-
-        Task<List<PlaylistItemView>> playListLoaderTask = createPlaylistLoaderTask(cachedItems, selected);
-        new Thread(playListLoaderTask).start();
+        playlistView.setCellFactory(this::playListCellFactory);
+        playlistView.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener());
+        playlistView.setOnScroll(e -> cells.forEach(c -> c.setOpacity(1)));
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Task<List<PlaylistItemView>> createPlaylistLoaderTask(List<PlaylistItemView> cachedItems, Optional<PlaylistItemView> selected) {
-        Task<List<PlaylistItemView>> playListLoaderTask = new Task<List<PlaylistItemView>>() {
-            @Override
-            protected List<PlaylistItemView> call() {
-                List<Mp3> files = new PlaylistLoader().load(Paths.get(ChoicePlayerApplication.getSettings().getFolder()));
-                return IntStream.range(0, files.size()).mapToObj(index -> new PlaylistItemView(index + 1, files.get(index))).collect(toList());
-            }
-        };
-
-        playListLoaderTask.setOnSucceeded(e -> {
-            List<PlaylistItemView> items = playListLoaderTask.getValue();
-            if (cachedItems.isEmpty() && items.isEmpty()) {
-                showItems(Optional.empty(), true);
-            }
-
-            if (!cachedItems.equals(items)) {
-                reloadItems(items, selected);
-            } else if (!items.isEmpty()) {
-                Messenger.send(new PlaylistLoadedMessage());
-            }
-        });
-        return playListLoaderTask;
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void reloadItems(List<PlaylistItemView> items, Optional<PlaylistItemView> selected) {
-        log.info("Loaded playlist not equals cached playlist");
-        if (playlistItemViews.isEmpty()) {
-            playlistItemViews.addAll(items);
-            showItems(selected, true);
-        } else {
-            animateItems(OUT, ev -> {
-                playlistItemViews.clear();
-                playlistItemViews.addAll(items);
-                showItems(selected, true);
-            }, Optional.empty(), false);
-        }
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void showItems(Optional<PlaylistItemView> selected, boolean playlistLoaded) {
+    void showItems(Optional<PlaylistItemView> selected, boolean cache) {
         PauseTransition wait = new PauseTransition(Duration.millis(50));
-        wait.setOnFinished(ev -> animateInItems(selected, playlistLoaded));
+        wait.setOnFinished(ev -> animateInItems(selected, cache));
         wait.play();
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void animateInItems(Optional<PlaylistItemView> selected, boolean playlistLoaded) {
-        animateItems(IN, null, selected, playlistLoaded);
+    private void animateInItems(Optional<PlaylistItemView> selected, boolean cache) {
+        animateItems(IN, null, selected, cache);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public void animateItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected) {
-        animateSpinner(direction.getInverse());
-        animateListItems(direction, finishedEventHandler, selected, false);
+    void animateOutItems(EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected) {
+        animateSpinner(AnimationDirection.OUT.getInverse());
+        animateListItems(AnimationDirection.OUT, finishedEventHandler, selected, false);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void animateItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected, boolean playlistLoaded) {
+    void animateItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected, boolean cache) {
         animateSpinner(direction.getInverse());
-        animateListItems(direction, finishedEventHandler, selected, playlistLoaded);
+        animateListItems(direction, finishedEventHandler, selected, cache);
     }
 
     private void animateSpinner(AnimationDirection direction) {
@@ -168,7 +88,7 @@ public class PlaylistInitializer {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected, boolean playlistLoaded) {
+    private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected, boolean cache) {
         int[] delay = new int[1];
         delay[0] = 0;
         beforeListAnimatedIn = true;
@@ -178,12 +98,12 @@ public class PlaylistInitializer {
         parallelTransition.setOnFinished(e -> {
             if (direction == IN) {
                 beforeListAnimatedIn = false;
-                selectInNewItems(selected);
+                selected.ifPresent(s -> Messenger.send(new SelectItemInNewPlaylistMessage(s)));
             }
             if (finishedEventHandler != null) {
                 finishedEventHandler.handle(null);
             }
-            if (playlistLoaded && direction == IN) {
+            if (!cache && direction == IN) {
                 Messenger.send(new PlaylistLoadedMessage());
             }
         });
@@ -214,18 +134,6 @@ public class PlaylistInitializer {
         return fadeTransition;
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void selectInNewItems(Optional<PlaylistItemView> selected) {
-        selected.ifPresent(v -> {
-            Optional<PlaylistItemView> newSelected = playlistItemViews.stream().filter(item -> item.getMp3().equals(v.getMp3())).findFirst();
-            newSelected.ifPresent(s -> {
-                Optional<PlaylistCell> cell = getCell(s);
-                cell.ifPresent(c -> c.getPlaylistItem().animateToState(SELECTED));
-                s.getMp3().setCurrentlyPlaying(true);
-            });
-        });
-    }
-
     private ParallelTransition getSpinnerAnimation(AnimationDirection direction) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(ANIMATION_DURATION), spinner);
         fadeTransition.setFromValue(direction == IN ? 0 : 1);
@@ -252,16 +160,16 @@ public class PlaylistInitializer {
         return cell;
     }
 
-    public Optional<PlaylistCell> getCell(PlaylistItemView playlistItemView) {
+    Optional<PlaylistCell> getCell(PlaylistItemView playlistItemView) {
         return cells.stream().filter(c -> playlistItemView.equals(c.getPlaylistItemView())).findFirst();
     }
 
-    public List<PlaylistCell> getCellsAfter(PlaylistItemView playlistItemView) {
+    List<PlaylistCell> getCellsAfter(PlaylistItemView playlistItemView) {
         return cells.stream().filter(c -> c.getPlaylistItemView() != null && playlistItemView.getIndex() < c.getPlaylistItemView().getIndex())
                 .sorted(Comparator.comparing(c2 -> c2.getPlaylistItemView().getIndex())).collect(toList());
     }
 
-    public void changeTheme() {
+    void changeTheme() {
         cells.forEach(PlaylistCell::changeTheme);
     }
 }
