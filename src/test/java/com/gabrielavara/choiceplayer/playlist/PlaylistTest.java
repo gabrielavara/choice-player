@@ -4,9 +4,11 @@ import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +27,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -39,37 +43,34 @@ import javafx.event.EventHandler;
 @RunWith(JfxRunner.class)
 public class PlaylistTest {
 
-    private static final String CACHE_JSON = "cache.json";
+    private static final String FOLDER = "folder";
 
     @Mock
-    private JFXListView<PlaylistItemView> playlistView;
+    private JFXListView<PlaylistItemView> playlistViewMock;
     @Mock
-    private PlaylistAnimator playlistAnimator;
+    private PlaylistAnimator playlistAnimatorMock;
     @Mock
-    private PlaylistLoader playlistLoader;
+    private PlaylistLoader playlistLoaderMock;
 
     private ObservableList<PlaylistItemView> playlistItemViews = FXCollections.observableArrayList();
     private Playlist playlist;
+    private int playlistLoadedMessageSent;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        playlist = new Playlist(playlistView, playlistItemViews, playlistAnimator) {
+        playlist = new Playlist(playlistViewMock, playlistItemViews, playlistAnimatorMock) {
             @Override
             PlaylistLoader createPlaylistLoader() {
-                return playlistLoader;
+                return playlistLoaderMock;
             }
 
             @Override
-            Path getCacheFile() {
-                return Paths.get(CACHE_JSON);
+            Path getFolder() {
+                return Paths.get(FOLDER);
             }
         };
-    }
-
-    @Test
-    public void testItemsSet() {
-        verify(playlistView).setItems(playlistItemViews);
+        Messenger.register(PlaylistLoadedMessage.class, this::playlistLoaded);
     }
 
     @Test
@@ -81,7 +82,7 @@ public class PlaylistTest {
         playlist.getCell(playlistItemView);
 
         //then
-        verify(playlistAnimator).getCell(playlistItemView);
+        verify(playlistAnimatorMock).getCell(playlistItemView);
     }
 
     @Test
@@ -93,7 +94,7 @@ public class PlaylistTest {
         playlist.getCellsAfter(playlistItemView);
 
         //then
-        verify(playlistAnimator).getCellsAfter(playlistItemView);
+        verify(playlistAnimatorMock).getCellsAfter(playlistItemView);
     }
 
     @Test
@@ -102,16 +103,16 @@ public class PlaylistTest {
         playlist.changeTheme();
 
         //then
-        verify(playlistAnimator).changeTheme();
+        verify(playlistAnimatorMock).changeTheme();
     }
 
     @Test
     public void testLoadWithCacheNotEquals() throws InvalidDataException, IOException, UnsupportedTagException {
         //given
+        PlaylistItemView itemView = createPlaylistItemView(createMp3());
         PlaylistCache.save(PlaylistCacheTestUtil.createPlaylist());
         List<Mp3> mp3List = singletonList(createMp3());
-        PlaylistItemView itemView = createPlaylistItemView(createMp3());
-        when(playlistLoader.load(any())).thenReturn(mp3List);
+        when(playlistLoaderMock.load(Paths.get(FOLDER))).thenReturn(mp3List);
         mockAnimateOut();
 
         //when
@@ -120,21 +121,104 @@ public class PlaylistTest {
                 .atMost(5, SECONDS).until(containsPlaylist(itemView));
 
         //then
-        verify(playlistLoader).load(Paths.get(CACHE_JSON));
-        verify(playlistAnimator).showItems(Optional.empty(), true);
-        verify(playlistAnimator).showItems(Optional.empty(), false);
+        verify(playlistLoaderMock).load(Paths.get(FOLDER));
+        verify(playlistAnimatorMock).showItems(Optional.empty(), true);
+        verify(playlistAnimatorMock).showItems(Optional.empty(), false);
+        assertEquals(0, playlistLoadedMessageSent);
 
         // tear down
         PlaylistCacheTestUtil.deleteCacheFile();
     }
 
+    @Test
+    public void testLoadWithCacheEquals() throws IOException {
+        // given
+        PlaylistItemView itemView = createPlaylistItemView(createMp3());
+        PlaylistCache.save(singletonList(itemView));
+        List<Mp3> mp3List = singletonList(createMp3());
+        when(playlistLoaderMock.load(Paths.get(FOLDER))).thenReturn(mp3List);
+        mockAnimateOut();
+
+        // when
+        playlist.load();
+        Awaitility.with().pollInterval(250, MILLISECONDS).await()
+                        .atMost(5, SECONDS).until(containsPlaylist(itemView));
+
+        // then
+        verify(playlistLoaderMock).load(Paths.get(FOLDER));
+        verify(playlistAnimatorMock).showItems(Optional.empty(), true);
+        verify(playlistAnimatorMock, never()).showItems(Optional.empty(), false);
+        assertEquals(1, playlistLoadedMessageSent);
+
+        // tear down
+        PlaylistCacheTestUtil.deleteCacheFile();
+    }
+
+    @Test
+    public void testReloadCacheEquals() throws IOException {
+        // given
+        PlaylistItemView itemView = createPlaylistItemView(createMp3());
+        PlaylistCache.save(singletonList(itemView));
+        List<Mp3> mp3List = singletonList(createMp3());
+        when(playlistLoaderMock.load(Paths.get(FOLDER))).thenReturn(mp3List);
+        mockAnimateOut();
+
+        // when
+        playlist.reload();
+        Awaitility.with().pollInterval(250, MILLISECONDS).await()
+                        .atMost(5, SECONDS).until(containsPlaylist(itemView));
+
+        // then
+        verify(playlistLoaderMock).load(Paths.get(FOLDER));
+        verify(playlistAnimatorMock).showItems(Optional.empty(), true);
+        verify(playlistAnimatorMock, never()).showItems(Optional.empty(), false);
+        assertEquals(1, playlistLoadedMessageSent);
+
+        // tear down
+        PlaylistCacheTestUtil.deleteCacheFile();
+    }
+
+    @Test
+    public void testReloadWithoutCache() throws IOException {
+        // given
+        PlaylistItemView itemView = createPlaylistItemView(createMp3());
+        PlaylistCache.save(singletonList(itemView));
+        List<Mp3> mp3List = singletonList(createMp3());
+        when(playlistLoaderMock.load(Paths.get(FOLDER))).thenReturn(mp3List);
+        mockAnimateOut();
+
+        // when
+        playlist.reloadWithoutCache();
+        Awaitility.with().pollInterval(250, MILLISECONDS).await()
+                        .atMost(5, SECONDS).until(containsPlaylist(itemView));
+
+        // then
+        verify(playlistLoaderMock).load(Paths.get(FOLDER));
+        verify(playlistAnimatorMock, never()).showItems(Optional.empty(), true);
+        verify(playlistAnimatorMock).showItems(Optional.empty(), false);
+        assertEquals(0, playlistLoadedMessageSent);
+
+        // tear down
+        PlaylistCacheTestUtil.deleteCacheFile();
+    }
+
+    private void playlistLoaded(PlaylistLoadedMessage m) {
+        playlistLoadedMessageSent++;
+    }
+
     @SuppressWarnings("unchecked")
     private void mockAnimateOut() {
         doAnswer(invocation -> {
-            EventHandler<ActionEvent> argument = (EventHandler<ActionEvent>) invocation.getArgument(1);
-            argument.handle(null);
+            EventHandler<ActionEvent> eventHandler = (EventHandler<ActionEvent>) invocation.getArgument(1);
+            eventHandler.handle(null);
             return null;
-        }).when(playlistAnimator).animateItems(eq(OUT), any(), eq(Optional.empty()), eq(false));
+        }).when(playlistAnimatorMock).animateItems(eq(OUT), any(), eq(Optional.empty()), eq(false));
+
+        doAnswer(invocation -> {
+            EventHandler<ActionEvent> eventHandler = (EventHandler<ActionEvent>) invocation.getArgument(0);
+            eventHandler.handle(null);
+            return null;
+        }).when(playlistAnimatorMock).animateOutItems(any(), eq(Optional.empty()));
     }
 
     private Callable<Boolean> containsPlaylist(PlaylistItemView playlistItemView) {
@@ -154,13 +238,5 @@ public class PlaylistTest {
         mp3.setYear("2017");
         mp3.setTrack("1");
         return mp3;
-    }
-
-    @Test
-    public void testReload() {
-    }
-
-    @Test
-    public void testReloadWithoutCache() {
     }
 }

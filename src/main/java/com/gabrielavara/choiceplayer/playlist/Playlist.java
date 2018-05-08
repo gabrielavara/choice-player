@@ -92,9 +92,9 @@ public class Playlist {
         Task<List<PlaylistItemView>> playListLoaderTask = new Task<List<PlaylistItemView>>() {
             @Override
             protected List<PlaylistItemView> call() {
-                Path cacheFile = getCacheFile();
-                log.info("Load playlist from {}", cacheFile);
-                List<Mp3> files = createPlaylistLoader().load(cacheFile);
+                Path folder = getFolder();
+                log.info("Load playlist from {}", folder);
+                List<Mp3> files = createPlaylistLoader().load(folder);
                 return IntStream.range(0, files.size()).mapToObj(index -> new PlaylistItemView(index + 1, files.get(index))).collect(toList());
             }
         };
@@ -121,7 +121,7 @@ public class Playlist {
         return new PlaylistLoader();
     }
 
-    Path getCacheFile() {
+    Path getFolder() {
         return Paths.get(ChoicePlayerApplication.getSettings().getFolder());
     }
 
