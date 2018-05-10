@@ -118,7 +118,7 @@ public class PlaylistTest {
         //when
         playlist.load();
         Awaitility.with().pollInterval(250, MILLISECONDS).await()
-                .atMost(5, SECONDS).until(containsPlaylist(itemView));
+                .atMost(2, SECONDS).until(containsPlaylist(itemView));
 
         //then
         verify(playlistLoaderMock).load(Paths.get(FOLDER));
@@ -142,7 +142,7 @@ public class PlaylistTest {
         // when
         playlist.load();
         Awaitility.with().pollInterval(250, MILLISECONDS).await()
-                        .atMost(5, SECONDS).until(containsPlaylist(itemView));
+                .atMost(2, SECONDS).until(containsPlaylist(itemView));
 
         // then
         verify(playlistLoaderMock).load(Paths.get(FOLDER));
@@ -166,7 +166,7 @@ public class PlaylistTest {
         // when
         playlist.reload();
         Awaitility.with().pollInterval(250, MILLISECONDS).await()
-                        .atMost(5, SECONDS).until(containsPlaylist(itemView));
+                .atMost(2, SECONDS).until(containsPlaylist(itemView));
 
         // then
         verify(playlistLoaderMock).load(Paths.get(FOLDER));
@@ -190,7 +190,7 @@ public class PlaylistTest {
         // when
         playlist.reloadWithoutCache();
         Awaitility.with().pollInterval(250, MILLISECONDS).await()
-                        .atMost(5, SECONDS).until(containsPlaylist(itemView));
+                .atMost(2, SECONDS).until(containsPlaylist(itemView));
 
         // then
         verify(playlistLoaderMock).load(Paths.get(FOLDER));
