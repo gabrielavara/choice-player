@@ -68,7 +68,7 @@ public class BeatportUpdater {
     }
 
     private void update(Mp3 mp3) {
-        log.info("Search for: {}", mp3);
+        log.info("\nSearch for: {}", mp3);
         Optional<BeatportAlbum> beatportAlbum = beatportSearcher.search(mp3);
         beatportAlbum.ifPresent(album -> {
             Optional<BeatportTrack> track = getBestTrack(mp3, album);
