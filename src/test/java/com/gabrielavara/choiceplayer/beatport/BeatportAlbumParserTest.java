@@ -51,9 +51,9 @@ public class BeatportAlbumParserTest {
     @Test
     public void testGetLength() {
         // when
-        int length = BeatportAlbumParser.getLength("6:44 / 128 BPM");
+        int length = BeatportAlbumParser.getLength("2:18:01 / 128 BPM");
 
         // then
-        assertEquals(6 * 60 + 44, length);
+        assertEquals(2 * 60 * 60 + 18 * 60 + 1, length);
     }
 }

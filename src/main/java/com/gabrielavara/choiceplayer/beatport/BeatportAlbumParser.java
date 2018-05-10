@@ -109,10 +109,15 @@ public class BeatportAlbumParser extends BeatportParser<BeatportRelease, Beatpor
     }
 
     static int getLength(String lengthAndBpm) {
-        int i1 = lengthAndBpm.indexOf('/');
-        int i2 = lengthAndBpm.indexOf(':');
-        int minutes = Integer.parseInt(lengthAndBpm.substring(0, i2));
-        int seconds = Integer.parseInt(lengthAndBpm.substring(i2 + 1, i1 - 1));
-        return minutes * 60 + seconds;
+        int index = lengthAndBpm.indexOf('/');
+        String length = lengthAndBpm.substring(0, index - 1);
+        String[] parts = length.split(":");
+        int multiplier = 1;
+        int sumSeconds = 0;
+        for (int i = parts.length - 1; i >= 0; i--) {
+            sumSeconds += multiplier * Integer.parseInt(parts[i]);
+            multiplier *= 60;
+        }
+        return sumSeconds;
     }
 }
