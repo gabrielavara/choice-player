@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.google.common.base.Joiner;
 
@@ -68,7 +69,8 @@ public class BeatportUpdater {
     }
 
     private void update(Mp3 mp3) {
-        log.info("\nSearch for: {}", mp3);
+        log.info("\n");
+        log.info("Search for: {}", mp3);
         Optional<BeatportAlbum> beatportAlbum = beatportSearcher.search(mp3);
         beatportAlbum.ifPresent(album -> {
             Optional<BeatportTrack> track = getBestTrack(mp3, album);
@@ -90,8 +92,11 @@ public class BeatportUpdater {
             int minIndex = distances.indexOf(distance);
             BeatportTrack track = album.getTracks().get(minIndex);
             boolean trackEquals = track.getTrackNumber().equals(String.valueOf(mp3.getTrackAsInt()));
-            log.info("Beatport track number: {}, Mp3 track number: {}, Distance: {}", track.getTrackNumber(), mp3.getTrackAsInt(), distance);
-            return mp3.getTrackAsInt() == 0 || trackEquals || distance < MAX_DISTANCE ? Optional.of(track) : Optional.empty();
+            boolean lengthEquals = (track.getLength() + 1 >= mp3.getLength() / 1000) || (track.getLength() - 1 <= mp3.getLength() / 1000);
+            String beatportLength = TimeFormatter.getFormattedLength(track.getLength());
+            String mp3Length = TimeFormatter.getFormattedLength((int) (mp3.getLength() / 1000));
+            log.info("Beatport track number: {}, Mp3 track number: {}, Beatport length: {}, Mp3 length: {}, Distance: {}", track.getTrackNumber(), mp3.getTrackAsInt(), beatportLength, mp3Length, distance);
+            return mp3.getTrackAsInt() == 0 || (trackEquals && lengthEquals) || lengthEquals || distance < MAX_DISTANCE ? Optional.of(track) : Optional.empty();
         } else {
             return Optional.empty();
         }

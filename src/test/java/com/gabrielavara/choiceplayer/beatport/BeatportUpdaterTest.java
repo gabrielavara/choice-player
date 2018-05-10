@@ -9,7 +9,7 @@ public class BeatportUpdaterTest {
     @Test
     public void testGetTitle() {
         // given
-        BeatportTrack track = new BeatportTrack("", singletonList("artist"), "hello feat. artist", "mix", singletonList("genre"), 120);
+        BeatportTrack track = new BeatportTrack("", singletonList("artist"), "hello feat. artist", "mix", singletonList("genre"), 120, 360);
 
         // when
         String title = BeatportUpdater.getTitle(track);
@@ -17,11 +17,11 @@ public class BeatportUpdaterTest {
         // then
         assertEquals("hello", title);
     }
-    
+
     @Test
     public void testGetTitleArtistFirst() {
         // given
-        BeatportTrack track = new BeatportTrack("", singletonList("artist"), "artist hello", "mix", singletonList("genre"), 120);
+        BeatportTrack track = new BeatportTrack("", singletonList("artist"), "artist hello", "mix", singletonList("genre"), 120, 360);
 
         // when
         String title = BeatportUpdater.getTitle(track);
@@ -33,7 +33,7 @@ public class BeatportUpdaterTest {
     @Test
     public void testGetTitleWithoutArtist() {
         // given
-        BeatportTrack track = new BeatportTrack("", singletonList("artist"), "hello", "mix", singletonList("genre"), 120);
+        BeatportTrack track = new BeatportTrack("", singletonList("artist"), "hello", "mix", singletonList("genre"), 120, 360);
 
         // when
         String title = BeatportUpdater.getTitle(track);

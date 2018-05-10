@@ -89,8 +89,9 @@ public class BeatportAlbumParser extends BeatportParser<BeatportRelease, Beatpor
         WebElement mixElement = driver.findElement(By.xpath(format(MIX_XPATH, i)));
         String mix = mixElement.getText();
 
-        WebElement bpmElement = driver.findElement(By.xpath(format(BPM_XPATH, i)));
-        int bpm = getBpm(bpmElement.getText());
+        WebElement lengthAndBpmElement = driver.findElement(By.xpath(format(BPM_XPATH, i)));
+        int bpm = getBpm(lengthAndBpmElement.getText());
+        int length = getLength(lengthAndBpmElement.getText());
 
         List<WebElement> artistElements = driver.findElements(By.xpath(format(ARTISTS_XPATH, i)));
         List<String> artists = getTexts(artistElements);
@@ -98,12 +99,20 @@ public class BeatportAlbumParser extends BeatportParser<BeatportRelease, Beatpor
         List<WebElement> genreElements = driver.findElements(By.xpath(format(GENRES_XPATH, i)));
         List<String> genres = getTexts(genreElements);
 
-        return new BeatportTrack(number, artists, title, mix, genres, bpm);
+        return new BeatportTrack(number, artists, title, mix, genres, bpm, length);
     }
 
     static int getBpm(String lengthAndBpm) {
         int i1 = lengthAndBpm.indexOf('/');
         int i2 = lengthAndBpm.indexOf("BPM");
         return Integer.parseInt(lengthAndBpm.substring(i1 + 2, i2 - 1));
+    }
+
+    static int getLength(String lengthAndBpm) {
+        int i1 = lengthAndBpm.indexOf('/');
+        int i2 = lengthAndBpm.indexOf(':');
+        int minutes = Integer.parseInt(lengthAndBpm.substring(0, i2));
+        int seconds = Integer.parseInt(lengthAndBpm.substring(i2 + 1, i1 - 1));
+        return minutes * 60 + seconds;
     }
 }

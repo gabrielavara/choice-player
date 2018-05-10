@@ -40,8 +40,8 @@ public class BeatportSearcherTest {
         expected.setLabel("Anjunabeats");
         expected.setCatalog("ANJ395D");
 
-        BeatportTrack track1 = new BeatportTrack("1", expectedArtists, "Amun", "Original Mix", singletonList("Trance"), 128);
-        BeatportTrack track2 = new BeatportTrack("2", expectedArtists, "Meta", "Original Mix", singletonList("Trance"), 128);
+        BeatportTrack track1 = new BeatportTrack("1", expectedArtists, "Amun", "Original Mix", singletonList("Trance"), 128, 404);
+        BeatportTrack track2 = new BeatportTrack("2", expectedArtists, "Meta", "Original Mix", singletonList("Trance"), 128, 417);
         expected.setTracks(asList(track1, track2));
 
         return expected;

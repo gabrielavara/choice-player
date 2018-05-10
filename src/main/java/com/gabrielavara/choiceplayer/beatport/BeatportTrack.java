@@ -16,4 +16,5 @@ class BeatportTrack implements BeatportSearchOutput, BeatportSearchInput {
     private String mix;
     private List<String> genres;
     private int bpm;
+    private int length;
 }
