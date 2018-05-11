@@ -55,6 +55,7 @@ public class BeatportUpdater {
             protected Void call() {
                 playlistItems.forEach(pi -> {
                     try {
+                        log.info("Index on playlist: {}", pi.getIndex());
                         Mp3 mp3 = pi.getMp3();
                         if (mp3.shouldSearchForInfo()) {
                             update(mp3);
@@ -69,7 +70,6 @@ public class BeatportUpdater {
     }
 
     private void update(Mp3 mp3) {
-        log.info("\n");
         log.info("Search for: {}", mp3);
         Optional<BeatportAlbum> beatportAlbum = beatportSearcher.search(mp3);
         beatportAlbum.ifPresent(album -> {

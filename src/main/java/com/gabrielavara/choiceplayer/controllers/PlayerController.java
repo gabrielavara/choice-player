@@ -47,6 +47,7 @@ import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt;
 import com.gabrielavara.choiceplayer.controls.bigalbumart.Direction;
 import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton;
 import com.gabrielavara.choiceplayer.controls.overlay.Overlay;
+import com.gabrielavara.choiceplayer.controls.rotatingbutton.RotatingButton;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
 import com.gabrielavara.choiceplayer.controls.toast.Toast;
 import com.gabrielavara.choiceplayer.dto.Mp3;
@@ -123,9 +124,9 @@ public class PlayerController implements Initializable {
     @FXML
     private HBox buttonHBox;
     @FXML
-    private GrowingButton refreshButton;
+    private RotatingButton refreshButton;
     @FXML
-    private GrowingButton settingsButton;
+    private RotatingButton settingsButton;
     @FXML
     private StackPane rootContainer;
     @FXML
@@ -473,8 +474,14 @@ public class PlayerController implements Initializable {
         timeSlider.valueProperty().addListener(ov -> seek(true));
         likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
         dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
-        refreshButton.setOnMouseClicked(e -> playlist.reloadWithoutCache());
-        settingsButton.setOnMouseClicked(e -> settingsAnimator.animate(IN));
+        refreshButton.setOnMouseClicked(e -> {
+            refreshButton.rotate();
+            playlist.reloadWithoutCache();
+        });
+        settingsButton.setOnMouseClicked(e -> {
+            settingsButton.rotate();
+            settingsAnimator.animate(IN);
+        });
     }
 
     private void disableTimeSliderUpdate() {

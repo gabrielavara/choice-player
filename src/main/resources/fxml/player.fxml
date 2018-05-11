@@ -4,6 +4,7 @@
 <?import com.gabrielavara.choiceplayer.controls.animatedlabel.AnimatedLabel?>
 <?import com.gabrielavara.choiceplayer.controls.bigalbumart.BigAlbumArt?>
 <?import com.gabrielavara.choiceplayer.controls.growingbutton.GrowingButton?>
+<?import com.gabrielavara.choiceplayer.controls.rotatingbutton.RotatingButton?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXSpinner?>
@@ -112,8 +113,8 @@
                 <StackPane.margin>
                     <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
                 </StackPane.margin>
-                <GrowingButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
-                               minWidth="52.0" styleClass="button-accent-color">
+                <RotatingButton fx:id="refreshButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
+                                minWidth="52.0" styleClass="button-accent-color">
                     <graphic>
                         <MaterialDesignIconView glyphName="REFRESH" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
                                                 styleClass="icon"/>
@@ -121,8 +122,8 @@
                     <HBox.margin>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
                     </HBox.margin>
-                </GrowingButton>
-                <GrowingButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
+                </RotatingButton>
+                <RotatingButton fx:id="settingsButton" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" minHeight="52.0"
                                minWidth="52.0" styleClass="button-accent-color">
                     <graphic>
                         <MaterialDesignIconView glyphName="SETTINGS" size="36" strokeType="OUTSIDE" strokeWidth="0.0"
@@ -131,7 +132,7 @@
                     <HBox.margin>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
                     </HBox.margin>
-                </GrowingButton>
+                </RotatingButton>
             </HBox>
         </StackPane>
     </HBox>
