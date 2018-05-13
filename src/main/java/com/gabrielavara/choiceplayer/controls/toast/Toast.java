@@ -97,7 +97,7 @@ public class Toast {
             createInTransition();
             inTransition.play();
         }
-        isShowed = !isShowed;
+        isShowed = true;
     }
 
     private void stopTransitions() {
@@ -134,7 +134,7 @@ public class Toast {
             outTransition.setOnFinished(e -> stage.hide());
             outTransition.play();
         }
-        isShowed = !isShowed;
+        isShowed = false;
     }
 
     private TranslateTransition getTranslateTransition() {
