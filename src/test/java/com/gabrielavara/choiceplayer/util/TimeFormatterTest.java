@@ -1,22 +1,23 @@
 package com.gabrielavara.choiceplayer.util;
 
-import javafx.util.Duration;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import javafx.util.Duration;
 
 public class TimeFormatterTest {
     @Test
     public void getFormattedTimes() {
         // given
-        Duration elapsed = Duration.minutes(1).add(Duration.seconds(2));
-        Duration duration = Duration.minutes(3).add(Duration.seconds(4));
+        Duration elapsed = Duration.hours(1).add(Duration.minutes(1)).add(Duration.seconds(2));
+        Duration duration = Duration.hours(1).add(Duration.minutes(3)).add(Duration.seconds(4));
 
         // when
         TimeFormatter.Times formattedTimes = TimeFormatter.getFormattedTimes(elapsed, duration);
 
         // then
-        assertEquals("1:02", formattedTimes.getElapsed());
+        assertEquals("1:01:02", formattedTimes.getElapsed());
         assertEquals("2:02", formattedTimes.getRemaining());
     }
 

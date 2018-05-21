@@ -34,13 +34,8 @@ public class TimeFormatter {
 
     private static Time getTime(int seconds) {
         int elapsedHours = seconds / (60 * 60);
-        int s = seconds;
-        if (elapsedHours > 0) {
-            s = seconds - (elapsedHours * 60 * 60);
-        }
-        int elapsedMinutes = s / 60;
-        int elapsedSeconds = s - elapsedHours * 60 * 60 - elapsedMinutes * 60;
-
+        int elapsedMinutes = (seconds - elapsedHours * 60 * 60) / 60;
+        int elapsedSeconds = seconds - elapsedHours * 60 * 60 - elapsedMinutes * 60;
         return new Time.TimeBuilder().hours(elapsedHours).minutes(elapsedMinutes).seconds(elapsedSeconds).build();
     }
 
