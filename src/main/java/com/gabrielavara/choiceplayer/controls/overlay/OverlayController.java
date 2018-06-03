@@ -25,4 +25,9 @@ public class OverlayController implements Initializable {
         Color accentColor = ChoicePlayerApplication.getColors().getAccentColor();
         root.setBackground(new Background(new BackgroundFill(accentColor, null, null)));
     }
+
+    void setSize(double height, double width) {
+        root.setPrefHeight(height);
+        root.setPrefWidth(width);
+    }
 }

@@ -37,5 +37,9 @@ public class Overlay extends StackPane {
     public void setBackground() {
         controller.setBackground();
     }
+
+    public void setSize(double height, double width) {
+        controller.setSize(height, width);
+    }
 }
 

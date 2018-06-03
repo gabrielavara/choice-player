@@ -7,6 +7,7 @@ import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
+import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
 import com.gabrielavara.choiceplayer.controls.overlay.Overlay;
 import com.gabrielavara.choiceplayer.controls.settings.Settings;
@@ -31,6 +32,7 @@ public class SettingsAnimator {
         this.settings.setMouseTransparent(true);
         this.overlay.setOpacity(0);
         this.overlay.setTranslateX(SETTINGS_TRANSLATE_X);
+        this.overlay.setMouseTransparent(true);
     }
 
     public void animate(AnimationDirection direction) {
@@ -43,6 +45,7 @@ public class SettingsAnimator {
 
     private void animate(Node toRemove, Node toAdd, SettingsAnimatorFinishedCallback callback) {
         overlay.setBackground();
+        overlay.setSize(ChoicePlayerApplication.getStage().getHeight(), ChoicePlayerApplication.getStage().getWidth());
         overlay.setOpacity(1);
         toAdd.setMouseTransparent(true);
 
@@ -93,6 +96,7 @@ public class SettingsAnimator {
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(LONG_ANIMATION_DURATION), overlay);
         translateTransition.setFromX(0);
         translateTransition.setToX(overlay.getWidth());
+        translateTransition.setOnFinished(e -> overlay.setOpacity(0));
         return translateTransition;
     }
 
