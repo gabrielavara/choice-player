@@ -142,6 +142,7 @@
                             <excludes>
                                 <exclude>**/Beatport*.java</exclude>
                                 <exclude>**/PlaylistTest.java</exclude>
+                                <exclude>**/PlaylistAnimatorTest.java</exclude>
                                 <exclude>**/ChoicePlayerApplicationTests.java</exclude>
                             </excludes>
                         </configuration>
