@@ -1,5 +1,41 @@
 package com.gabrielavara.choiceplayer.controllers;
 
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.BACKGROUND_IMAGE_OPACITY;
+import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
+import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
+import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
+import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.BACKWARD;
+import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
+import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
+import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
+import static com.gabrielavara.choiceplayer.util.Opinion.LIKE;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
+import static javafx.scene.media.MediaPlayer.Status.HALTED;
+import static javafx.scene.media.MediaPlayer.Status.PAUSED;
+import static javafx.scene.media.MediaPlayer.Status.READY;
+import static javafx.scene.media.MediaPlayer.Status.STOPPED;
+import static javafx.scene.media.MediaPlayer.Status.UNKNOWN;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.beatport.BeatportUpdater;
 import com.gabrielavara.choiceplayer.controls.actionicon.Action;
@@ -45,6 +81,7 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSpinner;
+
 import de.felixroske.jfxsupport.FXMLController;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -73,41 +110,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.Getter;
-import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionTimeoutException;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.BACKGROUND_IMAGE_OPACITY;
-import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
-import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
-import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
-import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
-import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
-import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.BACKWARD;
-import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
-import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
-import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
-import static com.gabrielavara.choiceplayer.util.Opinion.LIKE;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
-import static javafx.scene.media.MediaPlayer.Status.HALTED;
-import static javafx.scene.media.MediaPlayer.Status.PAUSED;
-import static javafx.scene.media.MediaPlayer.Status.READY;
-import static javafx.scene.media.MediaPlayer.Status.STOPPED;
-import static javafx.scene.media.MediaPlayer.Status.UNKNOWN;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 @FXMLController
 public class PlayerController implements Initializable {
@@ -293,7 +295,6 @@ public class PlayerController implements Initializable {
         int index = message.getPlaylistItemView().getIndex() - 1;
         MultipleSelectionModel<PlaylistItemView> selectionModel = playlistView.getSelectionModel();
         selectionModel.select(index);
-        playlistView.scrollTo(message.getPlaylistItemView());
     }
 
     private void selectionChanged(SelectionChangedMessage message) {
