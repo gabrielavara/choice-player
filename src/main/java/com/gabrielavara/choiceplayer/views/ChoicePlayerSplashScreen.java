@@ -37,6 +37,7 @@ public class ChoicePlayerSplashScreen extends SplashScreen {
 
         JFXSpinner spinner = new JFXSpinner();
         spinner.setTranslateX(-1);
+        spinner.setTranslateY(-1);
 
         StackPane imageStackPane = new StackPane();
         imageStackPane.getChildren().addAll(circle, spinner, imageView);
