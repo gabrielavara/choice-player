@@ -165,7 +165,11 @@ public class Mp3 implements BeatportSearchInput {
                 break;
             }
         }
-        return Integer.valueOf(sb.toString());
+        String trackAsString = sb.toString();
+        if (trackAsString.length() == 0) {
+            return 1;
+        }
+        return Integer.valueOf(trackAsString);
     }
 
     @JsonIgnore

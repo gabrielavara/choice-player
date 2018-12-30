@@ -86,6 +86,8 @@ public class PlaylistLoader {
             log.error("Unsupported tag in file: {}. Message: {}", path, e.getMessage());
         } catch (InvalidDataException e) {
             log.error("Invalid data for file: {}. Message: {}", path, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error for file: {}. Message: {}", path, e.getMessage());
         }
         return null;
     }
