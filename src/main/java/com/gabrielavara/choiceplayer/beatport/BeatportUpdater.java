@@ -1,7 +1,16 @@
 package com.gabrielavara.choiceplayer.beatport;
 
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toList;
+import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.messages.SnackBarMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
+import com.gabrielavara.choiceplayer.util.TimeFormatter;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import com.google.common.base.Joiner;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,17 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.choiceplayer.dto.Mp3;
-import com.gabrielavara.choiceplayer.util.TimeFormatter;
-import com.gabrielavara.choiceplayer.views.PlaylistItemView;
-import com.google.common.base.Joiner;
-
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
+import static com.gabrielavara.choiceplayer.Constants.BEATPORT_UPDATE_FINISHED;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toList;
 
 public class BeatportUpdater {
     private static final int MAX_DISTANCE = 10;
@@ -64,6 +65,7 @@ public class BeatportUpdater {
                         log.error("Exception occurred during Beatport search", e);
                     }
                 });
+                Messenger.send(new SnackBarMessage(BEATPORT_UPDATE_FINISHED));
                 return null;
             }
         };

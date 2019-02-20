@@ -1,5 +1,29 @@
 package com.gabrielavara.choiceplayer.filemover;
 
+import com.gabrielavara.choiceplayer.controls.actionicon.Action;
+import com.gabrielavara.choiceplayer.messages.ActionMessage;
+import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
+import com.gabrielavara.choiceplayer.messages.SnackBarMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
+import com.gabrielavara.choiceplayer.playlist.Playlist;
+import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
+import com.gabrielavara.choiceplayer.util.Opinion;
+import com.gabrielavara.choiceplayer.views.PlaylistCell;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
 import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_DELETE_ORIGINAL_FILE;
 import static com.gabrielavara.choiceplayer.Constants.COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN;
@@ -9,48 +33,17 @@ import static com.gabrielavara.choiceplayer.Constants.SHORT_DELAY;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_BOTH;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.stream.IntStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.choiceplayer.controls.actionicon.Action;
-import com.gabrielavara.choiceplayer.messages.ActionMessage;
-import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
-import com.gabrielavara.choiceplayer.messenger.Messenger;
-import com.gabrielavara.choiceplayer.playlist.Playlist;
-import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
-import com.gabrielavara.choiceplayer.util.Opinion;
-import com.gabrielavara.choiceplayer.views.PlaylistCell;
-import com.gabrielavara.choiceplayer.views.PlaylistItemView;
-import com.jfoenix.controls.JFXSnackbar;
-
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.util.Duration;
-
 public abstract class FileMover {
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");
 
     private final PlaylistUtil playlistUtil;
     private final ObservableList<PlaylistItemView> playlistItemViews;
     private final Playlist playlist;
-    private final JFXSnackbar snackBar;
-    private final ResourceBundle resourceBundle;
 
-    FileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> playlistItemViews, Playlist playlist, JFXSnackbar snackBar) {
+    FileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> playlistItemViews, Playlist playlist) {
         this.playlistUtil = playlistUtil;
         this.playlistItemViews = playlistItemViews;
         this.playlist = playlist;
-        this.snackBar = snackBar;
-        resourceBundle = ResourceBundle.getBundle("language.player");
     }
 
     public void moveFile() {
@@ -84,9 +77,9 @@ public abstract class FileMover {
         task.setOnFailed(e -> {
             log.error("Could not move to {}: {}", getTarget(), item.getMp3());
             String message = RECYCLE_BIN.equals(getTarget())
-                    ? resourceBundle.getString(COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN)
-                    : resourceBundle.getString(COULD_NOT_DELETE_ORIGINAL_FILE);
-            snackBar.enqueue(new JFXSnackbar.SnackbarEvent(message));
+                    ? COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN
+                    : COULD_NOT_DELETE_ORIGINAL_FILE;
+            Messenger.send(new SnackBarMessage(message));
         });
         return task;
     }

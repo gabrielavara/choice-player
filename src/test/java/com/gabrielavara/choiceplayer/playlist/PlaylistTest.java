@@ -1,5 +1,31 @@
 package com.gabrielavara.choiceplayer.playlist;
 
+import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import com.jfoenix.controls.JFXListView;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.UnsupportedTagException;
+import de.saxsys.javafx.test.JfxRunner;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import org.awaitility.Awaitility;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+
 import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -11,34 +37,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Callable;
-
-import org.awaitility.Awaitility;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import com.gabrielavara.choiceplayer.dto.Mp3;
-import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
-import com.gabrielavara.choiceplayer.messenger.Messenger;
-import com.gabrielavara.choiceplayer.views.PlaylistItemView;
-import com.jfoenix.controls.JFXListView;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.UnsupportedTagException;
-
-import de.saxsys.javafx.test.JfxRunner;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 @RunWith(JfxRunner.class)
 public class PlaylistTest {
@@ -206,16 +204,15 @@ public class PlaylistTest {
         playlistLoadedMessageSent++;
     }
 
-    @SuppressWarnings("unchecked")
     private void mockAnimateOut() {
         doAnswer(invocation -> {
-            EventHandler<ActionEvent> eventHandler = (EventHandler<ActionEvent>) invocation.getArgument(1);
+            EventHandler<ActionEvent> eventHandler = invocation.getArgument(1);
             eventHandler.handle(null);
             return null;
         }).when(playlistAnimatorMock).animateItems(eq(OUT), any(), eq(Optional.empty()), eq(false));
 
         doAnswer(invocation -> {
-            EventHandler<ActionEvent> eventHandler = (EventHandler<ActionEvent>) invocation.getArgument(0);
+            EventHandler<ActionEvent> eventHandler = invocation.getArgument(0);
             eventHandler.handle(null);
             return null;
         }).when(playlistAnimatorMock).animateOutItems(any(), eq(Optional.empty()));

@@ -48,6 +48,11 @@ public class Constants {
     public static final String COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN = "couldNotMoveFileToRecycleBin";
     public static final String COULD_NOT_DELETE_ORIGINAL_FILE = "couldNotDeleteOriginalFile";
 
+    public static final String LOAD_FILES_FROM_DISK = "loadFilesFromDisk";
+    public static final String FILES_LOADED_FROM_DISK = "filesLoadedFromDisk";
+    public static final String BEATPORT_UPDATE_FINISHED = "beatportUpdateFinished";
+    public static final String UPDATE_TAGS_FROM_BEATPORT = "updateTagsFromBeatport";
+
     public static final String STYLE_CSS = "style.css";
     public static final String COLOR_PATTERN = "rgb({0}, {1}, {2})";
 

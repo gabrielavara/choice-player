@@ -1,8 +1,18 @@
 package com.gabrielavara.choiceplayer.playlist;
 
-import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
-import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
-import static java.util.stream.Collectors.toList;
+import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
+import com.gabrielavara.choiceplayer.dto.Mp3;
+import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
+import com.gabrielavara.choiceplayer.messages.SelectItemInNewPlaylistMessage;
+import com.gabrielavara.choiceplayer.messages.SnackBarMessage;
+import com.gabrielavara.choiceplayer.messenger.Messenger;
+import com.gabrielavara.choiceplayer.views.PlaylistCell;
+import com.gabrielavara.choiceplayer.views.PlaylistItemView;
+import com.jfoenix.controls.JFXListView;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,20 +21,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
-import com.gabrielavara.choiceplayer.dto.Mp3;
-import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
-import com.gabrielavara.choiceplayer.messages.SelectItemInNewPlaylistMessage;
-import com.gabrielavara.choiceplayer.messenger.Messenger;
-import com.gabrielavara.choiceplayer.views.PlaylistCell;
-import com.gabrielavara.choiceplayer.views.PlaylistItemView;
-import com.jfoenix.controls.JFXListView;
-
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
+import static com.gabrielavara.choiceplayer.Constants.LOAD_FILES_FROM_DISK;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
+import static java.util.stream.Collectors.toList;
 
 public class Playlist {
     private static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.playlist.Playlist");
@@ -89,6 +89,7 @@ public class Playlist {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Task<List<PlaylistItemView>> createPlaylistLoaderTask(List<PlaylistItemView> cachedItems, Optional<PlaylistItemView> selected) {
+        Messenger.send(new SnackBarMessage(LOAD_FILES_FROM_DISK));
         Task<List<PlaylistItemView>> playListLoaderTask = new Task<List<PlaylistItemView>>() {
             @Override
             protected List<PlaylistItemView> call() {
