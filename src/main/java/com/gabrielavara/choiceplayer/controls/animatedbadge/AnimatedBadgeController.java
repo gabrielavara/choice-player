@@ -1,5 +1,21 @@
 package com.gabrielavara.choiceplayer.controls.animatedbadge;
 
+import com.gabrielavara.choiceplayer.controls.AnimationDirection;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import static com.gabrielavara.choiceplayer.Constants.BADGE_MAX_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.BADGE_MIN_SCALE;
 import static com.gabrielavara.choiceplayer.Constants.BADGE_SIZE;
@@ -12,23 +28,6 @@ import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATI
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
 import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 import static javafx.geometry.Pos.CENTER;
-
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import com.gabrielavara.choiceplayer.controls.AnimationDirection;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 
 public class AnimatedBadgeController implements Initializable {
     @FXML
@@ -61,7 +60,7 @@ public class AnimatedBadgeController implements Initializable {
         });
     }
 
-    public void increaseCount() {
+    void increaseCount() {
         badgeLabel.setText(String.valueOf(++count));
         setLocationIfNeeded();
         animate();

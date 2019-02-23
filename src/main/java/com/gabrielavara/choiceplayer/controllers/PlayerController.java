@@ -84,6 +84,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -93,6 +94,8 @@ import static com.gabrielavara.choiceplayer.Constants.BACKGROUND_IMAGE_OPACITY;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_MAX_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.DISPOSE_WAIT_MS;
 import static com.gabrielavara.choiceplayer.Constants.FILES_LOADED_FROM_DISK;
+import static com.gabrielavara.choiceplayer.Constants.MOVED_TO_LIKED;
+import static com.gabrielavara.choiceplayer.Constants.MOVED_TO_TRASH;
 import static com.gabrielavara.choiceplayer.Constants.SEEK_SECONDS;
 import static com.gabrielavara.choiceplayer.Constants.SHORT_ANIMATION_DURATION;
 import static com.gabrielavara.choiceplayer.Constants.UPDATE_TAGS_FROM_BEATPORT;
@@ -234,7 +237,8 @@ public class PlayerController implements Initializable {
 
     private void snackBarMessageReceived(SnackBarMessage message) {
         String localizedMessage = resourceBundle.getString(message.getResourceBundleMessageKey());
-        snackBar.enqueue(new JFXSnackbar.SnackbarEvent(localizedMessage));
+        String formattedMessage = MessageFormat.format(localizedMessage, message.getObjects());
+        snackBar.enqueue(new JFXSnackbar.SnackbarEvent(formattedMessage));
     }
 
     private void actionHappened(ActionMessage m) {
@@ -271,8 +275,10 @@ public class PlayerController implements Initializable {
     private void fileMoved(FileMovedMessage m) {
         if (m.getOpinion().equals(LIKE)) {
             likedAnimatedBadge.increaseCount();
+            Messenger.send(new SnackBarMessage(MOVED_TO_LIKED, new Object[]{m.getTitle()}));
         } else {
             dislikedAnimatedBadge.increaseCount();
+            Messenger.send(new SnackBarMessage(MOVED_TO_TRASH, new Object[]{m.getTitle()}));
         }
     }
 

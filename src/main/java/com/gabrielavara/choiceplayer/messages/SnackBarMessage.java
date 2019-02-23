@@ -7,4 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SnackBarMessage {
     private final String resourceBundleMessageKey;
+    private final Object[] objects;
+
+    public SnackBarMessage(String resourceBundleMessageKey) {
+        this.resourceBundleMessageKey = resourceBundleMessageKey;
+        objects = null;
+    }
 }

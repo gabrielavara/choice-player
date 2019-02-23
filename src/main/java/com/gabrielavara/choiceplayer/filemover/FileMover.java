@@ -93,7 +93,8 @@ public abstract class FileMover {
         } else {
             remove(item);
         }
-        Messenger.send(new FileMovedMessage(getOpinion()));
+        String title = item.getMp3().getArtist() + " - " + item.getMp3().getTitle();
+        Messenger.send(new FileMovedMessage(title, getOpinion()));
     }
 
     private void animateCells(PlaylistItemView item, PlaylistCell cell, List<PlaylistCell> cellsAfter) {

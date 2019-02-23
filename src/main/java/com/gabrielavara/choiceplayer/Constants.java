@@ -8,17 +8,11 @@ public class Constants {
     public static final int SHORT_DELAY = 25;
     public static final int DELAY = 50;
     public static final int WAIT_TILL_ANIMATING_ITEMS = 1300;
-    public static final int SPLASH_ANIMATION_DURATION = 3000;
 
     public static final int LABEL_TRANSLATE_X = 20;
     public static final int INITIAL_ANIMATION_TRANSLATE_Y = 100;
-    public static final int SETTINGS_TRANSLATE_Y = 800;
     public static final int SETTINGS_TRANSLATE_X = 1200;
 
-    public static final double SEEK_VOLUME = 0.1;
-
-    public static final String ICON_SIZE = "56";
-    public static final String ICON_STYLE_CLASS = "icon";
     public static final String UTF_8 = "UTF-8";
     public static final String PER = "\\";
     public static final String SLASH = "/";
@@ -42,8 +36,6 @@ public class Constants {
     public static final int ALBUM_ART_SIZE = 72;
     public static final int ALBUM_ART_TRANSLATE_X = 20;
 
-    public static final double SETTINGS_SCALE = 0.5;
-
     public static final String RECYCLE_BIN = "Recycle bin";
     public static final String COULD_NOT_MOVE_FILE_TO_RECYCLE_BIN = "couldNotMoveFileToRecycleBin";
     public static final String COULD_NOT_DELETE_ORIGINAL_FILE = "couldNotDeleteOriginalFile";
@@ -52,6 +44,8 @@ public class Constants {
     public static final String FILES_LOADED_FROM_DISK = "filesLoadedFromDisk";
     public static final String BEATPORT_UPDATE_FINISHED = "beatportUpdateFinished";
     public static final String UPDATE_TAGS_FROM_BEATPORT = "updateTagsFromBeatport";
+    public static final String MOVED_TO_LIKED = "movedToLiked";
+    public static final String MOVED_TO_TRASH = "movedToTrash";
 
     public static final String STYLE_CSS = "style.css";
     public static final String COLOR_PATTERN = "rgb({0}, {1}, {2})";
