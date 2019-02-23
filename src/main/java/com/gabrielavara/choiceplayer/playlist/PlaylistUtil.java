@@ -1,19 +1,19 @@
 package com.gabrielavara.choiceplayer.playlist;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import com.gabrielavara.choiceplayer.controls.actionicon.Action;
 import com.gabrielavara.choiceplayer.dto.Mp3;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
+import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
-
 import javafx.collections.ObservableList;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PlaylistUtil {
 
@@ -80,7 +80,11 @@ public class PlaylistUtil {
     }
 
     public void select(PlaylistItemView item) {
-        Messenger.send(new PlaylistItemSelectedMessage(item));
+        Messenger.send(new PlaylistItemSelectedMessage(item, Optional.empty()));
+    }
+
+    public void select(PlaylistItemView item, Opinion opinion) {
+        Messenger.send(new PlaylistItemSelectedMessage(item, Optional.of(opinion)));
     }
 
     public Optional<byte[]> getCurrentlyPlayingAlbumArt() {

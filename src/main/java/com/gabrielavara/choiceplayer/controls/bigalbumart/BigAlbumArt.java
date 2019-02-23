@@ -1,16 +1,14 @@
 package com.gabrielavara.choiceplayer.controls.bigalbumart;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Optional;
 
 public class BigAlbumArt extends StackPane {
     private static final String COULD_NOT_LOAD = "Could not load big album art";
@@ -36,8 +34,8 @@ public class BigAlbumArt extends StackPane {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public void setImage(Optional<byte[]> albumArtData, Direction direction) {
-        controller.setImage(albumArtData, direction);
+    public void setImage(Optional<byte[]> albumArtData, Direction direction, Runnable afterFinished) {
+        controller.setImage(albumArtData, direction, afterFinished);
     }
 
     public void animatePlayPause(AnimationDirection animationDirection) {

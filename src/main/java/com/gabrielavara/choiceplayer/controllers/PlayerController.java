@@ -19,6 +19,7 @@ import com.gabrielavara.choiceplayer.filemover.FileMover;
 import com.gabrielavara.choiceplayer.filemover.LikedFolderFileMover;
 import com.gabrielavara.choiceplayer.filemover.RecycleBinFileMover;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
+import com.gabrielavara.choiceplayer.messages.AnimateBackgroundChangeMessage;
 import com.gabrielavara.choiceplayer.messages.BeginToSaveTagsMessage;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.messages.PlaylistItemSelectedMessage;
@@ -31,10 +32,12 @@ import com.gabrielavara.choiceplayer.messages.ThemeChangedMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.playlist.Playlist;
 import com.gabrielavara.choiceplayer.playlist.PlaylistAnimator;
+import com.gabrielavara.choiceplayer.playlist.PlaylistSelectionChangedListener;
 import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.CssModifier;
 import com.gabrielavara.choiceplayer.util.GlobalKeyListener;
 import com.gabrielavara.choiceplayer.util.MediaUrl;
+import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.util.TimeFormatter;
 import com.gabrielavara.choiceplayer.util.TimeSliderConverter;
 import com.gabrielavara.choiceplayer.views.ButtonBox;
@@ -105,6 +108,7 @@ import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.BACKW
 import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.DESELECTED;
 import static com.gabrielavara.choiceplayer.controls.playlistitem.PlaylistItemState.SELECTED;
+import static com.gabrielavara.choiceplayer.util.Opinion.DISLIKE;
 import static com.gabrielavara.choiceplayer.util.Opinion.LIKE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javafx.scene.media.MediaPlayer.Status.DISPOSED;
@@ -193,6 +197,8 @@ public class PlayerController implements Initializable {
 
     private ResourceBundle resourceBundle;
 
+    private PlaylistSelectionChangedListener playlistSelectionChangedListener;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CssModifier.modify(rootContainer);
@@ -204,11 +210,13 @@ public class PlayerController implements Initializable {
         registerGlobalKeyListener();
         registerMessageHandlers();
         PlaylistAnimator playlistAnimator = new PlaylistAnimator(playlistView, spinner, playlistStackPane);
+        playlistSelectionChangedListener = new PlaylistSelectionChangedListener();
+        playlistView.getSelectionModel().selectedItemProperty().addListener(playlistSelectionChangedListener);
         resourceBundle = ResourceBundle.getBundle("language.player");
         snackBar = new JFXSnackbar(mainContainer);
         playlist = new Playlist(playlistView, playlistItems, playlistAnimator);
-        likedFolderFileMover = new LikedFolderFileMover(playlistUtil, playlistItems, playlist);
-        recycleBinFileMover = new RecycleBinFileMover(playlistUtil, playlistItems, playlist);
+        likedFolderFileMover = new LikedFolderFileMover(playlistItems, playlist);
+        recycleBinFileMover = new RecycleBinFileMover(playlistItems, playlist);
         initializeButtonHBox();
         ChoicePlayerApplication.setPlaylistItems(playlistItems);
         addSettings();
@@ -233,6 +241,7 @@ public class PlayerController implements Initializable {
         Messenger.register(TagsSavedMessage.class, this::tagsSaved);
         Messenger.register(ActionMessage.class, this::actionHappened);
         Messenger.register(SnackBarMessage.class, this::snackBarMessageReceived);
+        Messenger.register(AnimateBackgroundChangeMessage.class, this::animateBackgroundChange);
     }
 
     private void snackBarMessageReceived(SnackBarMessage message) {
@@ -314,6 +323,7 @@ public class PlayerController implements Initializable {
     private void selectPlaylistItem(PlaylistItemSelectedMessage message) {
         int index = message.getPlaylistItemView().getIndex() - 1;
         MultipleSelectionModel<PlaylistItemView> selectionModel = playlistView.getSelectionModel();
+        playlistSelectionChangedListener.setOpinion(message.getOpinion());
         selectionModel.select(index);
     }
 
@@ -334,7 +344,7 @@ public class PlayerController implements Initializable {
             playPauseButton.play();
         }
         setPlaylistItemStates(message);
-        setCurrentlyPlayingAlbumArt(getDirection(message, newValue));
+        setCurrentlyPlayingAlbumArt(getDirection(message, newValue), message);
         showToast(newValue);
         ChoicePlayerApplication.getStage().setTitle(newValue.getArtist() + " - " + newValue.getTitle());
     }
@@ -492,8 +502,8 @@ public class PlayerController implements Initializable {
         timeSlider.setOnMouseReleased(e -> enableTimeSliderUpdate());
         timeSlider.setOnMouseClicked(e -> seek(false));
         timeSlider.valueProperty().addListener(ov -> seek(true));
-        likeButton.setOnMouseClicked(e -> likedFolderFileMover.moveFile());
-        dislikeButton.setOnMouseClicked(e -> recycleBinFileMover.moveFile());
+        likeButton.setOnMouseClicked(e -> moveFile(LIKE));
+        dislikeButton.setOnMouseClicked(e -> moveFile(DISLIKE));
         refreshButton.setOnMouseClicked(e -> {
             refreshButton.rotate();
             playlist.reloadWithoutCache();
@@ -526,6 +536,11 @@ public class PlayerController implements Initializable {
 
     private EventHandler<ActionEvent> seek() {
         return t -> mediaPlayer.seek(duration.multiply(timeSlider.getValue() / 100.0));
+    }
+
+    public void moveFile(Opinion opinion) {
+        playlistUtil.getCurrentlyPlayingPlaylistItemView().ifPresent(
+                item -> playlistUtil.getNextPlaylistItemView().ifPresent(itemView -> playlistUtil.select(itemView, opinion)));
     }
 
     public void playPause() {
@@ -577,9 +592,33 @@ public class PlayerController implements Initializable {
                 new KeyFrame(Duration.millis(duration), new KeyValue(mediaPlayer.volumeProperty(), volume)));
     }
 
-    private void setCurrentlyPlayingAlbumArt(Direction direction) {
+    private void setCurrentlyPlayingAlbumArt(Direction direction, SelectionChangedMessage message) {
         Optional<byte[]> albumArtData = playlistUtil.getCurrentlyPlayingAlbumArt();
-        albumArt.setImage(albumArtData, direction);
+        albumArt.setImage(albumArtData, direction, () -> moveFileOrChangeBackground(albumArtData, message));
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private void moveFileOrChangeBackground(Optional<byte[]> albumArtData, SelectionChangedMessage message) {
+        Optional<Opinion> opinion = message.getOpinion();
+        Optional<PlaylistItemView> oldPlaylistItemView = message.getOldPlaylistItemView();
+        if (opinion.isPresent() && oldPlaylistItemView.isPresent()) {
+            moveFile(opinion.get(), oldPlaylistItemView.get());
+        } else {
+            albumArtData.ifPresent(this::animateBackgroundImageChange);
+        }
+    }
+
+    private void moveFile(Opinion opinion, PlaylistItemView itemView) {
+        if (opinion.equals(LIKE)) {
+            likedFolderFileMover.start(itemView);
+        } else {
+            recycleBinFileMover.start(itemView);
+        }
+    }
+
+    @SuppressWarnings({"squid:S1172", "unused"})
+    private void animateBackgroundChange(AnimateBackgroundChangeMessage m) {
+        Optional<byte[]> albumArtData = playlistUtil.getCurrentlyPlayingAlbumArt();
         albumArtData.ifPresent(this::animateBackgroundImageChange);
     }
 

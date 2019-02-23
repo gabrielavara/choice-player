@@ -1,18 +1,5 @@
 package com.gabrielavara.choiceplayer.dto;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.FileTime;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gabrielavara.choiceplayer.beatport.BeatportSearchInput;
 import com.gabrielavara.choiceplayer.messages.BeginToSaveTagsMessage;
@@ -26,7 +13,6 @@ import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
-
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.EqualsAndHashCode;
@@ -34,6 +20,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.FileTime;
+import java.util.Optional;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Getter
 @ToString

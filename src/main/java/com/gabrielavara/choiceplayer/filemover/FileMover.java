@@ -1,12 +1,11 @@
 package com.gabrielavara.choiceplayer.filemover;
 
-import com.gabrielavara.choiceplayer.controls.actionicon.Action;
 import com.gabrielavara.choiceplayer.messages.ActionMessage;
+import com.gabrielavara.choiceplayer.messages.AnimateBackgroundChangeMessage;
 import com.gabrielavara.choiceplayer.messages.FileMovedMessage;
 import com.gabrielavara.choiceplayer.messages.SnackBarMessage;
 import com.gabrielavara.choiceplayer.messenger.Messenger;
 import com.gabrielavara.choiceplayer.playlist.Playlist;
-import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
@@ -36,30 +35,21 @@ import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATI
 public abstract class FileMover {
     protected static Logger log = LoggerFactory.getLogger("com.gabrielavara.choiceplayer.utils.FileMover");
 
-    private final PlaylistUtil playlistUtil;
     private final ObservableList<PlaylistItemView> playlistItemViews;
     private final Playlist playlist;
 
-    FileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> playlistItemViews, Playlist playlist) {
-        this.playlistUtil = playlistUtil;
+    FileMover(ObservableList<PlaylistItemView> playlistItemViews, Playlist playlist) {
         this.playlistItemViews = playlistItemViews;
         this.playlist = playlist;
     }
 
-    public void moveFile() {
+    public void start(PlaylistItemView item) {
         log.info("Move file to {}", getTarget());
-        playlistUtil.getCurrentlyPlayingPlaylistItemView().ifPresent(item -> {
-            playlistUtil.getNextPlaylistItemView().ifPresent(playlistUtil::select);
-            startMoveTask(item);
-        });
-    }
-
-    private void startMoveTask(PlaylistItemView item) {
         Task<Void> task = createMoveTask(item);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
-        Messenger.send(new ActionMessage(getOpinion() == Opinion.LIKE ? Action.LIKE : Action.DISLIKE));
+        Messenger.send(new ActionMessage(getOpinion().getAction()));
     }
 
     private Task<Void> createMoveTask(PlaylistItemView item) {
@@ -105,6 +95,7 @@ public abstract class FileMover {
         parallelTransition.setOnFinished(e -> {
             resetCells(cell, cellsAfter);
             remove(item);
+            Messenger.send(new AnimateBackgroundChangeMessage());
         });
         parallelTransition.play();
     }

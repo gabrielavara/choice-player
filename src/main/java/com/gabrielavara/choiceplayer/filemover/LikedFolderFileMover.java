@@ -2,7 +2,6 @@ package com.gabrielavara.choiceplayer.filemover;
 
 import com.gabrielavara.choiceplayer.ChoicePlayerApplication;
 import com.gabrielavara.choiceplayer.playlist.Playlist;
-import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import javafx.collections.ObservableList;
@@ -22,8 +21,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class LikedFolderFileMover extends FileMover {
 
-    public LikedFolderFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, Playlist playlist) {
-        super(playlistUtil, mp3Files, playlist);
+    public LikedFolderFileMover(ObservableList<PlaylistItemView> mp3Files, Playlist playlist) {
+        super(mp3Files, playlist);
     }
 
     @Override

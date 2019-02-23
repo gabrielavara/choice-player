@@ -1,5 +1,15 @@
 package com.gabrielavara.choiceplayer.util;
 
+import com.gabrielavara.choiceplayer.controllers.PlayerController;
+import javafx.application.Platform;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+
+import java.util.logging.Level;
+
+import static com.gabrielavara.choiceplayer.util.Opinion.DISLIKE;
+import static com.gabrielavara.choiceplayer.util.Opinion.LIKE;
 import static java.awt.event.ActionEvent.CTRL_MASK;
 import static org.jnativehook.NativeInputEvent.ALT_MASK;
 import static org.jnativehook.NativeInputEvent.SHIFT_MASK;
@@ -9,16 +19,6 @@ import static org.jnativehook.keyboard.NativeKeyEvent.VC_M;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_PAGE_DOWN;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_PAGE_UP;
 import static org.jnativehook.keyboard.NativeKeyEvent.VC_RIGHT;
-
-import java.util.logging.Level;
-
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
-
-import com.gabrielavara.choiceplayer.controllers.PlayerController;
-
-import javafx.application.Platform;
 
 public class GlobalKeyListener implements NativeKeyListener {
     private static final int LONG_I = 0;
@@ -44,9 +44,9 @@ public class GlobalKeyListener implements NativeKeyListener {
         boolean isCtrlPressed = (e.getModifiers() & CTRL_MASK) != 0;
 
         if (e.getKeyCode() == VC_M && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            runOnApplicationThread(playerController.getLikedFolderFileMover()::moveFile);
+            runOnApplicationThread(() -> playerController.moveFile(LIKE));
         } else if (e.getKeyCode() == VC_D && isAltPressed && isCtrlPressed && !isShiftPressed) {
-            runOnApplicationThread(playerController.getRecycleBinFileMover()::moveFile);
+            runOnApplicationThread(() -> playerController.moveFile(DISLIKE));
         } else if (e.getKeyCode() == VC_PAGE_UP && isAltPressed && isCtrlPressed && !isShiftPressed) {
             runOnApplicationThread(playerController.getPlaylistUtil()::goToPreviousTrack);
         } else if (e.getKeyCode() == VC_PAGE_DOWN && isAltPressed && isCtrlPressed && !isShiftPressed) {

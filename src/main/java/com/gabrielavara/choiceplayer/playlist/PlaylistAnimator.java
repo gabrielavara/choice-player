@@ -1,18 +1,5 @@
 package com.gabrielavara.choiceplayer.playlist;
 
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.DELAY;
-import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
-import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
 import com.gabrielavara.choiceplayer.messages.PlaylistLoadedMessage;
 import com.gabrielavara.choiceplayer.messages.SelectItemInNewPlaylistMessage;
@@ -21,7 +8,6 @@ import com.gabrielavara.choiceplayer.views.PlaylistCell;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSpinner;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
@@ -35,6 +21,19 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.DELAY;
+import static com.gabrielavara.choiceplayer.Constants.LONG_ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
+import static java.util.stream.Collectors.toList;
+
 public class PlaylistAnimator {
     private final JFXSpinner spinner;
     private final StackPane playlistStackPane;
@@ -45,7 +44,6 @@ public class PlaylistAnimator {
         this.spinner = spinner;
         this.playlistStackPane = playlistStackPane;
         playlistView.setCellFactory(this::playListCellFactory);
-        playlistView.getSelectionModel().selectedItemProperty().addListener(new PlaylistSelectionChangedListener());
         playlistView.setOnScroll(e -> cells.forEach(c -> c.setOpacity(1)));
     }
 
@@ -90,7 +88,6 @@ public class PlaylistAnimator {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private void animateListItems(AnimationDirection direction, EventHandler<ActionEvent> finishedEventHandler, Optional<PlaylistItemView> selected, boolean cache) {
         int[] delay = new int[1];
-        delay[0] = 0;
         beforeListAnimatedIn = true;
 
         ParallelTransition parallelTransition = getItemsParallelTransition(direction, delay);

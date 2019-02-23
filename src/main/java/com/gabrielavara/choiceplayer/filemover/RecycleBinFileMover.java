@@ -1,7 +1,6 @@
 package com.gabrielavara.choiceplayer.filemover;
 
 import com.gabrielavara.choiceplayer.playlist.Playlist;
-import com.gabrielavara.choiceplayer.playlist.PlaylistUtil;
 import com.gabrielavara.choiceplayer.util.Opinion;
 import com.gabrielavara.choiceplayer.views.PlaylistItemView;
 import com.sun.jna.platform.FileUtils;
@@ -15,8 +14,8 @@ import static com.gabrielavara.choiceplayer.util.Opinion.DISLIKE;
 
 public class RecycleBinFileMover extends FileMover {
 
-    public RecycleBinFileMover(PlaylistUtil playlistUtil, ObservableList<PlaylistItemView> mp3Files, Playlist playlist) {
-        super(playlistUtil, mp3Files, playlist);
+    public RecycleBinFileMover(ObservableList<PlaylistItemView> mp3Files, Playlist playlist) {
+        super(mp3Files, playlist);
     }
 
     @Override

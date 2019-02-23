@@ -1,23 +1,7 @@
 package com.gabrielavara.choiceplayer.controls.bigalbumart;
 
-import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
-import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_SCALE;
-import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_SIZE;
-import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_X;
-import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_Y;
-import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
-import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
-import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
-import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
-import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
-
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
 import com.gabrielavara.choiceplayer.controls.AnimationDirection;
 import com.gabrielavara.choiceplayer.util.ImageUtil;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -28,6 +12,21 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
+
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import static com.gabrielavara.choiceplayer.Constants.ANIMATION_DURATION;
+import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_SCALE;
+import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_SIZE;
+import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_X;
+import static com.gabrielavara.choiceplayer.Constants.BIG_ALBUM_ART_TRANSLATE_Y;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.IN;
+import static com.gabrielavara.choiceplayer.controls.AnimationDirection.OUT;
+import static com.gabrielavara.choiceplayer.controls.bigalbumart.Direction.FORWARD;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_IN;
+import static com.gabrielavara.choiceplayer.views.QuadraticInterpolator.QUADRATIC_EASE_OUT;
 
 public class BigAlbumArtController implements Initializable {
     @FXML
@@ -85,7 +84,7 @@ public class BigAlbumArtController implements Initializable {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public void setImage(Optional<byte[]> albumArtData, Direction direction) {
+    void setImage(Optional<byte[]> albumArtData, Direction direction, Runnable afterFinished) {
         Image albumArtImage = ImageUtil.getAlbumArt(albumArtData, BIG_ALBUM_ART_SIZE);
         Image grayScaleAlbumArtImage = ImageUtil.getGrayScaleAlbumArt(albumArtData, BIG_ALBUM_ART_SIZE);
 
@@ -98,6 +97,7 @@ public class BigAlbumArtController implements Initializable {
                 showAlbumArt();
             }
             ParallelTransition inTransition = getParallelTransition(IN, direction.getInverse());
+            inTransition.setOnFinished(e2 -> afterFinished.run());
             inTransition.play();
         });
 
